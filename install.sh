@@ -134,10 +134,15 @@ else
   )
 fi
 
-step "5/8 서비스 켜기 (블루투스, 전원 모드, 패키지 캐시 자동 정리, 시간 동기화, Tailscale, zram 스왑, 소리)"
+step "5/8 서비스 켜기 (블루투스, 전원 모드, 패키지 캐시 자동 정리, 시간 동기화, Tailscale, 펌웨어 확인, 방화벽, zram 스왑, 소리)"
 sudo systemctl enable --now bluetooth.service power-profiles-daemon.service paccache.timer \
   systemd-timesyncd.service tailscaled.service fwupd-refresh.timer
 sudo install -m 644 "$REPO_DIR/system/zram-generator.conf" /etc/systemd/zram-generator.conf
+# 방화벽: 밖에서 먼저 들어오는 연결 막기 (Tailscale, 같은 Wi-Fi 기기 찾기는 허용). 원래 파일은 .bak으로 남긴다
+[ -f /etc/nftables.conf ] && [ ! -f /etc/nftables.conf.bak ] && sudo cp /etc/nftables.conf /etc/nftables.conf.bak
+sudo install -m 644 "$REPO_DIR/system/nftables.conf" /etc/nftables.conf
+sudo systemctl enable nftables.service
+sudo systemctl restart nftables.service
 sudo systemctl daemon-reload
 sudo systemctl start dev-zram0.swap
 # 로그인한 뒤에 설치한 PipeWire는 다음 로그인까지 꺼져 있어 소리가 안 난다. 지금 바로 켠다

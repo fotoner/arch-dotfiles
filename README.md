@@ -26,7 +26,7 @@ start-hyprland          # Hyprland 실행
 2. pacman 색상·병렬 다운로드를 켜고 전체 업데이트
 3. snapper + snap-pac 스냅샷 설정 (시간별 5개, 일별 7개 보존). 이미 설정돼 있으면 건너뜀
 4. Hyprland, Waybar, 한글 입력기(fcitx5), 글꼴, 테마(바탕화면·아이콘), 소리, 블루투스, 터미널 도구, Neovim, Discord, Tailscale, 맥 느낌 도구(음량·밝기 팝업, 전원 메뉴, 로그아웃 화면, Quickshell 제어 센터, 이미지·PDF 뷰어) 등 설치. oh-my-zsh 내려받기, Google Chrome·Vicinae·맥 커서(AUR) 빌드·설치, CodexBar(AI 사용량) 설치
-5. 블루투스, 전원 모드(power-profiles-daemon), 패키지 캐시 자동 정리, 시간 동기화, Tailscale, 펌웨어 업데이트 자동 확인(fwupd) 켜기. zram 스왑(RAM의 절반, 최대 8GB) 설정. 소리(PipeWire)를 재로그인 없이 바로 켜기
+5. 블루투스, 전원 모드(power-profiles-daemon), 패키지 캐시 자동 정리, 시간 동기화, Tailscale, 펌웨어 업데이트 자동 확인(fwupd), 방화벽(nftables) 켜기. zram 스왑(RAM의 절반, 최대 8GB) 설정. 소리(PipeWire)를 재로그인 없이 바로 켜기
 6. 배터리 충전 한도 켜기 (75% 아래에서 충전 시작, 80%에서 멈춤. 제어 센터에서 80% / 100% 전환, UPower가 저장해 재부팅해도 유지)
 7. `config/` 아래 설정 파일을 `~/.config/`로 복사. 내용이 다른 기존 파일은 `.bak-날짜시각`으로 백업. Claude Code 상태줄 설치, 앱 다크 모드 켜기, 기본 브라우저를 Chrome으로, 이미지는 Loupe·PDF는 Papers로 열기
 8. git 이메일, Tailscale 로그인, zram 스왑, 터보 부스트, NVIDIA GPU 유무 점검
@@ -183,6 +183,7 @@ SUPER는 Windows 키입니다.
 | `home/.zshrc`, `home/.dircolors` | `~/` | zsh 설정, `ls` 색 |
 | `home/.claude/statusline-command.sh` | `~/.claude/` | Claude Code 상태줄 |
 | `system/zram-generator.conf` | `/etc/systemd/` | zram 스왑 크기와 압축 방식 |
+| `system/nftables.conf` | `/etc/` | 방화벽: 밖에서 먼저 들어오는 연결은 막고 응답만 받기. Tailscale, 같은 Wi-Fi 기기 찾기(mDNS), ping은 허용. Tailscale·NordVPN이 넣는 규칙은 건드리지 않음 |
 
 ## 참고
 
