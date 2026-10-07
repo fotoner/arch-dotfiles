@@ -86,7 +86,38 @@ tooltip label {
     color: @text;
 }
 
-#custom-power {
+#idle_inhibitor {
+    color: @overlay1;
+    padding: 0 8px;
+}
+
+#idle_inhibitor.activated {
+    color: @yellow;
+}
+
+/* 시계 바로 오른쪽에 붙는 알림 빨간 점. 방해 금지일 때는 달 */
+#custom-notification {
     color: @red;
-    padding: 0 10px 0 6px;
+    font-size: 9px;
+    padding: 0 8px 0 0;
+    margin-left: -6px;
+}
+
+#custom-notification.dnd-none,
+#custom-notification.dnd-notification,
+#custom-notification.dnd-inhibited-none,
+#custom-notification.dnd-inhibited-notification {
+    color: @overlay1;
+    font-size: 13px;
+}
+
+/* 한/영 표시: 맥 메뉴바 입력 소스처럼 작은 둥근 배지 */
+#custom-ime {
+    background: @text;
+    color: @base;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 0 5px;
+    margin: 8px 6px;
 }

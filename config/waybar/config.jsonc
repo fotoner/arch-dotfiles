@@ -6,44 +6,134 @@
   "margin-left": 10,
   "margin-right": 10,
   "spacing": 4,
-  "modules-left": ["hyprland/workspaces"],
-  "modules-center": ["clock"],
-  "modules-right": ["tray", "power-profiles-daemon", "pulseaudio", "network", "battery", "custom/power"],
-
+  "modules-left": [
+    "hyprland/workspaces"
+  ],
+  "modules-right": [
+    "tray",
+    "idle_inhibitor",
+    "power-profiles-daemon",
+    "pulseaudio",
+    "battery",
+    "custom/ime",
+    "network",
+    "clock",
+    "custom/notification"
+  ],
   "clock": {
     "format": "{:%m/%d %H:%M}",
-    "tooltip-format": "<tt>{calendar}</tt>"
+    "locale": "ko_KR.UTF-8",
+    "tooltip-format": "<tt>{calendar}</tt>",
+    "calendar": {
+      "mode": "month",
+      "format": {
+        "months": "<span color='#cba6f7'><b>{}</b></span>",
+        "weekdays": "<span color='#89b4fa'><b>{}</b></span>",
+        "days": "<span color='#cdd6f4'>{}</span>",
+        "today": "<span color='#f38ba8'><b><u>{}</u></b></span>"
+      }
+    },
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw"
+  },
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+      "activated": "󰅶",
+      "deactivated": "󰾪"
+    },
+    "tooltip-format-activated": "잠자기 방지 켜짐 (클릭해서 끄기)",
+    "tooltip-format-deactivated": "잠자기 방지 꺼짐 (클릭해서 켜기)"
   },
   "power-profiles-daemon": {
     "format": "{icon}",
-    "format-icons": { "default": "", "performance": "", "balanced": "", "power-saver": "" },
+    "format-icons": {
+      "default": "",
+      "performance": "",
+      "balanced": "",
+      "power-saver": ""
+    },
     "tooltip-format": "전원 모드: {profile} (클릭해서 바꾸기)"
   },
   "pulseaudio": {
     "format": "{icon} {volume}%",
-    "format-muted": "󰝟 음소거",
-    "format-icons": { "default": ["󰕿", "󰖀", "󰕾"] },
-    "on-click": "pavucontrol"
-  },
-  "network": {
-    "format-wifi": "󰖩 {essid}",
-    "format-ethernet": "󰈀 유선",
-    "format-disconnected": "󰖪 오프라인",
-    "tooltip-format": "{ifname} {ipaddr}",
-    "on-click": "nm-connection-editor"
+    "format-muted": "󰝟",
+    "format-icons": {
+      "default": [
+        "󰕿",
+        "󰖀",
+        "󰕾"
+      ]
+    },
+    "on-click": "pwvucontrol || pavucontrol",
+    "on-click-right": "swayosd-client --output-volume mute-toggle",
+    "scroll-step": 5,
+    "tooltip-format": "{desc} (클릭: 음량 창, 오른쪽 클릭: 음소거, 휠: 음량)"
   },
   "battery": {
     "format": "{icon} {capacity}%",
     "format-charging": "󰂄 {capacity}%",
-    "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
-    "states": { "warning": 25, "critical": 10 }
+    "format-icons": [
+      "󰂎",
+      "󰁺",
+      "󰁻",
+      "󰁼",
+      "󰁽",
+      "󰁾",
+      "󰁿",
+      "󰂀",
+      "󰂁",
+      "󰂂",
+      "󰁹"
+    ],
+    "states": {
+      "warning": 25,
+      "critical": 10
+    }
   },
   "tray": {
     "spacing": 8
   },
-  "custom/power": {
-    "format": "󰐥",
-    "tooltip-format": "전원 메뉴 (Super+Esc)",
-    "on-click": "nwg-bar"
+  "custom/notification": {
+    "tooltip": false,
+    "format": "{icon}",
+    "format-icons": {
+      "notification": "",
+      "none": "",
+      "dnd-notification": "󰖔",
+      "dnd-none": "󰖔",
+      "inhibited-notification": "",
+      "inhibited-none": "",
+      "dnd-inhibited-notification": "󰖔",
+      "dnd-inhibited-none": "󰖔"
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true
+  },
+  "network": {
+    "format-wifi": "{icon}",
+    "format-icons": [
+      "󰤯",
+      "󰤟",
+      "󰤢",
+      "󰤥",
+      "󰤨"
+    ],
+    "format-ethernet": "󰈀",
+    "format-disconnected": "󰤮",
+    "tooltip-format-wifi": "{essid} ({signalStrength}%)",
+    "tooltip-format-ethernet": "유선 {ifname} {ipaddr}",
+    "tooltip-format-disconnected": "연결 안 됨",
+    "interval": 5,
+    "on-click": "~/.config/hypr/scripts/wifi-menu.sh"
+  },
+  "custom/ime": {
+    "exec": "~/.config/hypr/scripts/ime-status.sh",
+    "return-type": "json",
+    "on-click": "fcitx5-remote -t"
   }
 }

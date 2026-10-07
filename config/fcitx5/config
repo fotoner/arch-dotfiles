@@ -1,0 +1,11 @@
+# fcitx5 전역 설정. Ctrl+Space를 누를 때마다 A(영어) → 한(한글) → あ(일본어) 순서로 바뀐다
+[Hotkey]
+# 입력기를 차례로 바꿀 때 첫 번째(영어)도 포함
+EnumerateSkipFirst=False
+
+# 한/영 키가 있는 키보드에서는 그 키로 영어 ↔ 한글
+[Hotkey/TriggerKeys]
+0=Hangul
+
+[Hotkey/EnumerateForwardKeys]
+0=Control+space

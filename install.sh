@@ -51,8 +51,8 @@ PKGS=(
   # Hyprland 본체와 짝꿍들
   hyprland hyprlauncher hyprpolkitagent hyprlock hypridle
   xdg-desktop-portal-hyprland xdg-desktop-portal-gtk qt5-wayland qt6-wayland
-  # 터미널, 상단 막대, 알림, 파일 관리자
-  kitty waybar mako libnotify nautilus xdg-user-dirs
+  # 터미널, 상단 막대, 알림 센터, 파일 관리자
+  kitty waybar swaync libnotify nautilus xdg-user-dirs
   # 소리
   pipewire pipewire-pulse pipewire-alsa wireplumber pavucontrol
   # 글꼴
@@ -61,6 +61,8 @@ PKGS=(
   hyprpaper papirus-icon-theme
   # 맥 느낌: 로그아웃 화면, 음량·밝기 팝업, 전원 메뉴, GTK3 앱 테마, 글꼴
   hyprshutdown swayosd nwg-bar adw-gtk-theme inter-font
+  # 배터리 부족 알림, 스크린샷 편집기, 단축키 도움말 창, 폴더 바로 이동
+  batsignal satty yad zoxide
   # 터미널 도구, zsh 플러그인 (mac-dotfiles에서 가져옴)
   zsh-autosuggestions zsh-syntax-highlighting zsh-completions
   bat eza fd fzf jq tmux tree lazygit htop btop fastfetch git-lfs github-cli unzip
@@ -71,7 +73,7 @@ PKGS=(
   # AUR 패키지 빌드 도구
   base-devel
   # 한글 입력
-  fcitx5 fcitx5-hangul fcitx5-configtool fcitx5-gtk fcitx5-qt
+  fcitx5 fcitx5-hangul fcitx5-mozc fcitx5-configtool fcitx5-gtk fcitx5-qt
   # 네트워크, 블루투스
   network-manager-applet bluez bluez-utils blueman
   # 노트북 키(밝기, 미디어), 스크린샷, 클립보드
@@ -99,6 +101,7 @@ aur_install() {
 aur_install google-chrome   # 기본 브라우저
 aur_install vicinae-bin     # Raycast 대체 실행기
 aur_install apple_cursor    # 맥 커서
+aur_install pwvucontrol     # 음량 창 (상단바 음량 아이콘)
 # AI 사용량(CodexBar): GitHub 공식 배포 파일을 받아 체크섬을 확인한 뒤 사용자 폴더에 설치한다 (공식 안내와 같은 절차)
 if [ -x "$HOME/.local/bin/codexbar-linux" ]; then
   note "CodexBar: 이미 설치되어 있어 건너뜁니다."
@@ -169,13 +172,24 @@ place waybar/style.css
 place waybar/mocha.css
 place kitty/kitty.conf
 place kitty/current-theme.conf
-place mako/config
+place swaync/config.json
+place swaync/style.css
+place hypr/scripts/screenshot.sh
+place hypr/scripts/keyhints.sh
+place hypr/scripts/quick-toggle.sh
+place hypr/scripts/smart-paste.sh
+place hypr/scripts/wifi-menu.sh
+place hypr/scripts/ime-status.sh
+chmod +x "$HOME/.config/hypr/scripts/"*.sh
 place swayosd/style.css
 place nwg-bar/bar.json
 place nwg-bar/style.css
 place fontconfig/fonts.conf
 place vicinae/settings.json
 place fcitx5/profile
+place fcitx5/config
+place fcitx5/conf/classicui.conf
+(cd "$REPO_DIR/home" && find .local/share/fcitx5 -type f) | while read -r f; do place_home "$f"; done
 place git/config
 place git/ignore
 place gh/config.yml
@@ -194,6 +208,7 @@ xdg-user-dirs-update
 gsettings set org.gnome.desktop.interface color-scheme prefer-dark \
   && gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-dark \
   && gsettings set org.gnome.desktop.interface cursor-theme macOS \
+  && gsettings set org.gnome.desktop.interface accent-color purple \
   && gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark \
   || note "다크 모드 설정 실패. Hyprland에서 install.sh를 다시 실행하세요."
 xdg-settings set default-web-browser google-chrome.desktop || note "기본 브라우저 설정 실패"

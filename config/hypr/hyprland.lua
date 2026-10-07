@@ -52,12 +52,12 @@ local menu        = "hyprlauncher"
 
 hl.on("hyprland.start", function()
     hl.exec_cmd("systemctl --user start hyprpolkitagent") -- 관리자 암호 창
-    hl.exec_cmd("fcitx5 -d")                              -- 한글 입력기
+    hl.exec_cmd("fcitx5 -d --disable=notificationitem")   -- 한글 입력기 (트레이 아이콘 대신 상단바에 한/A 표시)
     hl.exec_cmd("waybar")                                 -- 상단 막대
     hl.exec_cmd("hyprpaper")                              -- 바탕화면
     hl.exec_cmd("swayosd-server")                         -- 음량·밝기 팝업
-    hl.exec_cmd("nm-applet")                              -- Wi-Fi 아이콘
-    hl.exec_cmd("blueman-applet")                         -- 블루투스 아이콘
+    hl.exec_cmd("swaync")                                 -- 알림 센터 (Super+N, 시계 클릭)
+    hl.exec_cmd("batsignal -b -w 20 -c 10")               -- 배터리 20%·10%에서 알림
     hl.exec_cmd("hypridle")                               -- 자동 잠금/화면 끄기
     hl.exec_cmd("vicinae server")                         -- Raycast 대체 실행기 (Alt+Space)
     hl.exec_cmd("~/.local/bin/codexbar-linux --background") -- AI 사용량 (상단바 트레이)
@@ -334,12 +334,20 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 -- 잠금 (맥의 Ctrl+Cmd+Q)
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("loginctl lock-session"))
 
--- 전원 메뉴 (화면 잠금·로그아웃·잠자기·재시동·시스템 종료). 상단바 오른쪽 끝 전원 버튼도 같은 메뉴
+-- 전원 메뉴 (화면 잠금·로그아웃·잠자기·재시동·시스템 종료). 알림 센터의 전원 버튼도 같은 메뉴
 hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("nwg-bar"))
+
+-- 알림 센터 열고 닫기 (맥처럼 상단바 오른쪽 끝 시계를 눌러도 열린다. 시계 오른쪽 클릭 = 방해 금지), 단축키 도움말
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
+hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("~/.config/hypr/scripts/keyhints.sh"))
 
 -- 스크린샷: Print = 영역 선택 후 클립보드, SHIFT + Print = 전체 화면을 ~/Pictures에 저장
 hl.bind("Print",         hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
 hl.bind("SHIFT + Print", hl.dsp.exec_cmd('mkdir -p ~/Pictures && grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png'))
+
+-- 맥식 스크린샷 (Alt = Cmd): Alt+Shift+3 전체 화면, Alt+Shift+4 영역을 골라 편집기로. 파일은 ~/Pictures/Screenshots
+hl.bind("ALT + SHIFT + 3", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot.sh full"))
+hl.bind("ALT + SHIFT + 4", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot.sh area"))
 
 -- 맥식 단축키: 스페이스바 옆 Alt를 맥의 Cmd처럼 쓴다 (ThinkPad의 Alt 자리가 맥의 Cmd 자리)
 -- 일반 앱에는 Ctrl 조합을 보낸다. 터미널은 Ctrl+C가 '실행 중단'이라 복사·붙여넣기·탭·창은 Ctrl+Shift 조합으로 보내고,
@@ -357,7 +365,16 @@ local function cmdBind(mods, key, appMods, termMods, opts)
 end
 
 cmdBind("ALT",         "C", "CTRL",         "CTRL + SHIFT")             -- 복사
-cmdBind("ALT",         "V", "CTRL",         "CTRL + SHIFT")             -- 붙여넣기
+-- 붙여넣기: 터미널에서는 클립보드에 이미지만 있으면 Ctrl+V(Claude Code 이미지 붙여넣기), 아니면 Ctrl+Shift+V
+hl.bind("ALT + V", function()
+    local win = hl.get_active_window()
+    if not win then return end
+    if terminalClasses[win.class] then
+        hl.dispatch(hl.dsp.exec_cmd("~/.config/hypr/scripts/smart-paste.sh"))
+    else
+        hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL", key = "V" }))
+    end
+end)
 cmdBind("ALT",         "X", "CTRL")                                     -- 잘라내기
 cmdBind("ALT",         "A", "CTRL")                                     -- 전체 선택
 cmdBind("ALT",         "Z", "CTRL",         nil, { repeating = true })  -- 실행 취소
@@ -466,4 +483,59 @@ hl.layer_rule({
     match        = { namespace = "^(swayosd|gtk-layer-shell)$" },
     blur         = true,
     ignore_alpha = 0.3,
+})
+
+-- 화면 속 화면(PiP): 타일에 끼지 않고 오른쪽 아래 구석에 떠서 모든 워크스페이스에 보이게
+hl.window_rule({
+    name              = "pip",
+    match             = { title = "^(Picture[- ]in[- ][Pp]icture)$" },
+    float             = true,
+    pin               = true,
+    keep_aspect_ratio = true,
+    size              = "480 270",
+    move              = "monitor_w-495 monitor_h-285",
+})
+
+-- 단축키 도움말 창은 가운데에 띄운다
+hl.window_rule({
+    name   = "keyhints",
+    match  = { class = "^yad$", title = "^단축키$" },
+    float  = true,
+    size   = "620 780",
+    center = true,
+})
+
+-- 알림 센터와 알림(swaync) 뒤를 흐리게
+hl.layer_rule({
+    name         = "blur-swaync",
+    match        = { namespace = "^swaync-(control-center|notification-window)$" },
+    blur         = true,
+    ignore_alpha = 0.3,
+})
+
+-- 스크린샷 편집기(satty)는 가운데에 띄운다
+hl.window_rule({
+    name   = "satty",
+    match  = { class = "^com\\.gabm\\.satty$" },
+    float  = true,
+    size   = "1280 800",
+    center = true,
+})
+
+-- Wi-Fi 목록 창(상단바 Wi-Fi 아이콘 클릭)은 가운데에 띄운다
+hl.window_rule({
+    name   = "nmtui",
+    match  = { class = "^nmtui$" },
+    float  = true,
+    size   = "720 520",
+    center = true,
+})
+
+-- 음량 창(pwvucontrol, 상단바 음량 아이콘 클릭)은 맥 메뉴바 팝업처럼 오른쪽 위에 띄운다
+hl.window_rule({
+    name  = "volume-popup",
+    match = { class = "^(com\\.saivert\\.)?pwvucontrol$" },
+    float = true,
+    size  = "460 600",
+    move  = "monitor_w-475 52",
 })

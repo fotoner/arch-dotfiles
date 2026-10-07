@@ -44,6 +44,11 @@ if [[ -d "$BUN_INSTALL/bin" ]]; then
 fi
 [ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
 
+# zoxide: z <폴더 이름 일부>로 자주 가던 폴더로 바로 이동
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+fi
+
 # Colored ls via GNU dircolors (~/.dircolors: Catppuccin Mocha)
 if command -v dircolors >/dev/null 2>&1 && [[ -e "$HOME/.dircolors" ]]; then
   eval "$(dircolors -b "$HOME/.dircolors")"

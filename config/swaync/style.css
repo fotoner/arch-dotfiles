@@ -1,0 +1,57 @@
+/* swaync: 알림 센터와 알림. 기본 스타일을 불러온 뒤 색만 Catppuccin Mocha로 바꾼다 */
+@import url("file:///etc/xdg/swaync/style.css");
+
+:root {
+  --cc-bg: rgba(30, 30, 46, 0.88);
+  --noti-border-color: rgba(69, 71, 90, 0.6);
+  --noti-bg: 49, 50, 68;
+  --noti-bg-alpha: 0.88;
+  --noti-bg-darker: rgb(24, 24, 37);
+  --noti-bg-hover: rgb(69, 71, 90);
+  --noti-bg-focus: rgba(88, 91, 112, 0.6);
+  --noti-close-bg: rgb(69, 71, 90);
+  --noti-close-bg-hover: rgb(88, 91, 112);
+  --text-color: rgb(205, 214, 244);
+  --text-color-disabled: rgb(127, 132, 156);
+  --bg-selected: rgb(203, 166, 247);
+  --border-radius: 14px;
+}
+
+@define-color cc-bg rgba(30, 30, 46, 0.88);
+@define-color noti-border-color rgba(69, 71, 90, 0.6);
+@define-color noti-bg rgba(49, 50, 68, 0.88);
+@define-color noti-bg-opaque rgb(49, 50, 68);
+@define-color noti-bg-darker rgb(24, 24, 37);
+@define-color noti-bg-hover rgb(69, 71, 90);
+@define-color noti-bg-hover-opaque rgb(69, 71, 90);
+@define-color noti-bg-focus rgba(88, 91, 112, 0.6);
+@define-color noti-close-bg rgba(205, 214, 244, 0.1);
+@define-color noti-close-bg-hover rgba(205, 214, 244, 0.15);
+@define-color text-color rgb(205, 214, 244);
+@define-color text-color-disabled rgb(127, 132, 156);
+@define-color bg-selected rgb(203, 166, 247);
+
+* {
+  font-family: "Inter", "Noto Sans CJK KR", "JetBrainsMono Nerd Font", sans-serif;
+}
+
+/* 켜진 빠른 버튼, 슬라이더, 방해 금지 스위치를 Catppuccin 보라색으로 */
+.widget-buttons-grid flowboxchild > button:checked,
+.widget-buttons-grid flowboxchild > button.active {
+  background: rgb(203, 166, 247);
+  color: rgb(30, 30, 46);
+}
+
+.widget-volume scale highlight,
+.widget-backlight scale highlight {
+  background-color: rgb(203, 166, 247);
+}
+
+.widget-volume scale slider,
+.widget-backlight scale slider {
+  background-color: rgb(205, 214, 244);
+}
+
+.widget-dnd switch:checked {
+  background-color: rgb(203, 166, 247);
+}
