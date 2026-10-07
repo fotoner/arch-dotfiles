@@ -61,17 +61,21 @@ PKGS=(
   hyprpaper papirus-icon-theme
   # 터미널 도구, zsh 플러그인 (mac-dotfiles에서 가져옴)
   zsh-autosuggestions zsh-syntax-highlighting zsh-completions
-  bat eza fd fzf jq tmux tree lazygit htop git-lfs unzip
-  # Neovim(LazyVim)과 짝꿍
-  neovim tree-sitter-cli shfmt stylua
+  bat eza fd fzf jq tmux tree lazygit htop btop fastfetch git-lfs github-cli unzip
+  # Neovim(LazyVim)과 짝꿍 (npm: LSP 설치용)
+  neovim tree-sitter-cli shfmt stylua npm
+  # 앱: 메신저, VPN
+  discord tailscale
+  # AUR 패키지 빌드 도구
+  base-devel
   # 한글 입력
   fcitx5 fcitx5-hangul fcitx5-configtool fcitx5-gtk fcitx5-qt
   # 네트워크, 블루투스
   network-manager-applet bluez bluez-utils blueman
   # 노트북 키(밝기, 미디어), 스크린샷, 클립보드
   brightnessctl playerctl grim slurp wl-clipboard
-  # 전원 모드, 하드웨어 영상 가속, 패키지 캐시 정리, 점검 도구
-  power-profiles-daemon intel-media-driver pacman-contrib pciutils
+  # 전원 모드, 하드웨어 영상 가속, 패키지 캐시 정리, 점검 도구, zram 스왑
+  power-profiles-daemon intel-media-driver pacman-contrib pciutils zram-generator
 )
 sudo pacman -S --needed --noconfirm "${PKGS[@]}"
 if [ -d "$HOME/.oh-my-zsh" ]; then
@@ -79,9 +83,28 @@ if [ -d "$HOME/.oh-my-zsh" ]; then
 else
   git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
 fi
+# 공식 저장소에 없는 앱은 AUR에서 받아 빌드한다 (둘 다 공식 배포 파일을 받아 묶기만 함)
+aur_install() {
+  local pkg="$1" dir="$HOME/.cache/aur/$1"
+  if pacman -Q "$pkg" >/dev/null 2>&1; then
+    note "$pkg: 이미 설치되어 있어 건너뜁니다."
+    return
+  fi
+  rm -rf "$dir"
+  git clone --depth=1 "https://aur.archlinux.org/$pkg.git" "$dir"
+  (cd "$dir" && makepkg -si --noconfirm)
+}
+aur_install google-chrome   # 기본 브라우저
+aur_install vicinae-bin     # Raycast 대체 실행기
 
-step "5/8 서비스 켜기 (블루투스, 전원 모드, 패키지 캐시 자동 정리)"
-sudo systemctl enable --now bluetooth.service power-profiles-daemon.service paccache.timer
+step "5/8 서비스 켜기 (블루투스, 전원 모드, 패키지 캐시 자동 정리, 시간 동기화, Tailscale, zram 스왑, 소리)"
+sudo systemctl enable --now bluetooth.service power-profiles-daemon.service paccache.timer \
+  systemd-timesyncd.service tailscaled.service
+sudo install -m 644 "$REPO_DIR/system/zram-generator.conf" /etc/systemd/zram-generator.conf
+sudo systemctl daemon-reload
+sudo systemctl start dev-zram0.swap
+# 로그인한 뒤에 설치한 PipeWire는 다음 로그인까지 꺼져 있어 소리가 안 난다. 지금 바로 켠다
+systemctl --user enable --now pipewire.socket pipewire-pulse.socket wireplumber.service
 
 step "6/8 배터리 충전 상한 75~80%"
 BAT=/sys/class/power_supply/BAT0
@@ -119,24 +142,39 @@ place waybar/mocha.css
 place kitty/kitty.conf
 place kitty/current-theme.conf
 place mako/config
+place vicinae/settings.json
 place fcitx5/profile
 place git/config
 place git/ignore
+place gh/config.yml
 (cd "$REPO_DIR/config" && find nvim -type f) | while read -r f; do place "$f"; done
 place_home .zshrc
 place_home .dircolors
+# Claude Code 상태줄 (fotoner/claude-statusline에서 bash 5.2+ 버그를 고친 본). settings.json에는 statusLine만 넣는다
+place_home .claude/statusline-command.sh
+chmod +x "$HOME/.claude/statusline-command.sh"
+CLAUDE_SETTINGS="$HOME/.claude/settings.json"
+[ -f "$CLAUDE_SETTINGS" ] || echo '{}' > "$CLAUDE_SETTINGS"
+jq '.statusLine = {"type": "command", "command": "bash ~/.claude/statusline-command.sh", "refreshInterval": 3}' \
+  "$CLAUDE_SETTINGS" > "$CLAUDE_SETTINGS.tmp" && mv "$CLAUDE_SETTINGS.tmp" "$CLAUDE_SETTINGS"
 xdg-user-dirs-update
 # 앱 다크 모드와 아이콘 테마 (Catppuccin Mocha와 어울리게)
 gsettings set org.gnome.desktop.interface color-scheme prefer-dark \
   && gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark \
   && gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark \
   || note "다크 모드 설정 실패. Hyprland에서 install.sh를 다시 실행하세요."
+xdg-settings set default-web-browser google-chrome.desktop || note "기본 브라우저 설정 실패"
 
 step "8/8 점검"
 if git config --global user.email >/dev/null; then
   note "git 이메일: 설정됨"
 else
   note "git 이메일이 없습니다. 커밋하기 전에: git config --global user.email \"you@example.com\""
+fi
+if tailscale status >/dev/null 2>&1; then
+  note "Tailscale: 연결됨"
+else
+  note "Tailscale: 로그인 전입니다. 연결하려면: sudo tailscale up"
 fi
 if swapon --show 2>/dev/null | grep zram >/dev/null; then note "zram 스왑: 정상"; else note "zram 스왑: 안 보임 (재부팅 후 다시 확인)"; fi
 if [ "$(cat /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || echo '?')" = 0 ]; then

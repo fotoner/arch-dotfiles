@@ -58,6 +58,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("nm-applet")                              -- Wi-Fi 아이콘
     hl.exec_cmd("blueman-applet")                         -- 블루투스 아이콘
     hl.exec_cmd("hypridle")                               -- 자동 잠금/화면 끄기
+    hl.exec_cmd("vicinae server")                         -- Raycast 대체 실행기 (Alt+Space)
 end)
 
 
@@ -359,7 +360,7 @@ cmdBind("ALT",         "W", "CTRL",         "CTRL + SHIFT")             -- 탭 �
 cmdBind("ALT",         "N", "CTRL",         "CTRL + SHIFT")             -- 새 창
 
 hl.bind("ALT + Q",     hl.dsp.window.close()) -- 맥의 Cmd+Q: 앱 전체 종료 대신 지금 창 닫기
-hl.bind("ALT + space", hl.dsp.exec_cmd(menu)) -- 맥의 Cmd+Space: Spotlight 대신 앱 검색
+hl.bind("ALT + space", hl.dsp.exec_cmd("vicinae toggle")) -- 맥의 Cmd+Space: Raycast 대신 Vicinae
 hl.bind("ALT + Tab", function()               -- 맥의 Cmd+Tab: 지금 워크스페이스의 다음 창으로
     hl.dispatch(hl.dsp.window.cycle_next())
     hl.dispatch(hl.dsp.window.bring_to_top())
@@ -426,4 +427,17 @@ hl.layer_rule({
     match        = { namespace = "waybar" },
     blur         = true,
     ignore_alpha = 0.3,
+})
+
+-- Vicinae(Raycast 대체 실행기): 뒤를 흐리게, 열고 닫을 때 애니메이션 없이
+hl.layer_rule({
+    name         = "vicinae-blur",
+    match        = { namespace = "vicinae" },
+    blur         = true,
+    ignore_alpha = 0,
+})
+hl.layer_rule({
+    name    = "vicinae-no-animation",
+    match   = { namespace = "vicinae" },
+    no_anim = true,
 })

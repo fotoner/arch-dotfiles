@@ -25,11 +25,11 @@ start-hyprland          # Hyprland 실행
 1. 인터넷 연결 확인
 2. pacman 색상·병렬 다운로드를 켜고 전체 업데이트
 3. snapper + snap-pac 스냅샷 설정 (시간별 5개, 일별 7개 보존). 이미 설정돼 있으면 건너뜀
-4. Hyprland, Waybar, 한글 입력기(fcitx5), 글꼴, 테마(바탕화면·아이콘), 소리, 블루투스, 터미널 도구, Neovim 등 설치. oh-my-zsh 내려받기
-5. 블루투스, 전원 모드(power-profiles-daemon), 패키지 캐시 자동 정리 켜기
+4. Hyprland, Waybar, 한글 입력기(fcitx5), 글꼴, 테마(바탕화면·아이콘), 소리, 블루투스, 터미널 도구, Neovim, Discord, Tailscale 등 설치. oh-my-zsh 내려받기, Google Chrome·Vicinae(AUR) 빌드·설치
+5. 블루투스, 전원 모드(power-profiles-daemon), 패키지 캐시 자동 정리, 시간 동기화, Tailscale 켜기. zram 스왑(RAM의 절반, 최대 8GB) 설정. 소리(PipeWire)를 재로그인 없이 바로 켜기
 6. 배터리 충전 상한 75~80%
-7. `config/` 아래 설정 파일을 `~/.config/`로 복사. 내용이 다른 기존 파일은 `.bak-날짜시각`으로 백업. 앱 다크 모드 켜기
-8. zram 스왑, 터보 부스트, NVIDIA GPU 유무 점검
+7. `config/` 아래 설정 파일을 `~/.config/`로 복사. 내용이 다른 기존 파일은 `.bak-날짜시각`으로 백업. Claude Code 상태줄 설치, 앱 다크 모드 켜기, 기본 브라우저를 Chrome으로
+8. git 이메일, Tailscale 로그인, zram 스왑, 터보 부스트, NVIDIA GPU 유무 점검
 
 ## 단축키
 
@@ -73,7 +73,7 @@ SUPER는 Windows 키입니다.
 | Alt + W | 탭 닫기 | 같음 |
 | Alt + N | 새 창 | 같음 |
 | Alt + Q | 창 닫기 (맥처럼 앱 전체 종료는 아님) | 같음 |
-| Alt + Space | 앱 검색 (Spotlight) | 같음 |
+| Alt + Space | Vicinae: 앱 검색·계산기·클립보드 기록·이모지 등 (Raycast) | 같음 |
 | Alt + Tab | 지금 워크스페이스의 다음 창 (Shift를 더하면 이전 창) | 같음 |
 
 "그대로"는 Alt 조합을 터미널에 그대로 넘긴다는 뜻이라 셸의 Alt 단축키도 계속 쓸 수 있습니다. 다른 터미널을 쓰면 `config/hypr/hyprland.lua`의 `terminalClasses`에 그 창의 class(`hyprctl clients`로 확인)를 추가하세요.
@@ -91,6 +91,7 @@ SUPER는 Windows 키입니다.
 | 잠금 화면 | `config/hypr/hyprlock.conf`의 `input-field`, `label` |
 | 알림 | `config/mako/config` |
 | 앱 검색 창 | `config/hypr/hyprtoolkit.conf` |
+| Vicinae | `config/vicinae/settings.json`의 `theme` |
 
 ## 터미널 환경
 
@@ -102,7 +103,8 @@ SUPER는 Windows 키입니다.
   git config --global user.email "you@example.com"
   gh auth setup-git   # gh로 GitHub에 로그인한 뒤 git push 인증 연결
   ```
-- **터미널 도구**: `bat eza fd fzf jq tmux tree lazygit htop git-lfs`
+- **터미널 도구**: `bat eza fd fzf jq tmux tree lazygit htop btop fastfetch git-lfs`, GitHub CLI(`gh`, 설정은 `config/gh/config.yml`. 로그인 정보는 저장소에 없음)
+- **Claude Code 상태줄**: [fotoner/claude-statusline](https://github.com/fotoner/claude-statusline)의 스크립트에서 bash 5.2+ 버그(`~`가 홈 경로 전체로 바뀜)를 고친 본 (`home/.claude/statusline-command.sh`). `install.sh`가 `~/.claude/settings.json`에 `statusLine`만 추가하고 다른 설정은 건드리지 않습니다.
 - **Neovim**: LazyVim. 처음 `nvim`을 켜면 플러그인을 내려받습니다. 색은 Catppuccin Mocha (`config/nvim/lua/plugins/colorscheme.lua`)
 
 ## 꼬였을 때
@@ -131,13 +133,20 @@ SUPER는 Windows 키입니다.
 | `config/mako/config` | `~/.config/mako/` | 알림 창 |
 | `config/fcitx5/profile` | `~/.config/fcitx5/` | 입력기 목록: 영어 + 한글 |
 | `config/git/config`, `ignore` | `~/.config/git/` | git 이름, LFS, 전역 gitignore |
+| `config/gh/config.yml` | `~/.config/gh/` | GitHub CLI 설정 (`gh co` = PR 체크아웃) |
 | `config/nvim/` | `~/.config/nvim/` | Neovim(LazyVim) 설정 |
+| `config/vicinae/settings.json` | `~/.config/vicinae/` | Raycast 대체 실행기 Vicinae: 테마, 모서리 |
 | `home/.zshrc`, `home/.dircolors` | `~/` | zsh 설정, `ls` 색 |
+| `home/.claude/statusline-command.sh` | `~/.claude/` | Claude Code 상태줄 |
 | `system/battery-threshold.conf` | `/etc/tmpfiles.d/` | 배터리 충전 상한 |
+| `system/zram-generator.conf` | `/etc/systemd/` | zram 스왑 크기와 압축 방식 |
 
 ## 참고
 
 - Hyprland 0.56부터 설정 파일이 `hyprland.conf`가 아니라 Lua(`hyprland.lua`)입니다. 인터넷의 예전 `bind = ...` 형식 예시는 그대로 쓸 수 없습니다.
 - [Hyprland Master tutorial](https://wiki.hypr.land/Getting-Started/Master-Tutorial/) · [Must-have](https://wiki.hypr.land/Useful-Utilities/Must-have/) · [hypridle](https://wiki.hypr.land/Hypr-Ecosystem/hypridle/) · [hyprlock](https://wiki.hypr.land/Hypr-Ecosystem/hyprlock/)
 - [ArchWiki: Lenovo ThinkPad T14/T14s (Intel) Gen 1](https://wiki.archlinux.org/title/Lenovo_ThinkPad_T14/T14s_(Intel)_Gen_1) · [ArchWiki: Fcitx5](https://wiki.archlinux.org/title/Fcitx5) · [ArchWiki: Snapper](https://wiki.archlinux.org/title/Snapper)
+- Google Chrome과 [Vicinae](https://vicinae.com)는 공식 저장소에 없어서 `install.sh`가 AUR의 `google-chrome`, `vicinae-bin`을 받아 빌드합니다. AUR은 누구나 올릴 수 있으니 바뀐 PKGBUILD가 걱정되면 `~/.cache/aur/<패키지>/PKGBUILD`를 먼저 읽어 보세요. 업데이트는 `pacman -Syu`로 되지 않으니 같은 폴더에서 `git pull && makepkg -si`를 실행합니다.
+- Tailscale은 `install.sh`가 서비스만 켭니다. 처음 한 번 `sudo tailscale up`으로 로그인하세요. 연결되면 `/etc/resolv.conf`를 Tailscale이 직접 관리합니다(MagicDNS).
+- Vicinae의 "활성 창에 붙여넣기"와 스니펫 기능은 키보드 입력을 감시하는 도우미가 필요해서, 설치할 때 그 도우미에 권한(`cap_dac_override`)을 줍니다. 필요 없으면 `settings.json`에 `"input_server": { "enabled": false }`를 넣으세요.
 - 리눅스에는 무릎 위 감지(lap mode)가 없어서 "performance" 전원 모드에서는 75°C를 넘을 수 있습니다. 무릎 위에서는 balanced 이하로 두세요.

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://vicinae.com/schemas/config.json",
+  "theme": {
+    "light": { "name": "catppuccin-latte", "icon_theme": "Papirus" },
+    "dark": { "name": "catppuccin-mocha", "icon_theme": "Papirus-Dark" }
+  },
+  "launcher_window": {
+    "rounding": 12
+  }
+}
