@@ -1,0 +1,39 @@
+/* nwg-bar: 전원 메뉴 (Super+Esc, 상단바 전원 버튼). Catppuccin Mocha */
+window {
+  background-color: rgba(17, 17, 27, 0.45);
+}
+
+#outer-box {
+  margin: 0px;
+}
+
+#inner-box {
+  background-color: rgba(30, 30, 46, 0.92);
+  border: 1px solid rgba(69, 71, 90, 0.6);
+  border-radius: 18px;
+  padding: 12px;
+  margin: 5px;
+}
+
+button,
+image {
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+button {
+  color: #cdd6f4;
+  padding: 10px 16px;
+  margin: 4px;
+  border-radius: 12px;
+}
+
+button:hover,
+button:focus {
+  background-color: rgba(203, 166, 247, 0.18);
+}
+
+label {
+  color: #cdd6f4;
+}

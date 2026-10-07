@@ -25,7 +25,7 @@ start-hyprland          # Hyprland 실행
 1. 인터넷 연결 확인
 2. pacman 색상·병렬 다운로드를 켜고 전체 업데이트
 3. snapper + snap-pac 스냅샷 설정 (시간별 5개, 일별 7개 보존). 이미 설정돼 있으면 건너뜀
-4. Hyprland, Waybar, 한글 입력기(fcitx5), 글꼴, 테마(바탕화면·아이콘), 소리, 블루투스, 터미널 도구, Neovim, Discord, Tailscale 등 설치. oh-my-zsh 내려받기, Google Chrome·Vicinae(AUR) 빌드·설치
+4. Hyprland, Waybar, 한글 입력기(fcitx5), 글꼴, 테마(바탕화면·아이콘), 소리, 블루투스, 터미널 도구, Neovim, Discord, Tailscale, 맥 느낌 도구(음량·밝기 팝업, 전원 메뉴, 로그아웃 화면) 등 설치. oh-my-zsh 내려받기, Google Chrome·Vicinae·맥 커서(AUR) 빌드·설치, CodexBar(AI 사용량) 설치
 5. 블루투스, 전원 모드(power-profiles-daemon), 패키지 캐시 자동 정리, 시간 동기화, Tailscale 켜기. zram 스왑(RAM의 절반, 최대 8GB) 설정. 소리(PipeWire)를 재로그인 없이 바로 켜기
 6. 배터리 충전 상한 75~80%
 7. `config/` 아래 설정 파일을 `~/.config/`로 복사. 내용이 다른 기존 파일은 `.bak-날짜시각`으로 백업. Claude Code 상태줄 설치, 앱 다크 모드 켜기, 기본 브라우저를 Chrome으로
@@ -42,6 +42,8 @@ SUPER는 Windows 키입니다.
 | SUPER + R | 앱 검색 실행 | Spotlight |
 | SUPER + E | 파일 관리자(Nautilus) | Finder |
 | SUPER + L | 화면 잠금 | Ctrl+Cmd+Q |
+| SUPER + Esc | 전원 메뉴: 화면 잠금·로그아웃·잠자기·재시동·시스템 종료 (상단바 오른쪽 끝 전원 버튼도 같음) | 메뉴의 전원 항목 |
+| 음량·밝기 키 | 화면에 팝업으로 표시 | 같음 |
 | SUPER + 1~0 | 워크스페이스 이동 | Spaces 이동 |
 | SUPER + Shift + 1~0 | 창을 그 워크스페이스로 보내기 | |
 | SUPER + V | 창 띄우기/타일로 되돌리기 | |
@@ -49,7 +51,7 @@ SUPER는 Windows 키입니다.
 | 세 손가락 좌우 쓸기 | 워크스페이스 전환 | 같음 |
 | Print | 영역 스크린샷을 클립보드로 | Cmd+Shift+Ctrl+4 |
 | Shift + Print | 전체 화면을 `~/Pictures`에 저장 | Cmd+Shift+3 |
-| SUPER + M | Hyprland 종료 | 로그아웃 |
+| SUPER + M | 앱을 정리하고 로그아웃 (hyprshutdown) | 로그아웃 |
 
 한글 전환은 **Ctrl+Space**(키보드에 한/영 키가 있으면 그 키도)입니다. 한글이 목록에 없으면 SUPER+R → "Fcitx 5 Configuration"에서 "Only Show Current Language"를 끄고 Hangul을 추가하세요.
 
@@ -80,7 +82,7 @@ SUPER는 Windows 키입니다.
 
 ## 테마
 
-[Catppuccin](https://github.com/catppuccin/catppuccin) Mocha 색으로 맞췄습니다. 앱은 다크 모드, 아이콘은 Papirus-Dark입니다.
+[Catppuccin](https://github.com/catppuccin/catppuccin) Mocha 색으로 맞췄습니다. 앱은 다크 모드(GTK3 앱은 `adw-gtk3-dark`), 아이콘은 Papirus-Dark, 커서는 맥 커서(`macOS`)입니다. 창 테두리를 끌어 크기를 바꿀 수 있고, 워크스페이스는 맥 Spaces처럼 옆으로 밀리며 바뀝니다.
 
 | 부분 | 색이 들어 있는 곳 |
 |---|---|
@@ -88,7 +90,9 @@ SUPER는 Windows 키입니다.
 | 창 테두리·그림자 | `config/hypr/hyprland.lua`의 `col`, `shadow` |
 | 상단 막대 | `config/waybar/mocha.css` (모양은 `style.css`) |
 | 터미널 | `config/kitty/current-theme.conf` (`kitty +kitten themes`로 골라도 됨) |
-| 잠금 화면 | `config/hypr/hyprlock.conf`의 `input-field`, `label` |
+| 잠금 화면 | `config/hypr/hyprlock.conf`: 맥처럼 위에 날짜와 큰 시계, 가운데 사용자와 암호 입력, 오른쪽 아래 배터리 |
+| 음량·밝기 팝업 | `config/swayosd/style.css` |
+| 전원 메뉴 | `config/nwg-bar/style.css` (항목은 `bar.json`) |
 | 알림 | `config/mako/config` |
 | 앱 검색 창 | `config/hypr/hyprtoolkit.conf` |
 | Vicinae | `config/vicinae/settings.json`의 `theme` |
@@ -131,6 +135,9 @@ SUPER는 Windows 키입니다.
 | `config/waybar/style.css`, `mocha.css` | `~/.config/waybar/` | 상단 막대 모양과 색 |
 | `config/kitty/kitty.conf`, `current-theme.conf` | `~/.config/kitty/` | 터미널 글꼴·여백·색 |
 | `config/mako/config` | `~/.config/mako/` | 알림 창 |
+| `config/swayosd/style.css` | `~/.config/swayosd/` | 음량·밝기 팝업 |
+| `config/nwg-bar/bar.json`, `style.css` | `~/.config/nwg-bar/` | 전원 메뉴 |
+| `config/fontconfig/fonts.conf` | `~/.config/fontconfig/` | 웹페이지의 맥 전용 글꼴 이름(`-apple-system` 등)을 Inter로 |
 | `config/fcitx5/profile` | `~/.config/fcitx5/` | 입력기 목록: 영어 + 한글 |
 | `config/git/config`, `ignore` | `~/.config/git/` | git 이름, LFS, 전역 gitignore |
 | `config/gh/config.yml` | `~/.config/gh/` | GitHub CLI 설정 (`gh co` = PR 체크아웃) |
@@ -146,7 +153,8 @@ SUPER는 Windows 키입니다.
 - Hyprland 0.56부터 설정 파일이 `hyprland.conf`가 아니라 Lua(`hyprland.lua`)입니다. 인터넷의 예전 `bind = ...` 형식 예시는 그대로 쓸 수 없습니다.
 - [Hyprland Master tutorial](https://wiki.hypr.land/Getting-Started/Master-Tutorial/) · [Must-have](https://wiki.hypr.land/Useful-Utilities/Must-have/) · [hypridle](https://wiki.hypr.land/Hypr-Ecosystem/hypridle/) · [hyprlock](https://wiki.hypr.land/Hypr-Ecosystem/hyprlock/)
 - [ArchWiki: Lenovo ThinkPad T14/T14s (Intel) Gen 1](https://wiki.archlinux.org/title/Lenovo_ThinkPad_T14/T14s_(Intel)_Gen_1) · [ArchWiki: Fcitx5](https://wiki.archlinux.org/title/Fcitx5) · [ArchWiki: Snapper](https://wiki.archlinux.org/title/Snapper)
-- Google Chrome과 [Vicinae](https://vicinae.com)는 공식 저장소에 없어서 `install.sh`가 AUR의 `google-chrome`, `vicinae-bin`을 받아 빌드합니다. AUR은 누구나 올릴 수 있으니 바뀐 PKGBUILD가 걱정되면 `~/.cache/aur/<패키지>/PKGBUILD`를 먼저 읽어 보세요. 업데이트는 `pacman -Syu`로 되지 않으니 같은 폴더에서 `git pull && makepkg -si`를 실행합니다.
+- Google Chrome, [Vicinae](https://vicinae.com), 맥 커서는 공식 저장소에 없어서 `install.sh`가 AUR의 `google-chrome`, `vicinae-bin`, `apple_cursor`를 받아 빌드합니다. AUR은 누구나 올릴 수 있으니 바뀐 PKGBUILD가 걱정되면 `~/.cache/aur/<패키지>/PKGBUILD`를 먼저 읽어 보세요. 업데이트는 `pacman -Syu`로 되지 않으니 같은 폴더에서 `git pull && makepkg -si`를 실행합니다.
 - Tailscale은 `install.sh`가 서비스만 켭니다. 처음 한 번 `sudo tailscale up`으로 로그인하세요. 연결되면 `/etc/resolv.conf`를 Tailscale이 직접 관리합니다(MagicDNS).
 - Vicinae의 "활성 창에 붙여넣기"와 스니펫 기능은 키보드 입력을 감시하는 도우미가 필요해서, 설치할 때 그 도우미에 권한(`cap_dac_override`)을 줍니다. 필요 없으면 `settings.json`에 `"input_server": { "enabled": false }`를 넣으세요.
 - 리눅스에는 무릎 위 감지(lap mode)가 없어서 "performance" 전원 모드에서는 75°C를 넘을 수 있습니다. 무릎 위에서는 balanced 이하로 두세요.
+- [CodexBar](https://github.com/steipete/CodexBar)(AI 사용량, 상단바 트레이)는 `install.sh`가 GitHub 공식 배포 파일을 받아 체크섬을 확인한 뒤 `~/.local`에 설치합니다. 업데이트도 같은 방법이라, 새 버전을 쓰려면 `~/.local/bin/codexbar-linux`를 지우고 `install.sh`를 다시 실행하세요. 보여줄 서비스(Claude, Codex 등)는 트레이 아이콘 → Settings → Providers에서 고릅니다.

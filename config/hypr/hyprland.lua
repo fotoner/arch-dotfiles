@@ -55,10 +55,12 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("fcitx5 -d")                              -- 한글 입력기
     hl.exec_cmd("waybar")                                 -- 상단 막대
     hl.exec_cmd("hyprpaper")                              -- 바탕화면
+    hl.exec_cmd("swayosd-server")                         -- 음량·밝기 팝업
     hl.exec_cmd("nm-applet")                              -- Wi-Fi 아이콘
     hl.exec_cmd("blueman-applet")                         -- 블루투스 아이콘
     hl.exec_cmd("hypridle")                               -- 자동 잠금/화면 끄기
     hl.exec_cmd("vicinae server")                         -- Raycast 대체 실행기 (Alt+Space)
+    hl.exec_cmd("~/.local/bin/codexbar-linux --background") -- AI 사용량 (상단바 트레이)
 end)
 
 
@@ -70,6 +72,7 @@ end)
 
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
+hl.env("XCURSOR_THEME", "macOS") -- 맥 커서 (apple_cursor)
 
 -- fcitx5: Wayland 앱은 text-input 프로토콜을 쓰고, Xwayland/Qt 앱용으로만 지정
 hl.env("XMODIFIERS", "@im=fcitx")
@@ -114,7 +117,7 @@ hl.config({
         },
 
         -- Set to true to enable resizing windows by clicking and dragging on borders and gaps
-        resize_on_border = false,
+        resize_on_border = true, -- 맥처럼 창 테두리를 끌어서 크기 조절
 
         -- Please see https://wiki.hypr.land/Configuring/Advanced-and-Cool/Tearing/ before you turn this on
         allow_tearing = false,
@@ -173,9 +176,10 @@ hl.animation({ leaf = "layersIn",      enabled = true,  speed = 4,    bezier = "
 hl.animation({ leaf = "layersOut",     enabled = true,  speed = 1.5,  bezier = "linear",       style = "fade" })
 hl.animation({ leaf = "fadeLayersIn",  enabled = true,  speed = 1.79, bezier = "almostLinear" })
 hl.animation({ leaf = "fadeLayersOut", enabled = true,  speed = 1.39, bezier = "almostLinear" })
-hl.animation({ leaf = "workspaces",    enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 1.21, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
+-- 워크스페이스 전환: 맥 Spaces처럼 옆으로 밀기
+hl.animation({ leaf = "workspaces",    enabled = true,  speed = 4,    bezier = "easeOutQuint", style = "slide" })
+hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 4,    bezier = "easeOutQuint", style = "slide" })
+hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 4,    bezier = "easeOutQuint", style = "slide" })
 hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
 
 -- Ref https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
@@ -311,12 +315,13 @@ hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Laptop multimedia keys for volume and LCD brightness
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true })
-hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     { locked = true, repeating = true })
-hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),   { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessUp",  hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"),                  { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"),                  { locked = true, repeating = true })
+-- 음량·밝기 키: swayosd가 맥처럼 화면에 팝업을 띄운다. swayosd가 없거나 꺼져 있으면 팝업 없이 바로 바꾼다
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("swayosd-client --output-volume +5 --max-volume 100 || wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("swayosd-client --output-volume -5 || wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),                  { locked = true, repeating = true })
+hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("swayosd-client --output-volume mute-toggle || wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),         { locked = true, repeating = true })
+hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("swayosd-client --input-volume mute-toggle || wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),          { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessUp",  hl.dsp.exec_cmd("swayosd-client --brightness +5 || brightnessctl -e4 -n2 set 5%+"),                     { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd("swayosd-client --brightness -5 || brightnessctl -e4 -n2 set 5%-"),                     { locked = true, repeating = true })
 
 -- Requires playerctl
 hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = true })
@@ -327,6 +332,9 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 
 -- 잠금 (맥의 Ctrl+Cmd+Q)
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("loginctl lock-session"))
+
+-- 전원 메뉴 (화면 잠금·로그아웃·잠자기·재시동·시스템 종료). 상단바 오른쪽 끝 전원 버튼도 같은 메뉴
+hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("nwg-bar"))
 
 -- 스크린샷: Print = 영역 선택 후 클립보드, SHIFT + Print = 전체 화면을 ~/Pictures에 저장
 hl.bind("Print",         hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
@@ -440,4 +448,21 @@ hl.layer_rule({
     name    = "vicinae-no-animation",
     match   = { namespace = "vicinae" },
     no_anim = true,
+})
+
+-- CodexBar(AI 사용량): 맥 메뉴바 앱처럼 오른쪽 위에 띄운다
+hl.window_rule({
+    name  = "codexbar-popup",
+    match = { class = "^com\\.steipete\\.CodexBar$" },
+    float = true,
+    size  = "560 700",
+    move  = "monitor_w-575 52",
+})
+
+-- 음량·밝기 팝업(swayosd)과 전원 메뉴(nwg-bar, 이름공간 gtk-layer-shell) 뒤를 흐리게
+hl.layer_rule({
+    name         = "blur-osd-and-power-menu",
+    match        = { namespace = "^(swayosd|gtk-layer-shell)$" },
+    blur         = true,
+    ignore_alpha = 0.3,
 })

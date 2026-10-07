@@ -1,0 +1,52 @@
+/* swayosd: 음량·밝기 팝업. Catppuccin Mocha (기본 style.scss를 바탕으로 색만 바꿈) */
+window#osd {
+  border-radius: 999px;
+  border: 1px solid alpha(#45475a, 0.6);
+  background: alpha(#1e1e2e, 0.9);
+}
+
+window#osd #container {
+  margin: 16px;
+}
+
+window#osd image,
+window#osd label {
+  color: #cdd6f4;
+}
+
+window#osd progressbar:disabled,
+window#osd image:disabled {
+  opacity: 0.5;
+}
+
+window#osd progressbar,
+window#osd segmentedprogress {
+  min-height: 6px;
+  border-radius: 999px;
+  background: transparent;
+  border: none;
+}
+
+window#osd trough,
+window#osd segment {
+  min-height: inherit;
+  border-radius: inherit;
+  border: none;
+  background: alpha(#cdd6f4, 0.2);
+}
+
+window#osd progress,
+window#osd segment.active {
+  min-height: inherit;
+  border-radius: inherit;
+  border: none;
+  background: #cba6f7;
+}
+
+window#osd segment {
+  margin-left: 8px;
+}
+
+window#osd segment:first-child {
+  margin-left: 0;
+}

@@ -8,7 +8,7 @@
   "spacing": 4,
   "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
-  "modules-right": ["tray", "power-profiles-daemon", "pulseaudio", "network", "battery"],
+  "modules-right": ["tray", "power-profiles-daemon", "pulseaudio", "network", "battery", "custom/power"],
 
   "clock": {
     "format": "{:%m/%d %H:%M}",
@@ -40,5 +40,10 @@
   },
   "tray": {
     "spacing": 8
+  },
+  "custom/power": {
+    "format": "󰐥",
+    "tooltip-format": "전원 메뉴 (Super+Esc)",
+    "on-click": "nwg-bar"
   }
 }

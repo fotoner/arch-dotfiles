@@ -59,6 +59,8 @@ PKGS=(
   noto-fonts noto-fonts-cjk noto-fonts-emoji ttf-jetbrains-mono-nerd
   # 테마: 바탕화면, 아이콘
   hyprpaper papirus-icon-theme
+  # 맥 느낌: 로그아웃 화면, 음량·밝기 팝업, 전원 메뉴, GTK3 앱 테마, 글꼴
+  hyprshutdown swayosd nwg-bar adw-gtk-theme inter-font
   # 터미널 도구, zsh 플러그인 (mac-dotfiles에서 가져옴)
   zsh-autosuggestions zsh-syntax-highlighting zsh-completions
   bat eza fd fzf jq tmux tree lazygit htop btop fastfetch git-lfs github-cli unzip
@@ -96,6 +98,32 @@ aur_install() {
 }
 aur_install google-chrome   # 기본 브라우저
 aur_install vicinae-bin     # Raycast 대체 실행기
+aur_install apple_cursor    # 맥 커서
+# AI 사용량(CodexBar): GitHub 공식 배포 파일을 받아 체크섬을 확인한 뒤 사용자 폴더에 설치한다 (공식 안내와 같은 절차)
+if [ -x "$HOME/.local/bin/codexbar-linux" ]; then
+  note "CodexBar: 이미 설치되어 있어 건너뜁니다."
+else
+  (
+    work=$(mktemp -d)
+    trap 'rm -rf "$work"' EXIT
+    cd "$work"
+    version=$(curl -fsSL https://api.github.com/repos/steipete/CodexBar/releases/latest | jq -r .tag_name)
+    base="https://github.com/steipete/CodexBar/releases/download/$version"
+    cli="CodexBarCLI-$version-linux-x86_64.tar.gz"
+    desktop="CodexBarDesktop-$version-linux-x86_64.tar.gz"
+    for archive in "$cli" "$desktop"; do
+      curl -fSL "$base/$archive" -o "$archive"
+      curl -fSL "$base/$archive.sha256" -o "$archive.sha256"
+      sha256sum -c "$archive.sha256"
+    done
+    mkdir -p "$HOME/.local/lib/codexbar-cli" "$HOME/.local/bin"
+    tar -xzf "$cli" -C "$HOME/.local/lib/codexbar-cli"
+    ln -sfn "$HOME/.local/lib/codexbar-cli/codexbar" "$HOME/.local/bin/codexbar"
+    tar -xzf "$desktop"
+    # Hyprland는 XDG 자동 실행을 읽지 않아서 끄고, hyprland.lua에서 실행한다
+    python3 "${desktop%.tar.gz}/Integrations/Linux/install.py" --cli "$HOME/.local/bin/codexbar" --no-autostart
+  )
+fi
 
 step "5/8 서비스 켜기 (블루투스, 전원 모드, 패키지 캐시 자동 정리, 시간 동기화, Tailscale, zram 스왑, 소리)"
 sudo systemctl enable --now bluetooth.service power-profiles-daemon.service paccache.timer \
@@ -142,6 +170,10 @@ place waybar/mocha.css
 place kitty/kitty.conf
 place kitty/current-theme.conf
 place mako/config
+place swayosd/style.css
+place nwg-bar/bar.json
+place nwg-bar/style.css
+place fontconfig/fonts.conf
 place vicinae/settings.json
 place fcitx5/profile
 place git/config
@@ -158,9 +190,10 @@ CLAUDE_SETTINGS="$HOME/.claude/settings.json"
 jq '.statusLine = {"type": "command", "command": "bash ~/.claude/statusline-command.sh", "refreshInterval": 3}' \
   "$CLAUDE_SETTINGS" > "$CLAUDE_SETTINGS.tmp" && mv "$CLAUDE_SETTINGS.tmp" "$CLAUDE_SETTINGS"
 xdg-user-dirs-update
-# 앱 다크 모드와 아이콘 테마 (Catppuccin Mocha와 어울리게)
+# 앱 다크 모드, GTK3 앱 테마(adw-gtk3), 맥 커서, 아이콘 테마
 gsettings set org.gnome.desktop.interface color-scheme prefer-dark \
-  && gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark \
+  && gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-dark \
+  && gsettings set org.gnome.desktop.interface cursor-theme macOS \
   && gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark \
   || note "다크 모드 설정 실패. Hyprland에서 install.sh를 다시 실행하세요."
 xdg-settings set default-web-browser google-chrome.desktop || note "기본 브라우저 설정 실패"

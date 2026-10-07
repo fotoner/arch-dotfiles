@@ -85,3 +85,8 @@ tooltip {
 tooltip label {
     color: @text;
 }
+
+#custom-power {
+    color: @red;
+    padding: 0 10px 0 6px;
+}

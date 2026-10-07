@@ -1,0 +1,7 @@
+[
+  { "label": "화면 잠금", "exec": "loginctl lock-session", "icon": "system-lock-screen" },
+  { "label": "로그아웃", "exec": "hyprshutdown", "icon": "system-log-out" },
+  { "label": "잠자기", "exec": "systemctl suspend", "icon": "system-suspend" },
+  { "label": "재시동", "exec": "systemctl reboot", "icon": "system-reboot" },
+  { "label": "시스템 종료", "exec": "systemctl poweroff", "icon": "system-shutdown" }
+]
