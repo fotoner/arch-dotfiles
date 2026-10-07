@@ -26,7 +26,7 @@ start-hyprland          # Hyprland 실행
 2. pacman 색상·병렬 다운로드를 켜고 전체 업데이트
 3. snapper + snap-pac 스냅샷 설정 (시간별 5개, 일별 7개 보존). 이미 설정돼 있으면 건너뜀
 4. Hyprland, Waybar, 한글 입력기(fcitx5), 글꼴, 테마(바탕화면·아이콘), 소리, 블루투스, 터미널 도구, Neovim, Discord, Tailscale, 맥 느낌 도구(음량·밝기 팝업, 전원 메뉴, 로그아웃 화면, Quickshell 제어 센터, 이미지·PDF 뷰어) 등 설치. oh-my-zsh 내려받기, Google Chrome·Vicinae·맥 커서(AUR) 빌드·설치, CodexBar(AI 사용량) 설치
-5. 블루투스, 전원 모드(power-profiles-daemon), 패키지 캐시 자동 정리, 시간 동기화, Tailscale 켜기. zram 스왑(RAM의 절반, 최대 8GB) 설정. 소리(PipeWire)를 재로그인 없이 바로 켜기
+5. 블루투스, 전원 모드(power-profiles-daemon), 패키지 캐시 자동 정리, 시간 동기화, Tailscale, 펌웨어 업데이트 자동 확인(fwupd) 켜기. zram 스왑(RAM의 절반, 최대 8GB) 설정. 소리(PipeWire)를 재로그인 없이 바로 켜기
 6. 배터리 충전 한도 켜기 (75% 아래에서 충전 시작, 80%에서 멈춤. 제어 센터에서 80% / 100% 전환, UPower가 저장해 재부팅해도 유지)
 7. `config/` 아래 설정 파일을 `~/.config/`로 복사. 내용이 다른 기존 파일은 `.bak-날짜시각`으로 백업. Claude Code 상태줄 설치, 앱 다크 모드 켜기, 기본 브라우저를 Chrome으로, 이미지는 Loupe·PDF는 Papers로 열기
 8. git 이메일, Tailscale 로그인, zram 스왑, 터보 부스트, NVIDIA GPU 유무 점검
@@ -63,6 +63,12 @@ SUPER는 Windows 키입니다.
 
 입력기는 영어, 한글, 일본어(Mozc, 로마자 입력) 세 개입니다. **Ctrl+Space**를 누를 때마다 A → 한 → あ 순서로 바뀌고(한/영 키가 있으면 그 키는 영어 ↔ 한글), 지금 상태는 상단바의 "A" / "한" / "あ" 배지로 보입니다. 배지를 눌러도 같은 순서로 바뀝니다. 맥처럼 모든 창이 같은 입력 상태를 씁니다(`ShareInputState=All`). Ctrl+Space는 Hyprland가 직접 받아서 바꾸기 때문에 어느 앱에서도 공백이 입력되지 않습니다. Caps Lock을 누르면 켜짐/꺼짐 팝업이 뜨고, 잠금 화면에서는 암호 칸 테두리가 노란색이 되며 "Caps Lock 켜짐"이 표시됩니다. 한글이 목록에 없으면 SUPER+R → "Fcitx 5 Configuration"에서 "Only Show Current Language"를 끄고 Hangul을 추가하세요.
 
+음악은 Spotify 공식 앱으로 듣습니다(공식 저장소의 spotify-launcher가 설치·업데이트, 무료 계정도 됨). 셸에서 `sp`로 앱을 열고, `sp p` 재생/일시정지, `sp n` 다음 곡, `sp b` 이전 곡, `sp s` 지금 곡. 재생 중인 곡은 상단바와 제어 센터에도 나오고 미디어 키로도 조작됩니다.
+
+펌웨어(ThinkPad BIOS 등)는 fwupd가 하루 한 번 새 버전을 확인합니다. `fwupdmgr get-updates`로 보고 `fwupdmgr update`로 설치합니다.
+
+로그인하면 첫 화면에 왼쪽 위 fastfetch, 왼쪽 아래 큰 시계, 오른쪽 터미널(입력 대기)이 자동으로 열립니다. 셋 다 보통 터미널 창이라 닫거나 옮겨도 되고, 시계는 q로 끝납니다. 원하지 않으면 `hyprland.lua`의 `startup-layout.sh` 줄을 지우세요.
+
 상단바의 커피잔 아이콘을 누르면 잠자기 방지(화면이 꺼지지 않음)가 켜집니다. 배터리가 20%, 10%가 되면 알림이 뜨고, 유튜브 화면 속 화면(PiP)은 오른쪽 아래에 떠서 모든 워크스페이스에 보입니다.
 
 자동으로 일어나는 일: 2분 30초 뒤 화면 어둡게, 5분 뒤 잠금, 5분 30초 뒤 화면 끔, 30분 뒤 절전. 덮개를 닫으면 잠근 뒤 절전합니다 (`config/hypr/hypridle.conf`).
@@ -86,6 +92,7 @@ SUPER는 Windows 키입니다.
 | Alt + N | 새 창 | 같음 |
 | Alt + Q | 창 닫기 (맥처럼 앱 전체 종료는 아님) | 같음 |
 | Alt + Space | Vicinae: 앱 검색·계산기·클립보드 기록·이모지 등 (Raycast) | 같음 |
+| Alt + Shift + V | 클립보드 기록: 예전에 복사한 글·이미지를 골라 다시 붙여넣기 (Vicinae, 비밀번호 관리자에서 복사한 것은 따로 처리) | Raycast Clipboard History |
 | Alt + Shift + 3 | 스크린샷: 전체 화면을 `~/Pictures/Screenshots`에 저장 + 클립보드 복사 | 같음 |
 | Alt + Shift + 4 | 스크린샷: 영역을 골라 편집기(satty)로. Enter = 저장 + 복사 | 같음 (찍은 뒤 마크업) |
 | Alt + Tab | 지금 워크스페이스의 다음 창 (Shift를 더하면 이전 창) | 같음 |
@@ -155,6 +162,10 @@ SUPER는 Windows 키입니다.
 | `config/hypr/scripts/ime-status.sh` | `~/.config/hypr/scripts/` | 상단바 입력기 배지 A / 한 / あ (fcitx5 트레이 아이콘 대신) |
 | `config/hypr/scripts/wifi-menu.sh` | `~/.config/hypr/scripts/` | nmtui Wi-Fi 창 (Catppuccin 색). 상단바 Wi-Fi 오른쪽 클릭, 제어 센터의 "네트워크 설정…" |
 | `config/hypr/scripts/media-status.sh` | `~/.config/hypr/scripts/` | 상단바 미디어 표시 (재생 시간, 긴 제목 흐르기, 일시정지 10초 뒤 숨김) |
+| `config/chrome-flags.conf` | `~/.config/` | Chrome 영상 하드웨어 가속 (인텔 GPU로 영상 디코딩, 발열·배터리 절약) |
+| `config/spotify-launcher.conf` | `~/.config/` | Spotify 공식 앱을 Wayland로 실행 (선명한 글자, 한글 입력) |
+| `config/hypr/scripts/startup-layout.sh` | `~/.config/hypr/scripts/` | 로그인 첫 화면 배치: 왼쪽 위 fastfetch, 왼쪽 아래 시계, 오른쪽 터미널(포커스) |
+| `config/hypr/scripts/big-clock.sh` | `~/.config/hypr/scripts/` | 터미널 큰 시계 (블록 숫자, 쌍점 깜박임, 한국어 날짜, Catppuccin 색, q로 끝) |
 | `config/hypr/scripts/media-focus.sh` | `~/.config/hypr/scripts/` | 상단바 미디어를 누르면 그 미디어를 재생하는 창으로 이동 |
 | `config/hypr/scripts/smart-paste.sh` | `~/.config/hypr/scripts/` | 터미널에서 Alt+V: 클립보드에 이미지만 있으면 Ctrl+V(Claude Code 이미지 붙여넣기), 아니면 글자 붙여넣기 |
 | `config/swayosd/style.css` | `~/.config/swayosd/` | 음량·밝기 팝업 |

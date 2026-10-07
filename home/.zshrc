@@ -79,3 +79,15 @@ fi
 if [[ -d "$HOME/.codeium/windsurf/bin" ]]; then
   export PATH="$HOME/.codeium/windsurf/bin:$PATH"
 fi
+
+# Spotify (공식 앱): sp = 앱 열기, sp p = 재생/일시정지, sp n = 다음 곡, sp b = 이전 곡, sp s = 지금 곡
+sp() {
+  case "${1:-}" in
+    "") (spotify-launcher >/dev/null 2>&1 &) ;;
+    p) playerctl -p spotify play-pause ;;
+    n) playerctl -p spotify next ;;
+    b) playerctl -p spotify previous ;;
+    s) playerctl -p spotify metadata --format '{{status}}  {{artist}} - {{title}}' ;;
+    *) echo "사용법: sp [p|n|b|s]  (p 재생/일시정지, n 다음, b 이전, s 지금 곡)" >&2; return 1 ;;
+  esac
+}

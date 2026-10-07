@@ -62,6 +62,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hypridle")                               -- 자동 잠금/화면 끄기
     hl.exec_cmd("vicinae server")                         -- Raycast 대체 실행기 (Alt+Space)
     hl.exec_cmd("~/.local/bin/codexbar-linux --background") -- AI 사용량 (상단바 트레이)
+    hl.exec_cmd("~/.config/hypr/scripts/startup-layout.sh") -- 첫 화면: 왼쪽 위 fastfetch, 왼쪽 아래 시계, 오른쪽 터미널
 end)
 
 
@@ -403,6 +404,7 @@ cmdBind("ALT",         "N", "CTRL",         "CTRL + SHIFT")             -- 새 �
 
 hl.bind("ALT + Q",     hl.dsp.window.close()) -- 맥의 Cmd+Q: 앱 전체 종료 대신 지금 창 닫기
 hl.bind("ALT + space", hl.dsp.exec_cmd("vicinae toggle")) -- 맥의 Cmd+Space: Raycast 대신 Vicinae
+hl.bind("ALT + SHIFT + V", hl.dsp.exec_cmd("vicinae cmd launch clipboard:history")) -- 클립보드 기록 (Raycast의 Clipboard History)
 hl.bind("ALT + Tab", function()               -- 맥의 Cmd+Tab: 지금 워크스페이스의 다음 창으로
     hl.dispatch(hl.dsp.window.cycle_next())
     hl.dispatch(hl.dsp.window.bring_to_top())

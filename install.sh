@@ -55,6 +55,8 @@ PKGS=(
   kitty waybar swaync libnotify nautilus xdg-user-dirs
   # 제어 센터 (Wi-Fi·블루투스 기기, 빠른 버튼, 충전 한도, 사용량)
   quickshell
+  # Spotify 공식 앱(설치·업데이트 도구, sp 명령), 영상 하드웨어 가속 확인 도구(vainfo)
+  spotify-launcher libva-utils
   # 소리
   pipewire pipewire-pulse pipewire-alsa wireplumber pavucontrol
   # 글꼴
@@ -134,7 +136,7 @@ fi
 
 step "5/8 서비스 켜기 (블루투스, 전원 모드, 패키지 캐시 자동 정리, 시간 동기화, Tailscale, zram 스왑, 소리)"
 sudo systemctl enable --now bluetooth.service power-profiles-daemon.service paccache.timer \
-  systemd-timesyncd.service tailscaled.service
+  systemd-timesyncd.service tailscaled.service fwupd-refresh.timer
 sudo install -m 644 "$REPO_DIR/system/zram-generator.conf" /etc/systemd/zram-generator.conf
 sudo systemctl daemon-reload
 sudo systemctl start dev-zram0.swap
@@ -188,6 +190,10 @@ place hypr/scripts/ime-status.sh
 place hypr/scripts/ime-cycle.sh
 place hypr/scripts/media-focus.sh
 place hypr/scripts/media-status.sh
+place hypr/scripts/startup-layout.sh
+place hypr/scripts/big-clock.sh
+place chrome-flags.conf
+place spotify-launcher.conf
 chmod +x "$HOME/.config/hypr/scripts/"*.sh
 place swayosd/style.css
 (cd "$REPO_DIR/config" && find quickshell -type f) | while read -r f; do place "$f"; done

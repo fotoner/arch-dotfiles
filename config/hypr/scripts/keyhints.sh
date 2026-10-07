@@ -11,6 +11,7 @@ exec yad --title="단축키" --class=keyhints --list --center --width=620 --heig
   "Alt + T / W / N" "새 탭 / 탭 닫기 / 새 창" \
   "Alt + Q" "창 닫기" \
   "Alt + Space" "Vicinae: 앱 검색·계산기·클립보드 기록·이모지" \
+  "Alt + Shift + V" "클립보드 기록 (예전에 복사한 글·이미지 다시 붙여넣기)" \
   "Alt + Tab (Shift)" "다음 창 (이전 창)" \
   "Alt + Shift + 3" "스크린샷: 전체 화면" \
   "Alt + Shift + 4" "스크린샷: 영역을 골라 편집 (Enter = 저장·복사)" \
