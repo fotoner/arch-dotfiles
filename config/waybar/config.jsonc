@@ -1,8 +1,11 @@
 {
   "layer": "top",
   "position": "top",
-  "height": 30,
-  "spacing": 8,
+  "height": 32,
+  "margin-top": 6,
+  "margin-left": 10,
+  "margin-right": 10,
+  "spacing": 4,
   "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
   "modules-right": ["tray", "power-profiles-daemon", "pulseaudio", "network", "battery"],
@@ -12,24 +15,27 @@
     "tooltip-format": "<tt>{calendar}</tt>"
   },
   "power-profiles-daemon": {
-    "format": "{profile}",
+    "format": "{icon}",
+    "format-icons": { "default": "", "performance": "", "balanced": "", "power-saver": "" },
     "tooltip-format": "전원 모드: {profile} (클릭해서 바꾸기)"
   },
   "pulseaudio": {
-    "format": "VOL {volume}%",
-    "format-muted": "MUTE",
+    "format": "{icon} {volume}%",
+    "format-muted": "󰝟 음소거",
+    "format-icons": { "default": ["󰕿", "󰖀", "󰕾"] },
     "on-click": "pavucontrol"
   },
   "network": {
-    "format-wifi": "WiFi {essid}",
-    "format-ethernet": "LAN",
-    "format-disconnected": "오프라인",
+    "format-wifi": "󰖩 {essid}",
+    "format-ethernet": "󰈀 유선",
+    "format-disconnected": "󰖪 오프라인",
     "tooltip-format": "{ifname} {ipaddr}",
     "on-click": "nm-connection-editor"
   },
   "battery": {
-    "format": "BAT {capacity}%",
-    "format-charging": "BAT {capacity}% +",
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
     "states": { "warning": 25, "critical": 10 }
   },
   "tray": {

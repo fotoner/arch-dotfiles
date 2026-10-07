@@ -54,6 +54,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("systemctl --user start hyprpolkitagent") -- 관리자 암호 창
     hl.exec_cmd("fcitx5 -d")                              -- 한글 입력기
     hl.exec_cmd("waybar")                                 -- 상단 막대
+    hl.exec_cmd("hyprpaper")                              -- 바탕화면
     hl.exec_cmd("nm-applet")                              -- Wi-Fi 아이콘
     hl.exec_cmd("blueman-applet")                         -- 블루투스 아이콘
     hl.exec_cmd("hypridle")                               -- 자동 잠금/화면 끄기
@@ -105,9 +106,10 @@ hl.config({
 
         border_size = 2,
 
+        -- 창 테두리 색: Catppuccin Mocha (보라 → 하늘색)
         col = {
-            active_border   = { colors = {"rgba(33ccffee)", "rgba(00ff99ee)"}, angle = 45 },
-            inactive_border = "rgba(595959aa)",
+            active_border   = { colors = {"rgba(cba6f7ee)", "rgba(89b4faee)"}, angle = 45 },
+            inactive_border = "rgba(45475aaa)",
         },
 
         -- Set to true to enable resizing windows by clicking and dragging on borders and gaps
@@ -131,7 +133,7 @@ hl.config({
             enabled      = true,
             range        = 4,
             render_power = 3,
-            color        = 0xee1a1a1a,
+            color        = 0xee11111b, -- 그림자 색: Catppuccin Mocha crust
         },
 
         blur = {
@@ -220,8 +222,10 @@ hl.config({
 
 hl.config({
     misc = {
-        force_default_wallpaper = -1,    -- Set to 0 or 1 to disable the anime mascot wallpapers
-        disable_hyprland_logo   = false, -- If true disables the random hyprland logo / anime girl background. :(
+        -- 바탕화면은 hyprpaper가 그린다. hyprpaper가 없을 때는 기본 그림 대신 Catppuccin 배경색만
+        force_default_wallpaper = 0,
+        disable_hyprland_logo   = true,
+        background_color        = 0xff1e1e2e,
     },
 })
 
@@ -327,6 +331,44 @@ hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("loginctl lock-session"))
 hl.bind("Print",         hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
 hl.bind("SHIFT + Print", hl.dsp.exec_cmd('mkdir -p ~/Pictures && grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png'))
 
+-- 맥식 단축키: 스페이스바 옆 Alt를 맥의 Cmd처럼 쓴다 (ThinkPad의 Alt 자리가 맥의 Cmd 자리)
+-- 일반 앱에는 Ctrl 조합을 보낸다. 터미널은 Ctrl+C가 '실행 중단'이라 복사·붙여넣기·탭·창은 Ctrl+Shift 조합으로 보내고,
+-- 터미널에 맞는 기능이 없는 키는 Alt 조합을 그대로 넘겨 셸의 Alt 단축키(Alt+F 단어 이동 등)를 살린다
+local terminalClasses = { kitty = true } -- 다른 터미널을 쓰면 그 창의 class를 추가 (hyprctl clients로 확인)
+
+local function cmdBind(mods, key, appMods, termMods, opts)
+    hl.bind(mods .. " + " .. key, function()
+        local win = hl.get_active_window()
+        if not win then return end
+        local sendMods = appMods
+        if terminalClasses[win.class] then sendMods = termMods or mods end
+        hl.dispatch(hl.dsp.send_shortcut({ mods = sendMods, key = key }))
+    end, opts)
+end
+
+cmdBind("ALT",         "C", "CTRL",         "CTRL + SHIFT")             -- 복사
+cmdBind("ALT",         "V", "CTRL",         "CTRL + SHIFT")             -- 붙여넣기
+cmdBind("ALT",         "X", "CTRL")                                     -- 잘라내기
+cmdBind("ALT",         "A", "CTRL")                                     -- 전체 선택
+cmdBind("ALT",         "Z", "CTRL",         nil, { repeating = true })  -- 실행 취소
+cmdBind("ALT + SHIFT", "Z", "CTRL + SHIFT", nil, { repeating = true })  -- 다시 실행
+cmdBind("ALT",         "S", "CTRL")                                     -- 저장
+cmdBind("ALT",         "F", "CTRL")                                     -- 찾기
+cmdBind("ALT",         "T", "CTRL",         "CTRL + SHIFT")             -- 새 탭
+cmdBind("ALT",         "W", "CTRL",         "CTRL + SHIFT")             -- 탭 닫기
+cmdBind("ALT",         "N", "CTRL",         "CTRL + SHIFT")             -- 새 창
+
+hl.bind("ALT + Q",     hl.dsp.window.close()) -- 맥의 Cmd+Q: 앱 전체 종료 대신 지금 창 닫기
+hl.bind("ALT + space", hl.dsp.exec_cmd(menu)) -- 맥의 Cmd+Space: Spotlight 대신 앱 검색
+hl.bind("ALT + Tab", function()               -- 맥의 Cmd+Tab: 지금 워크스페이스의 다음 창으로
+    hl.dispatch(hl.dsp.window.cycle_next())
+    hl.dispatch(hl.dsp.window.bring_to_top())
+end)
+hl.bind("ALT + SHIFT + Tab", function()
+    hl.dispatch(hl.dsp.window.cycle_next({ next = false }))
+    hl.dispatch(hl.dsp.window.bring_to_top())
+end)
+
 
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----
@@ -376,4 +418,12 @@ hl.window_rule({
 
     move  = "20 monitor_h-120",
     float = true,
+})
+
+-- 상단 막대(Waybar) 뒤를 흐리게. 투명한 틈은 흐리지 않는다
+hl.layer_rule({
+    name         = "blur-waybar",
+    match        = { namespace = "waybar" },
+    blur         = true,
+    ignore_alpha = 0.3,
 })

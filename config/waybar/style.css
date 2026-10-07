@@ -1,0 +1,87 @@
+/* waybar: 상단 막대 모양. 왼쪽·가운데·오른쪽 묶음을 떠 있는 둥근 섬으로 그린다. 색은 mocha.css */
+@import "mocha.css";
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Noto Sans CJK KR", sans-serif;
+    font-size: 13px;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+}
+
+window#waybar {
+    background: transparent;
+    color: @text;
+}
+
+.modules-left,
+.modules-center,
+.modules-right {
+    background: alpha(@base, 0.85);
+    border: 1px solid alpha(@surface1, 0.6);
+    border-radius: 12px;
+    padding: 0 6px;
+}
+
+#workspaces button {
+    color: @overlay1;
+    background: transparent;
+    padding: 0 8px;
+    margin: 4px 1px;
+    border-radius: 8px;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+#workspaces button:hover {
+    color: @text;
+    background: @surface0;
+}
+
+#workspaces button.active {
+    color: @crust;
+    background: @mauve;
+}
+
+#workspaces button.urgent {
+    color: @crust;
+    background: @red;
+}
+
+#clock {
+    color: @lavender;
+    font-weight: bold;
+    padding: 0 10px;
+}
+
+#tray,
+#power-profiles-daemon,
+#pulseaudio,
+#network,
+#battery {
+    padding: 0 8px;
+}
+
+#power-profiles-daemon             { color: @peach; }
+#power-profiles-daemon.performance { color: @red; }
+#power-profiles-daemon.power-saver { color: @green; }
+
+#pulseaudio        { color: @blue; }
+#pulseaudio.muted  { color: @overlay0; }
+
+#network              { color: @teal; }
+#network.disconnected { color: @overlay0; }
+
+#battery                          { color: @green; }
+#battery.warning:not(.charging)   { color: @yellow; }
+#battery.critical:not(.charging)  { color: @red; }
+
+tooltip {
+    background: @base;
+    border: 1px solid @surface1;
+    border-radius: 10px;
+}
+
+tooltip label {
+    color: @text;
+}

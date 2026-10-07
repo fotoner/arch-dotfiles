@@ -1,0 +1,14 @@
+# mako: 알림 창. Catppuccin Mocha
+
+font=Noto Sans 11
+background-color=#1e1e2e
+text-color=#cdd6f4
+border-color=#cba6f7
+progress-color=over #313244
+border-size=2
+border-radius=10
+padding=12
+margin=12
+
+[urgency=high]
+border-color=#fab387

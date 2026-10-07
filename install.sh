@@ -57,6 +57,13 @@ PKGS=(
   pipewire pipewire-pulse pipewire-alsa wireplumber pavucontrol
   # 글꼴
   noto-fonts noto-fonts-cjk noto-fonts-emoji ttf-jetbrains-mono-nerd
+  # 테마: 바탕화면, 아이콘
+  hyprpaper papirus-icon-theme
+  # 터미널 도구, zsh 플러그인 (mac-dotfiles에서 가져옴)
+  zsh-autosuggestions zsh-syntax-highlighting zsh-completions
+  bat eza fd fzf jq tmux tree lazygit htop git-lfs unzip
+  # Neovim(LazyVim)과 짝꿍
+  neovim tree-sitter-cli shfmt stylua
   # 한글 입력
   fcitx5 fcitx5-hangul fcitx5-configtool fcitx5-gtk fcitx5-qt
   # 네트워크, 블루투스
@@ -67,6 +74,11 @@ PKGS=(
   power-profiles-daemon intel-media-driver pacman-contrib pciutils
 )
 sudo pacman -S --needed --noconfirm "${PKGS[@]}"
+if [ -d "$HOME/.oh-my-zsh" ]; then
+  note "oh-my-zsh: 이미 설치되어 있어 건너뜁니다."
+else
+  git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
+fi
 
 step "5/8 서비스 켜기 (블루투스, 전원 모드, 패키지 캐시 자동 정리)"
 sudo systemctl enable --now bluetooth.service power-profiles-daemon.service paccache.timer
@@ -83,8 +95,8 @@ else
 fi
 
 step "7/8 설정 파일 복사 (기존 파일이 다르면 .bak-$STAMP 로 백업)"
-place() {
-  local src="$REPO_DIR/config/$1" dst="$HOME/.config/$1"
+copy_with_backup() {
+  local src="$1" dst="$2"
   mkdir -p "$(dirname "$dst")"
   if [ -e "$dst" ] && [ "$(sha256sum < "$src")" != "$(sha256sum < "$dst")" ]; then
     cp -a "$dst" "$dst.bak-$STAMP"
@@ -93,14 +105,39 @@ place() {
   cp "$src" "$dst"
   note "설치: $dst"
 }
+place()      { copy_with_backup "$REPO_DIR/config/$1" "$HOME/.config/$1"; }
+place_home() { copy_with_backup "$REPO_DIR/home/$1" "$HOME/$1"; }
 place hypr/hyprland.lua
 place hypr/hypridle.conf
 place hypr/hyprlock.conf
+place hypr/hyprpaper.conf
+place hypr/hyprtoolkit.conf
+place hypr/wallpaper.png
 place waybar/config.jsonc
+place waybar/style.css
+place waybar/mocha.css
+place kitty/kitty.conf
+place kitty/current-theme.conf
+place mako/config
 place fcitx5/profile
+place git/config
+place git/ignore
+(cd "$REPO_DIR/config" && find nvim -type f) | while read -r f; do place "$f"; done
+place_home .zshrc
+place_home .dircolors
 xdg-user-dirs-update
+# 앱 다크 모드와 아이콘 테마 (Catppuccin Mocha와 어울리게)
+gsettings set org.gnome.desktop.interface color-scheme prefer-dark \
+  && gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark \
+  && gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark \
+  || note "다크 모드 설정 실패. Hyprland에서 install.sh를 다시 실행하세요."
 
 step "8/8 점검"
+if git config --global user.email >/dev/null; then
+  note "git 이메일: 설정됨"
+else
+  note "git 이메일이 없습니다. 커밋하기 전에: git config --global user.email \"you@example.com\""
+fi
 if swapon --show 2>/dev/null | grep zram >/dev/null; then note "zram 스왑: 정상"; else note "zram 스왑: 안 보임 (재부팅 후 다시 확인)"; fi
 if [ "$(cat /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || echo '?')" = 0 ]; then
   note "터보 부스트: 켜짐"

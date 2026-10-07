@@ -1,0 +1,4 @@
+# 전역 gitignore. mac-dotfiles의 .gitignore_global에서 가져왔다
+*~
+.DS_Store
+**/.claude/settings.local.json

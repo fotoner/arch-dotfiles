@@ -1,0 +1,14 @@
+# git 설정. mac-dotfiles의 .gitconfig에서 가져왔다 (Sourcetree, Homebrew 경로는 뺐다)
+# 이메일과 gh 로그인 연결은 저장소에 올리지 않도록 ~/.gitconfig 에 둔다:
+#   git config --global user.email "you@example.com"
+#   gh auth setup-git
+# 전역 gitignore는 같은 폴더의 ignore 파일을 git이 알아서 읽는다
+[user]
+	name = Hyeonjae Nam / Fotone
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+[url "https://github.com/guansss/CubismWebFramework.git"]
+	insteadOf = git@github.com:guansss/CubismWebFramework.git
