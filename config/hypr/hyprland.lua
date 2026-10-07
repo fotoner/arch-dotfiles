@@ -57,6 +57,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hyprpaper")                              -- 바탕화면
     hl.exec_cmd("swayosd-server")                         -- 음량·밝기 팝업
     hl.exec_cmd("swaync")                                 -- 알림 센터 (Super+N, 시계 클릭)
+    hl.exec_cmd("qs")                                     -- 제어 센터 (Super+A, 상단바 제어 센터 아이콘), ~/.config/quickshell
     hl.exec_cmd("batsignal -b -w 20 -c 10")               -- 배터리 20%·10%에서 알림
     hl.exec_cmd("hypridle")                               -- 자동 잠금/화면 끄기
     hl.exec_cmd("vicinae server")                         -- Raycast 대체 실행기 (Alt+Space)
@@ -106,7 +107,7 @@ hl.env("QT_IM_MODULE", "fcitx")
 hl.config({
     general = {
         gaps_in  = 5,
-        gaps_out = 20,
+        gaps_out = 8, -- 화면 가장자리·상단바와 창 사이 여백
 
         border_size = 2,
 
@@ -295,6 +296,12 @@ hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 
+-- 지금 창을 그 방향의 창과 자리 바꾸기
+hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.swap({ direction = "left" }))
+hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.swap({ direction = "right" }))
+hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.window.swap({ direction = "up" }))
+hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.window.swap({ direction = "down" }))
+
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
 for i = 1, 10 do
@@ -339,7 +346,16 @@ hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("nwg-bar"))
 
 -- 알림 센터 열고 닫기 (맥처럼 상단바 오른쪽 끝 시계를 눌러도 열린다. 시계 오른쪽 클릭 = 방해 금지), 단축키 도움말
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
+-- 제어 센터: Wi-Fi·블루투스 기기, 빠른 버튼, 밝기·음량, 미디어, 배터리 충전 한도, 시스템 사용량
+hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("qs ipc call cc toggle"))
 hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("~/.config/hypr/scripts/keyhints.sh"))
+
+-- Ctrl+Space: 입력기 바꾸기 (A → 한 → あ). fcitx5 대신 Hyprland가 키를 받아서 어느 앱에서도 공백이 들어가지 않는다.
+-- locked: 잠금 화면에서도 동작해서 암호 칸에 공백이 들어가지 않고 좌하단 배지가 바뀐다
+hl.bind("CTRL + space", hl.dsp.exec_cmd("~/.config/hypr/scripts/ime-cycle.sh"), { locked = true })
+
+-- Caps Lock을 누르면 켜짐/꺼짐 팝업 (키 자체는 그대로 동작)
+hl.bind("Caps_Lock", hl.dsp.exec_cmd("swayosd-client --caps-lock"), { release = true, non_consuming = true })
 
 -- 스크린샷: Print = 영역 선택 후 클립보드, SHIFT + Print = 전체 화면을 ~/Pictures에 저장
 hl.bind("Print",         hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
@@ -474,7 +490,7 @@ hl.window_rule({
     match = { class = "^com\\.steipete\\.CodexBar$" },
     float = true,
     size  = "560 700",
-    move  = "monitor_w-575 52",
+    move  = "monitor_w-570 36",
 })
 
 -- 음량·밝기 팝업(swayosd)과 전원 메뉴(nwg-bar, 이름공간 gtk-layer-shell) 뒤를 흐리게
@@ -505,6 +521,24 @@ hl.window_rule({
     center = true,
 })
 
+-- Nautilus 빠른 미리보기(Sushi, Space): 맥 Quick Look처럼 타일에 끼지 않고 화면 가운데에 띄운다
+hl.window_rule({
+    name   = "sushi-preview",
+    match  = { class = "^org\\.gnome\\.NautilusPreviewer$" },
+    float  = true,
+    center = true,
+})
+
+-- 제어 센터(Quickshell) 뒤를 흐리게. 열고 닫는 애니메이션은 패널이 직접 하므로 Hyprland 애니메이션은 끈다.
+-- ignore_alpha: 반투명 그림자 부분은 흐리지 않는다
+hl.layer_rule({
+    name         = "quickshell-control-center",
+    match        = { namespace = "^quickshell-control-center$" },
+    blur         = true,
+    ignore_alpha = 0.5,
+    no_anim      = true,
+})
+
 -- 알림 센터와 알림(swaync) 뒤를 흐리게
 hl.layer_rule({
     name         = "blur-swaync",
@@ -531,11 +565,14 @@ hl.window_rule({
     center = true,
 })
 
--- 음량 창(pwvucontrol, 상단바 음량 아이콘 클릭)은 맥 메뉴바 팝업처럼 오른쪽 위에 띄운다
+-- 음량 상세 설정 창(pwvucontrol, 상단바 음량 아이콘 오른쪽 클릭)은 가운데에 넓게 띄운다
 hl.window_rule({
-    name  = "volume-popup",
-    match = { class = "^(com\\.saivert\\.)?pwvucontrol$" },
-    float = true,
-    size  = "460 600",
-    move  = "monitor_w-475 52",
+    name   = "volume-settings",
+    match  = { class = "^(com\\.saivert\\.)?pwvucontrol$" },
+    float  = true,
+    size   = "860 600",
+    center = true,
 })
+
+-- 이 컴퓨터에서만 쓰는 개인 설정(~/.config/hypr/personal.lua)이 있으면 읽는다. 저장소에는 없다 (예: 저작권 있는 커서)
+pcall(require, "personal")

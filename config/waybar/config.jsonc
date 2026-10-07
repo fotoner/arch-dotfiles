@@ -1,12 +1,13 @@
 {
   "layer": "top",
   "position": "top",
-  "height": 32,
-  "margin-top": 6,
-  "margin-left": 10,
-  "margin-right": 10,
+  "height": 30,
   "spacing": 4,
   "modules-left": [
+    "custom/arch",
+    "custom/media"
+  ],
+  "modules-center": [
     "hyprland/workspaces"
   ],
   "modules-right": [
@@ -17,24 +18,30 @@
     "battery",
     "custom/ime",
     "network",
+    "custom/control",
     "clock",
     "custom/notification"
   ],
   "clock": {
     "format": "{:%m/%d %H:%M}",
     "locale": "ko_KR.UTF-8",
-    "tooltip-format": "<tt>{calendar}</tt>",
+    "tooltip-format": "<span font_family='Noto Sans Mono CJK KR' font_size='11pt'>{calendar}</span>",
     "calendar": {
       "mode": "month",
+      "on-scroll": 1,
       "format": {
         "months": "<span color='#cba6f7'><b>{}</b></span>",
-        "weekdays": "<span color='#89b4fa'><b>{}</b></span>",
+        "weekdays": "<span color='#9399b2'>{}</span>",
         "days": "<span color='#cdd6f4'>{}</span>",
-        "today": "<span color='#f38ba8'><b><u>{}</u></b></span>"
+        "today": "<span background='#cba6f7' color='#1e1e2e'><b>{}</b></span>"
       }
     },
     "on-click": "swaync-client -t -sw",
-    "on-click-right": "swaync-client -d -sw"
+    "on-click-right": "swaync-client -d -sw",
+    "actions": {
+      "on-scroll-up": "shift_down",
+      "on-scroll-down": "shift_up"
+    }
   },
   "idle_inhibitor": {
     "format": "{icon}",
@@ -57,7 +64,7 @@
   },
   "pulseaudio": {
     "format": "{icon} {volume}%",
-    "format-muted": "󰝟",
+    "format-muted": "󰝟 {volume}%",
     "format-icons": {
       "default": [
         "󰕿",
@@ -65,34 +72,33 @@
         "󰕾"
       ]
     },
-    "on-click": "pwvucontrol || pavucontrol",
-    "on-click-right": "swayosd-client --output-volume mute-toggle",
+    "on-click": "qs ipc call cc open sound",
+    "on-click-right": "pwvucontrol --tab=4 || pavucontrol",
     "scroll-step": 5,
-    "tooltip-format": "{desc} (클릭: 음량 창, 오른쪽 클릭: 음소거, 휠: 음량)"
+    "tooltip-format": "{desc}\n클릭: 제어 센터(음량·출력 장치) · 오른쪽 클릭: 상세 설정 · 가운데 클릭: 음소거 · 휠: 음량",
+    "on-click-middle": "swayosd-client --output-volume mute-toggle"
   },
   "battery": {
     "format": "{icon} {capacity}%",
-    "format-charging": "󰂄 {capacity}%",
-    "format-icons": [
-      "󰂎",
-      "󰁺",
-      "󰁻",
-      "󰁼",
-      "󰁽",
-      "󰁾",
-      "󰁿",
-      "󰂀",
-      "󰂁",
-      "󰂂",
-      "󰁹"
-    ],
+    "format-plugged": "󱈑 {capacity}%",
+    "format-full": "󰚥 {capacity}%",
+    "format-icons": {
+      "charging": ["󰢟", "󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
+      "default": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+    },
+    "format-time": "{H}시간 {M}분",
+    "tooltip-format": "배터리 사용 중 · {time} 남음 ({power:.1f}W)",
+    "tooltip-format-charging": "충전 중 · {time} 후 다 참 ({power:.1f}W)",
+    "tooltip-format-plugged": "전원 연결됨 · 충전 한도라서 충전 안 함\n클릭: 제어 센터에서 한도 바꾸기",
+    "tooltip-format-full": "완전히 충전됨",
+    "on-click": "qs ipc call cc toggle",
     "states": {
       "warning": 25,
       "critical": 10
     }
   },
   "tray": {
-    "spacing": 8
+    "spacing": 15
   },
   "custom/notification": {
     "tooltip": false,
@@ -129,11 +135,37 @@
     "tooltip-format-ethernet": "유선 {ifname} {ipaddr}",
     "tooltip-format-disconnected": "연결 안 됨",
     "interval": 5,
-    "on-click": "~/.config/hypr/scripts/wifi-menu.sh"
+    "on-click": "qs ipc call cc open wifi",
+    "on-click-right": "~/.config/hypr/scripts/wifi-menu.sh"
+  },
+  "custom/control": {
+    "format": "󱕂",
+    "tooltip-format": "제어 센터 (Super+A)",
+    "on-click": "qs ipc call cc toggle"
   },
   "custom/ime": {
     "exec": "~/.config/hypr/scripts/ime-status.sh",
     "return-type": "json",
-    "on-click": "fcitx5-remote -t"
+    "on-click": "~/.config/hypr/scripts/ime-cycle.sh"
+  },
+  "custom/arch": {
+    "format": "",
+    "tooltip-format": "전원 메뉴 (Super+Esc)",
+    "on-click": "nwg-bar"
+  },
+  "custom/media": {
+    "exec": "~/.config/hypr/scripts/media-status.sh",
+    "return-type": "json",
+    "escape": true,
+    "on-click": "~/.config/hypr/scripts/media-focus.sh",
+    "on-click-right": "playerctl -p \"$(cat \"${XDG_RUNTIME_DIR:-/tmp}/waybar-media-player\")\" play-pause",
+    "on-click-middle": "playerctl -p \"$(cat \"${XDG_RUNTIME_DIR:-/tmp}/waybar-media-player\")\" next"
+  },
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "active": "󰝥",
+      "default": "󰝦"
+    }
   }
 }

@@ -1,0 +1,36 @@
+/* GTK4·libadwaita 앱(음량 창, 파일 관리자 등)의 색을 Catppuccin Mocha로. 지우면 GNOME 기본 색으로 돌아간다 */
+:root {
+  --accent-color: #cba6f7; --accent-bg-color: #cba6f7; --accent-fg-color: #11111b;
+  --destructive-bg-color: #f38ba8; --success-bg-color: #a6e3a1; --warning-bg-color: #f9e2af; --error-bg-color: #f38ba8;
+  --window-bg-color: #1e1e2e; --window-fg-color: #cdd6f4;
+  --view-bg-color: #181825; --view-fg-color: #cdd6f4;
+  --headerbar-bg-color: #181825; --headerbar-fg-color: #cdd6f4; --headerbar-backdrop-color: #1e1e2e;
+  --sidebar-bg-color: #181825; --sidebar-fg-color: #cdd6f4;
+  --card-bg-color: #313244; --card-fg-color: #cdd6f4;
+  --popover-bg-color: #313244; --popover-fg-color: #cdd6f4;
+  --dialog-bg-color: #1e1e2e; --dialog-fg-color: #cdd6f4;
+}
+
+/* 예전 이름(named color)을 쓰는 앱용 */
+@define-color accent_color #cba6f7;
+@define-color accent_bg_color #cba6f7;
+@define-color accent_fg_color #11111b;
+@define-color destructive_bg_color #f38ba8;
+@define-color success_bg_color #a6e3a1;
+@define-color warning_bg_color #f9e2af;
+@define-color error_bg_color #f38ba8;
+@define-color window_bg_color #1e1e2e;
+@define-color window_fg_color #cdd6f4;
+@define-color view_bg_color #181825;
+@define-color view_fg_color #cdd6f4;
+@define-color headerbar_bg_color #181825;
+@define-color headerbar_fg_color #cdd6f4;
+@define-color headerbar_backdrop_color #1e1e2e;
+@define-color sidebar_bg_color #181825;
+@define-color sidebar_fg_color #cdd6f4;
+@define-color card_bg_color #313244;
+@define-color card_fg_color #cdd6f4;
+@define-color popover_bg_color #313244;
+@define-color popover_fg_color #cdd6f4;
+@define-color dialog_bg_color #1e1e2e;
+@define-color dialog_fg_color #cdd6f4;

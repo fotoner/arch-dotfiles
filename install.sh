@@ -53,6 +53,8 @@ PKGS=(
   xdg-desktop-portal-hyprland xdg-desktop-portal-gtk qt5-wayland qt6-wayland
   # 터미널, 상단 막대, 알림 센터, 파일 관리자
   kitty waybar swaync libnotify nautilus xdg-user-dirs
+  # 제어 센터 (Wi-Fi·블루투스 기기, 빠른 버튼, 충전 한도, 사용량)
+  quickshell
   # 소리
   pipewire pipewire-pulse pipewire-alsa wireplumber pavucontrol
   # 글꼴
@@ -61,6 +63,8 @@ PKGS=(
   hyprpaper papirus-icon-theme
   # 맥 느낌: 로그아웃 화면, 음량·밝기 팝업, 전원 메뉴, GTK3 앱 테마, 글꼴
   hyprshutdown swayosd nwg-bar adw-gtk-theme inter-font
+  # 맥의 미리보기·Quick Look: 이미지 보기, PDF 보기, Nautilus에서 Space로 빠른 미리보기
+  loupe papers sushi
   # 배터리 부족 알림, 스크린샷 편집기, 단축키 도움말 창, 폴더 바로 이동
   batsignal satty yad zoxide
   # 터미널 도구, zsh 플러그인 (mac-dotfiles에서 가져옴)
@@ -137,15 +141,17 @@ sudo systemctl start dev-zram0.swap
 # 로그인한 뒤에 설치한 PipeWire는 다음 로그인까지 꺼져 있어 소리가 안 난다. 지금 바로 켠다
 systemctl --user enable --now pipewire.socket pipewire-pulse.socket wireplumber.service
 
-step "6/8 배터리 충전 상한 75~80%"
-BAT=/sys/class/power_supply/BAT0
-if [ -e "$BAT/charge_control_end_threshold" ]; then
-  sudo install -m 644 "$REPO_DIR/system/battery-threshold.conf" /etc/tmpfiles.d/battery-threshold.conf
-  sudo systemd-tmpfiles --create /etc/tmpfiles.d/battery-threshold.conf \
-    || note "지금 바로 적용하지 못했습니다. 재부팅하면 적용됩니다."
-  note "현재 충전 상한: $(cat "$BAT/charge_control_end_threshold")%"
+step "6/8 배터리 충전 한도 켜기 (75% 아래에서 충전 시작, 80%에서 멈춤)"
+# UPower가 펌웨어에 기록하고 상태를 저장해 재부팅해도 유지한다. 제어 센터(Super+A)에서 80% / 100%를 바꿀 수 있다.
+# 예전 방식(부팅마다 80%로 되돌리는 tmpfiles 규칙)은 제어 센터 설정을 덮어쓰므로 지운다
+sudo rm -f /etc/tmpfiles.d/battery-threshold.conf
+BAT_DEV=$(upower -e | grep -m1 battery_BAT)
+if [ -n "$BAT_DEV" ] && busctl get-property org.freedesktop.UPower "$BAT_DEV" org.freedesktop.UPower.Device ChargeThresholdSupported | grep -q true; then
+  busctl call org.freedesktop.UPower "$BAT_DEV" org.freedesktop.UPower.Device EnableChargeThreshold b true \
+    && note "충전 한도 켜짐: 지금 상한 $(cat /sys/class/power_supply/BAT0/charge_control_end_threshold 2>/dev/null)%" \
+    || note "충전 한도를 켜지 못했습니다. 로그인한 화면의 터미널에서 다시 실행해 주세요."
 else
-  note "이 기기는 충전 상한 설정을 지원하지 않아 건너뜁니다."
+  note "이 기기는 충전 한도를 지원하지 않아 건너뜁니다."
 fi
 
 step "7/8 설정 파일 복사 (기존 파일이 다르면 .bak-$STAMP 로 백업)"
@@ -176,20 +182,27 @@ place swaync/config.json
 place swaync/style.css
 place hypr/scripts/screenshot.sh
 place hypr/scripts/keyhints.sh
-place hypr/scripts/quick-toggle.sh
 place hypr/scripts/smart-paste.sh
 place hypr/scripts/wifi-menu.sh
 place hypr/scripts/ime-status.sh
+place hypr/scripts/ime-cycle.sh
+place hypr/scripts/media-focus.sh
+place hypr/scripts/media-status.sh
 chmod +x "$HOME/.config/hypr/scripts/"*.sh
 place swayosd/style.css
+(cd "$REPO_DIR/config" && find quickshell -type f) | while read -r f; do place "$f"; done
 place nwg-bar/bar.json
 place nwg-bar/style.css
 place fontconfig/fonts.conf
+place gtk-4.0/gtk.css
+place gtk-3.0/gtk.css
+place wireplumber/wireplumber.conf.d/51-hide-hdmi.conf
 place vicinae/settings.json
 place fcitx5/profile
 place fcitx5/config
 place fcitx5/conf/classicui.conf
 (cd "$REPO_DIR/home" && find .local/share/fcitx5 -type f) | while read -r f; do place_home "$f"; done
+(cd "$REPO_DIR/home" && find .local/share/icons -type f) | while read -r f; do place_home "$f"; done
 place git/config
 place git/ignore
 place gh/config.yml
@@ -212,6 +225,11 @@ gsettings set org.gnome.desktop.interface color-scheme prefer-dark \
   && gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark \
   || note "다크 모드 설정 실패. Hyprland에서 install.sh를 다시 실행하세요."
 xdg-settings set default-web-browser google-chrome.desktop || note "기본 브라우저 설정 실패"
+# 이미지는 Loupe, PDF 같은 문서는 Papers로 연다 (앱이 여는 형식 전부)
+for app in org.gnome.Loupe org.gnome.Papers; do
+  xdg-mime default "$app.desktop" $(grep '^MimeType=' "/usr/share/applications/$app.desktop" | cut -d= -f2 | tr ';' ' ') \
+    || note "$app 기본 앱 설정 실패"
+done
 
 step "8/8 점검"
 if git config --global user.email >/dev/null; then

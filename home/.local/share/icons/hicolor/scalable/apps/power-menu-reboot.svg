@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- nwg-bar 전원 메뉴 아이콘: 동그란 바탕(Catppuccin surface0) 위에 선 아이콘(text) -->
+  <circle cx="24" cy="24" r="24" fill="#313244"/>
+  <g transform="translate(12 12)" fill="none" stroke="#cdd6f4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v4.5h-4.5"/>
+  </g>
+</svg>

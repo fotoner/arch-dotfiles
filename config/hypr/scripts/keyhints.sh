@@ -19,11 +19,13 @@ exec yad --title="단축키" --class=keyhints --list --center --width=620 --heig
   "Super + C" "창 닫기" \
   "Super + V" "창 띄우기 / 타일로 되돌리기" \
   "Super + 방향키" "옆 창으로 이동" \
+  "Super + Shift + 방향키" "옆 창과 자리 바꾸기" \
   "Super + 1~0" "워크스페이스 이동" \
   "Super + Shift + 1~0" "창을 그 워크스페이스로 보내기" \
   "Super + S / Super + Shift + S" "숨김 공간 열기 / 창을 숨김 공간으로" \
   "Super + 마우스 끌기" "왼쪽: 창 이동, 오른쪽: 크기 조절" \
-  "Super + N" "알림 센터 (상단바 시계 클릭도 같음, 시계 오른쪽 클릭 = 방해 금지)" \
+  "Super + A" "제어 센터: Wi-Fi·블루투스·밝기·음량·충전 한도 (상단바 토글 아이콘도 같음)" \
+  "Super + N" "알림 목록 (상단바 시계 클릭도 같음, 시계 오른쪽 클릭 = 방해 금지)" \
   "Super + L" "화면 잠금" \
   "Super + Esc" "전원 메뉴" \
   "Super + M" "로그아웃" \

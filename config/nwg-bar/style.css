@@ -1,6 +1,8 @@
-/* nwg-bar: 전원 메뉴 (Super+Esc, 알림 센터 전원 버튼). Catppuccin Mocha */
+/* nwg-bar: 전원 메뉴 (Super+Esc, 상단바 Arch 로고, 알림 센터 전원 버튼). Catppuccin Mocha.
+   글자 없이 아이콘만: 잠금 · 로그아웃 · 잠자기 · 재시동 · 종료 (bar.json 순서).
+   아이콘은 ~/.local/share/icons/hicolor/scalable/apps/power-menu-*.svg (동그란 바탕 + 단색 선 아이콘) */
 window {
-  background-color: rgba(17, 17, 27, 0.45);
+  background-color: transparent;
 }
 
 #outer-box {
@@ -8,10 +10,10 @@ window {
 }
 
 #inner-box {
-  background-color: rgba(30, 30, 46, 0.92);
-  border: 1px solid rgba(69, 71, 90, 0.6);
-  border-radius: 18px;
-  padding: 12px;
+  background-color: rgba(30, 30, 46, 0.94);
+  border: 1px solid rgba(88, 91, 112, 0.45);
+  border-radius: 999px;
+  padding: 10px 12px;
   margin: 5px;
 }
 
@@ -20,20 +22,24 @@ image {
   background: none;
   border: none;
   box-shadow: none;
+  outline: none;
 }
 
+/* 마우스를 올리거나 키보드로 고르면 동그라미 둘레에 보라색 테 */
 button {
-  color: #cdd6f4;
-  padding: 10px 16px;
-  margin: 4px;
-  border-radius: 12px;
+  padding: 4px;
+  margin: 0 4px;
+  border-radius: 999px;
+  transition: background-color 120ms ease-out;
 }
 
 button:hover,
 button:focus {
-  background-color: rgba(203, 166, 247, 0.18);
+  background-color: rgba(203, 166, 247, 0.55);
 }
 
 label {
-  color: #cdd6f4;
+  font-size: 0;
+  margin: 0;
+  padding: 0;
 }

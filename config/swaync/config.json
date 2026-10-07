@@ -8,10 +8,10 @@
   "cssPriority": "user",
   "control-center-margin-top": 8,
   "control-center-margin-bottom": 10,
-  "control-center-margin-right": 10,
-  "control-center-width": 420,
-  "notification-window-width": 400,
-  "fit-to-screen": true,
+  "control-center-margin-right": 8,
+  "control-center-width": 380,
+  "notification-window-width": 380,
+  "fit-to-screen": false,
   "timeout": 6,
   "timeout-low": 4,
   "timeout-critical": 0,
@@ -24,10 +24,6 @@
   "relative-timestamps": true,
   "text-empty": "알림 없음",
   "widgets": [
-    "buttons-grid",
-    "volume",
-    "backlight",
-    "mpris",
     "title",
     "dnd",
     "notifications"
@@ -40,42 +36,7 @@
     },
     "dnd": {
       "text": "방해 금지"
-    },
-    "volume": {
-      "label": "󰕾"
-    },
-    "backlight": {
-      "label": "󰃟",
-      "device": "intel_backlight"
-    },
-    "mpris": {
-      "show-album-art": "always",
-      "autohide": true
-    },
-    "buttons-grid": {
-      "buttons-per-row": 5,
-      "actions": [
-        {
-          "label": "󰖩",
-          "command": "~/.config/hypr/scripts/quick-toggle.sh wifi"
-        },
-        {
-          "label": "󰂯",
-          "command": "~/.config/hypr/scripts/quick-toggle.sh bluetooth"
-        },
-        {
-          "label": "󰍬",
-          "command": "~/.config/hypr/scripts/quick-toggle.sh mic"
-        },
-        {
-          "label": "󰄀",
-          "command": "sh -c 'swaync-client -cp; sleep 0.3; ~/.config/hypr/scripts/screenshot.sh area'"
-        },
-        {
-          "label": "󰐥",
-          "command": "sh -c 'swaync-client -cp; nwg-bar'"
-        }
-      ]
     }
-  }
+  },
+  "control-center-height": -1
 }

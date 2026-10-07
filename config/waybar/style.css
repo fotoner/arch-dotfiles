@@ -1,4 +1,4 @@
-/* waybar: 상단 막대 모양. 왼쪽·가운데·오른쪽 묶음을 떠 있는 둥근 섬으로 그린다. 색은 mocha.css */
+/* waybar: 상단 막대 모양. 맥 메뉴바처럼 화면 위에 붙은 반투명 직선 막대. 색은 mocha.css */
 @import "mocha.css";
 
 * {
@@ -10,56 +10,73 @@
 }
 
 window#waybar {
-    background: transparent;
+    background: alpha(@base, 0.85);
     color: @text;
 }
 
 .modules-left,
 .modules-center,
 .modules-right {
-    background: alpha(@base, 0.85);
-    border: 1px solid alpha(@surface1, 0.6);
-    border-radius: 12px;
     padding: 0 6px;
 }
 
+/* 왼쪽 끝 Arch 로고 (누르면 전원 메뉴, 맥의 사과 메뉴 자리) */
+#custom-arch {
+    color: @blue;
+    font-size: 16px;
+    padding: 0 12px 0 8px;
+}
+
+/* 재생 중인 미디어 (일시정지면 ⏸로 10초 보인 뒤 숨김) */
+#custom-media {
+    color: @subtext1;
+    padding: 0 10px;
+}
+
+#custom-media.paused {
+    color: @overlay1;
+}
+
+/* 워크스페이스: 숫자 대신 점. 지금 보는 곳은 채운 보라 점, 나머지는 테두리만 */
 #workspaces button {
     color: @overlay1;
     background: transparent;
-    padding: 0 8px;
-    margin: 4px 1px;
-    border-radius: 8px;
+    font-size: 11px;
+    padding: 0 5px;
+    margin: 0;
+    border-radius: 0;
     box-shadow: none;
     text-shadow: none;
 }
 
 #workspaces button:hover {
     color: @text;
-    background: @surface0;
+    background: transparent;
 }
 
 #workspaces button.active {
-    color: @crust;
-    background: @mauve;
+    color: @mauve;
 }
 
 #workspaces button.urgent {
-    color: @crust;
-    background: @red;
+    color: @red;
 }
 
 #clock {
     color: @lavender;
     font-weight: bold;
-    padding: 0 10px;
 }
 
+/* 오른쪽 항목 사이 간격을 모두 16px로: 좌우 여백 6 + 모듈 간격 4 + 6 (트레이 아이콘 사이도 16) */
 #tray,
+#idle_inhibitor,
 #power-profiles-daemon,
 #pulseaudio,
 #network,
-#battery {
-    padding: 0 8px;
+#battery,
+#custom-control,
+#clock {
+    padding: 0 6px;
 }
 
 #power-profiles-daemon             { color: @peach; }
@@ -67,28 +84,32 @@ window#waybar {
 #power-profiles-daemon.power-saver { color: @green; }
 
 #pulseaudio        { color: @blue; }
-#pulseaudio.muted  { color: @overlay0; }
+#pulseaudio.muted  { color: @overlay1; }
 
 #network              { color: @teal; }
 #network.disconnected { color: @overlay0; }
 
-#battery                          { color: @green; }
+/* 배터리: 충전 중 초록, 전원 연결됐는데 충전 안 함(충전 한도) 청록, 배터리로 쓸 때 기본 글자색 */
+#battery                          { color: @text; }
+#battery.charging                 { color: @green; }
+#battery.plugged,
+#battery.full                     { color: @teal; }
 #battery.warning:not(.charging)   { color: @yellow; }
 #battery.critical:not(.charging)  { color: @red; }
 
 tooltip {
-    background: @base;
+    background: alpha(@base, 0.95);
     border: 1px solid @surface1;
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
 tooltip label {
     color: @text;
+    padding: 6px 10px;
 }
 
 #idle_inhibitor {
     color: @overlay1;
-    padding: 0 8px;
 }
 
 #idle_inhibitor.activated {
@@ -111,13 +132,29 @@ tooltip label {
     font-size: 13px;
 }
 
-/* 한/영 표시: 맥 메뉴바 입력 소스처럼 작은 둥근 배지 */
+/* 입력기 표시: 맥 메뉴바 입력 소스처럼 작은 둥근 배지.
+   A·한·あ를 같은 글꼴로 그리고 여백을 줄여서, 입력기에 따라 막대 높이가 바뀌지 않게 한다 */
 #custom-ime {
     background: @text;
     color: @base;
+    font-family: "Noto Sans CJK KR";
     font-size: 10px;
     font-weight: bold;
     border-radius: 5px;
     padding: 0 5px;
-    margin: 8px 6px;
+    margin: 6px 6px;
+    min-width: 12px; /* A·한·あ 모두 같은 폭 */
+}
+
+/* 아이콘 글리프마다 안쪽 여백이 달라서, 눈에 보이는 간격이 16px이 되도록 보정 */
+#power-profiles-daemon {
+    padding: 0 9px;
+}
+
+#pulseaudio {
+    padding-left: 9px;
+}
+
+#clock {
+    padding-left: 9px;
 }

@@ -1,7 +1,7 @@
 [
-  { "label": "화면 잠금", "exec": "loginctl lock-session", "icon": "system-lock-screen" },
-  { "label": "로그아웃", "exec": "hyprshutdown", "icon": "system-log-out" },
-  { "label": "잠자기", "exec": "systemctl suspend", "icon": "system-suspend" },
-  { "label": "재시동", "exec": "systemctl reboot", "icon": "system-reboot" },
-  { "label": "시스템 종료", "exec": "systemctl poweroff", "icon": "system-shutdown" }
+  { "label": "", "exec": "loginctl lock-session", "icon": "power-menu-lock" },
+  { "label": "", "exec": "hyprshutdown", "icon": "power-menu-logout" },
+  { "label": "", "exec": "systemctl suspend", "icon": "power-menu-sleep" },
+  { "label": "", "exec": "systemctl reboot", "icon": "power-menu-reboot" },
+  { "label": "", "exec": "systemctl poweroff", "icon": "power-menu-shutdown" }
 ]

@@ -1,4 +1,5 @@
-# fcitx5 전역 설정. Ctrl+Space를 누를 때마다 A(영어) → 한(한글) → あ(일본어) 순서로 바뀐다
+# fcitx5 전역 설정. A(영어) → 한(한글) → あ(일본어) 순서로 바꾼다.
+# 평소 Ctrl+Space는 Hyprland가 받아서 ime-cycle.sh로 바꾼다(앱에 공백이 들어가지 않게). 아래 단축키는 그 밖의 경우를 위한 것
 [Hotkey]
 # 입력기를 차례로 바꿀 때 첫 번째(영어)도 포함
 EnumerateSkipFirst=False
@@ -9,3 +10,12 @@ EnumerateSkipFirst=False
 
 [Hotkey/EnumerateForwardKeys]
 0=Control+space
+
+# 맥처럼 모든 창이 같은 입력 상태(A/한/あ)를 쓴다
+[Behavior]
+ShareInputState=All
+
+# 트레이 아이콘을 끈다 (상단바 A/한/あ 배지가 대신 보여 준다).
+# 실행 옵션이 아니라 설정에 두어야, 시스템이 fcitx5를 자동으로 켤 때도 적용된다
+[Behavior/DisabledAddons]
+0=notificationitem

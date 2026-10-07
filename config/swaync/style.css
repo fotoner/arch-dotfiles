@@ -1,57 +1,164 @@
-/* swaync: 알림 센터와 알림. 기본 스타일을 불러온 뒤 색만 Catppuccin Mocha로 바꾼다 */
+/* swaync: 알림 목록과 알림 팝업 (빠른 설정은 Quickshell 제어 센터로 옮겼다).
+   기본 스타일을 불러온 뒤 Catppuccin Mocha, 제어 센터와 같은 카드 모양으로 덮어쓴다 */
 @import url("file:///etc/xdg/swaync/style.css");
 
 :root {
-  --cc-bg: rgba(30, 30, 46, 0.88);
-  --noti-border-color: rgba(69, 71, 90, 0.6);
+  --cc-bg: rgba(30, 30, 46, 0.86);
+  --noti-border-color: rgba(255, 255, 255, 0.06);
   --noti-bg: 49, 50, 68;
-  --noti-bg-alpha: 0.88;
+  --noti-bg-alpha: 0.55;
   --noti-bg-darker: rgb(24, 24, 37);
-  --noti-bg-hover: rgb(69, 71, 90);
-  --noti-bg-focus: rgba(88, 91, 112, 0.6);
-  --noti-close-bg: rgb(69, 71, 90);
-  --noti-close-bg-hover: rgb(88, 91, 112);
+  --noti-bg-hover: rgba(255, 255, 255, 0.08);
+  --noti-bg-focus: transparent;
+  --noti-close-bg: rgba(255, 255, 255, 0.08);
+  --noti-close-bg-hover: rgba(255, 255, 255, 0.16);
   --text-color: rgb(205, 214, 244);
   --text-color-disabled: rgb(127, 132, 156);
   --bg-selected: rgb(203, 166, 247);
-  --border-radius: 14px;
+  --border-radius: 16px;
+  --notification-icon-size: 40px;
+  --notification-group-icon-size: 20px;
+  --font-size-summary: 13px;
+  --font-size-body: 12px;
+  --notification-shadow: none;
 }
-
-@define-color cc-bg rgba(30, 30, 46, 0.88);
-@define-color noti-border-color rgba(69, 71, 90, 0.6);
-@define-color noti-bg rgba(49, 50, 68, 0.88);
-@define-color noti-bg-opaque rgb(49, 50, 68);
-@define-color noti-bg-darker rgb(24, 24, 37);
-@define-color noti-bg-hover rgb(69, 71, 90);
-@define-color noti-bg-hover-opaque rgb(69, 71, 90);
-@define-color noti-bg-focus rgba(88, 91, 112, 0.6);
-@define-color noti-close-bg rgba(205, 214, 244, 0.1);
-@define-color noti-close-bg-hover rgba(205, 214, 244, 0.15);
-@define-color text-color rgb(205, 214, 244);
-@define-color text-color-disabled rgb(127, 132, 156);
-@define-color bg-selected rgb(203, 166, 247);
 
 * {
   font-family: "Inter", "Noto Sans CJK KR", "JetBrainsMono Nerd Font", sans-serif;
 }
 
-/* 켜진 빠른 버튼, 슬라이더, 방해 금지 스위치를 Catppuccin 보라색으로 */
-.widget-buttons-grid flowboxchild > button:checked,
-.widget-buttons-grid flowboxchild > button.active {
-  background: rgb(203, 166, 247);
-  color: rgb(30, 30, 46);
+/* 패널: 제어 센터와 같은 반투명 카드 */
+.control-center {
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 22px;
+  padding: 6px;
 }
 
-.widget-volume scale highlight,
-.widget-backlight scale highlight {
-  background-color: rgb(203, 166, 247);
+.control-center .control-center-list-placeholder {
+  opacity: 1;
+  color: rgb(127, 132, 156);
+  font-size: 13px;
+  margin: 24px 0;
 }
 
-.widget-volume scale slider,
-.widget-backlight scale slider {
-  background-color: rgb(205, 214, 244);
+/* 제목 줄: '알림' + 모두 지우기 */
+.widget-title {
+  margin: 8px 10px 0;
+}
+
+.widget-title > label {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.widget-title > button {
+  font-size: 12px;
+  padding: 4px 12px;
+  min-height: 0;
+  border-radius: 999px;
+  border: none;
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgb(186, 194, 222);
+}
+
+.widget-title > button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgb(205, 214, 244);
+}
+
+/* 방해 금지 줄 */
+.widget-dnd {
+  margin: 0 10px 4px;
+}
+
+.widget-dnd label {
+  font-size: 13px;
+  color: rgb(186, 194, 222);
+}
+
+.widget-dnd switch {
+  background: rgba(255, 255, 255, 0.10);
+  border: none;
 }
 
 .widget-dnd switch:checked {
-  background-color: rgb(203, 166, 247);
+  background: rgb(203, 166, 247);
+}
+
+.widget-dnd switch slider {
+  background: rgb(205, 214, 244);
+}
+
+/* 알림 카드 */
+.notification-row .notification-background {
+  padding: 4px 8px;
+}
+
+.notification-row .notification-background .notification {
+  border-radius: 16px;
+}
+
+.notification-row .notification-background .notification .notification-default-action {
+  padding: 8px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .text-box .time {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgb(127, 132, 156);
+  margin-right: 32px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .text-box .body {
+  color: rgb(186, 194, 222);
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .image {
+  border-radius: 10px;
+  margin: 2px 10px 2px 2px;
+}
+
+.close-button {
+  min-width: 20px;
+  min-height: 20px;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+/* 앱별로 묶인 알림: 포커스 회색 상자를 없애고 머리줄을 작게 */
+.notification-group,
+.notification-group:focus,
+.notification-row:focus {
+  background: transparent;
+  box-shadow: none;
+}
+
+.notification-group .notification-group-headers {
+  margin: 6px 18px 0;
+  font-size: 12px;
+  color: rgb(166, 173, 200);
+}
+
+.notification-group .notification-group-buttons button {
+  min-height: 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: none;
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.notification-group.collapsed .notification-row .notification {
+  background-color: rgb(42, 43, 60);
+}
+
+/* 화면 오른쪽 위에 잠깐 뜨는 알림 팝업: 불투명에 가깝게 */
+.floating-notifications .notification-row .notification-background .notification {
+  background: rgba(30, 30, 46, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.notification-row .notification-background .notification.critical {
+  border: 1px solid rgba(243, 139, 168, 0.6);
 }

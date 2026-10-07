@@ -25,10 +25,10 @@ start-hyprland          # Hyprland 실행
 1. 인터넷 연결 확인
 2. pacman 색상·병렬 다운로드를 켜고 전체 업데이트
 3. snapper + snap-pac 스냅샷 설정 (시간별 5개, 일별 7개 보존). 이미 설정돼 있으면 건너뜀
-4. Hyprland, Waybar, 한글 입력기(fcitx5), 글꼴, 테마(바탕화면·아이콘), 소리, 블루투스, 터미널 도구, Neovim, Discord, Tailscale, 맥 느낌 도구(음량·밝기 팝업, 전원 메뉴, 로그아웃 화면) 등 설치. oh-my-zsh 내려받기, Google Chrome·Vicinae·맥 커서(AUR) 빌드·설치, CodexBar(AI 사용량) 설치
+4. Hyprland, Waybar, 한글 입력기(fcitx5), 글꼴, 테마(바탕화면·아이콘), 소리, 블루투스, 터미널 도구, Neovim, Discord, Tailscale, 맥 느낌 도구(음량·밝기 팝업, 전원 메뉴, 로그아웃 화면, Quickshell 제어 센터, 이미지·PDF 뷰어) 등 설치. oh-my-zsh 내려받기, Google Chrome·Vicinae·맥 커서(AUR) 빌드·설치, CodexBar(AI 사용량) 설치
 5. 블루투스, 전원 모드(power-profiles-daemon), 패키지 캐시 자동 정리, 시간 동기화, Tailscale 켜기. zram 스왑(RAM의 절반, 최대 8GB) 설정. 소리(PipeWire)를 재로그인 없이 바로 켜기
-6. 배터리 충전 상한 75~80%
-7. `config/` 아래 설정 파일을 `~/.config/`로 복사. 내용이 다른 기존 파일은 `.bak-날짜시각`으로 백업. Claude Code 상태줄 설치, 앱 다크 모드 켜기, 기본 브라우저를 Chrome으로
+6. 배터리 충전 한도 켜기 (75% 아래에서 충전 시작, 80%에서 멈춤. 제어 센터에서 80% / 100% 전환, UPower가 저장해 재부팅해도 유지)
+7. `config/` 아래 설정 파일을 `~/.config/`로 복사. 내용이 다른 기존 파일은 `.bak-날짜시각`으로 백업. Claude Code 상태줄 설치, 앱 다크 모드 켜기, 기본 브라우저를 Chrome으로, 이미지는 Loupe·PDF는 Papers로 열기
 8. git 이메일, Tailscale 로그인, zram 스왑, 터보 부스트, NVIDIA GPU 유무 점검
 
 ## 단축키
@@ -41,14 +41,19 @@ SUPER는 Windows 키입니다.
 | SUPER + C | 창 닫기 | Cmd+W |
 | SUPER + R | 앱 검색 실행 | Spotlight |
 | SUPER + E | 파일 관리자(Nautilus) | Finder |
+| Nautilus에서 Space | 고른 파일 빠른 미리보기(Sushi). 이미지를 열면 Loupe, PDF는 Papers | Quick Look, 미리보기 |
 | SUPER + L | 화면 잠금 | Ctrl+Cmd+Q |
-| SUPER + Esc | 전원 메뉴: 화면 잠금·로그아웃·잠자기·재시동·시스템 종료 (알림 센터의 전원 버튼도 같음) | 메뉴의 전원 항목 |
-| SUPER + N | 알림 센터: 빠른 버튼(Wi-Fi·블루투스·마이크·스크린샷·전원), 음량·밝기, 재생 중인 음악, 알림 목록, 방해 금지 (상단바 오른쪽 끝 시계를 눌러도 열림, 시계 오른쪽 클릭 = 방해 금지). 읽지 않은 알림이 있으면 시계 옆에 빨간 점, 방해 금지 중이면 달 | 알림 센터 + 제어 센터 |
+| SUPER + Esc | 전원 메뉴(글자 없는 아이콘 줄, 왼쪽부터): 화면 잠금·로그아웃·잠자기·재시동·시스템 종료 (상단바 Arch 로고, 제어 센터의 전원 버튼도 같음) | 메뉴의 전원 항목 |
+| SUPER + A | 제어 센터 (상단바 시계 왼쪽 토글 아이콘도 같음): Wi-Fi·블루투스 켜짐 표시와 기기 목록(신호 세기, 이어폰 배터리, 바로 연결/해제, 처음 쓰는 Wi-Fi는 암호 입력), 빠른 버튼(방해 금지·마이크·전원 모드·스크린샷, 켜지면 보라색), 밝기·음량 막대와 출력 장치, 재생 중인 미디어, 배터리(충전 상태·남은 시간·충전 한도 80% / 100%), 시스템 사용량(CPU·메모리·디스크·온도). 바깥을 누르거나 Esc로 닫기 | 제어 센터 |
+| SUPER + N | 알림 목록과 방해 금지 (상단바 오른쪽 끝 시계를 눌러도 열림, 시계 오른쪽 클릭 = 방해 금지). 읽지 않은 알림이 있으면 시계 옆에 빨간 점, 방해 금지 중이면 달 | 알림 센터 |
 | SUPER + H | 단축키 도움말 창 | |
 | 음량·밝기 키 | 화면에 팝업으로 표시 | 같음 |
-| 상단바 음량 아이콘 | 클릭: 음량 창(출력 장치·앱별 음량), 오른쪽 클릭: 음소거, 휠: 음량 | 메뉴바 소리 메뉴 |
+| 상단바 음량 아이콘 | 클릭: 제어 센터(음량, 출력 장치 목록), 오른쪽 클릭: 상세 설정 창(pwvucontrol), 가운데 클릭: 음소거, 휠: 음량 | 메뉴바 소리 메뉴 |
+| 상단바 Wi-Fi 아이콘 | 클릭: 제어 센터의 Wi-Fi 목록, 오른쪽 클릭: nmtui 창 | 메뉴바 Wi-Fi 메뉴 |
+| 상단바 배터리 | 충전 중 = 번개 배터리(초록), 전원은 연결됐지만 충전 한도라서 충전 안 함 = 하트 배터리(청록), 완충 = 플러그, 배터리로 쓰는 중 = 보통 배터리. 마우스를 올리면 남은 시간·전력, 클릭하면 제어 센터 | 메뉴바 배터리 |
 | SUPER + 1~0 | 워크스페이스 이동 | Spaces 이동 |
 | SUPER + Shift + 1~0 | 창을 그 워크스페이스로 보내기 | |
+| SUPER + Shift + 방향키 | 옆 창과 자리 바꾸기 | |
 | SUPER + V | 창 띄우기/타일로 되돌리기 | |
 | SUPER + 마우스 끌기 | 왼쪽: 창 이동, 오른쪽: 크기 조절 | |
 | 세 손가락 좌우 쓸기 | 워크스페이스 전환 | 같음 |
@@ -56,7 +61,7 @@ SUPER는 Windows 키입니다.
 | Shift + Print | 전체 화면을 `~/Pictures`에 저장 | Cmd+Shift+3 |
 | SUPER + M | 앱을 정리하고 로그아웃 (hyprshutdown) | 로그아웃 |
 
-입력기는 영어, 한글, 일본어(Mozc, 로마자 입력) 세 개입니다. **Ctrl+Space**를 누를 때마다 A → 한 → あ 순서로 바뀌고(한/영 키가 있으면 그 키는 영어 ↔ 한글), 지금 상태는 상단바의 "A" / "한" / "あ" 배지로 보입니다. 배지를 누르면 영어와 마지막 입력기 사이를 오갑니다. 한글이 목록에 없으면 SUPER+R → "Fcitx 5 Configuration"에서 "Only Show Current Language"를 끄고 Hangul을 추가하세요.
+입력기는 영어, 한글, 일본어(Mozc, 로마자 입력) 세 개입니다. **Ctrl+Space**를 누를 때마다 A → 한 → あ 순서로 바뀌고(한/영 키가 있으면 그 키는 영어 ↔ 한글), 지금 상태는 상단바의 "A" / "한" / "あ" 배지로 보입니다. 배지를 눌러도 같은 순서로 바뀝니다. 맥처럼 모든 창이 같은 입력 상태를 씁니다(`ShareInputState=All`). Ctrl+Space는 Hyprland가 직접 받아서 바꾸기 때문에 어느 앱에서도 공백이 입력되지 않습니다. Caps Lock을 누르면 켜짐/꺼짐 팝업이 뜨고, 잠금 화면에서는 암호 칸 테두리가 노란색이 되며 "Caps Lock 켜짐"이 표시됩니다. 한글이 목록에 없으면 SUPER+R → "Fcitx 5 Configuration"에서 "Only Show Current Language"를 끄고 Hangul을 추가하세요.
 
 상단바의 커피잔 아이콘을 누르면 잠자기 방지(화면이 꺼지지 않음)가 켜집니다. 배터리가 20%, 10%가 되면 알림이 뜨고, 유튜브 화면 속 화면(PiP)은 오른쪽 아래에 떠서 모든 워크스페이스에 보입니다.
 
@@ -97,10 +102,11 @@ SUPER는 Windows 키입니다.
 | 창 테두리·그림자 | `config/hypr/hyprland.lua`의 `col`, `shadow` |
 | 상단 막대 | `config/waybar/mocha.css` (모양은 `style.css`) |
 | 터미널 | `config/kitty/current-theme.conf` (`kitty +kitten themes`로 골라도 됨) |
-| 잠금 화면 | `config/hypr/hyprlock.conf`: 맥처럼 위에 날짜와 큰 시계, 가운데 사용자와 암호 입력, 오른쪽 아래 배터리 |
+| 잠금 화면 | `config/hypr/hyprlock.conf`: 맥처럼 위에 날짜와 큰 시계, 가운데 프로필 사진과 암호 입력, 오른쪽 아래 배터리, 왼쪽 아래 입력기 배지(누르면 A → 한 → あ). 프로필 사진은 `~/.face`에 그림을 두면 나오고(저장소에는 없음), 없으면 이름 첫 글자 원. 암호는 입력기와 상관없이 항상 영문으로 입력됨 |
 | 음량·밝기 팝업 | `config/swayosd/style.css` |
 | 전원 메뉴 | `config/nwg-bar/style.css` (항목은 `bar.json`) |
-| 알림 센터 | `config/swaync/style.css` (기본 스타일을 불러와 색 변수만 바꿈), 구성은 `config.json` |
+| 제어 센터 | `config/quickshell/Theme.qml` (색·글꼴), 배치는 `ControlCenter.qml` |
+| 알림 센터 | `config/swaync/style.css` (기본 스타일을 불러와 제어 센터와 같은 카드 모양으로), 구성은 `config.json` |
 | 앱 검색 창 | `config/hypr/hyprtoolkit.conf` |
 | Vicinae | `config/vicinae/settings.json`의 `theme` |
 | 입력기 후보 창·전환 팝업 | `home/.local/share/fcitx5/themes/catppuccin-mocha-mauve` ([catppuccin/fcitx5](https://github.com/catppuccin/fcitx5), MIT, 둥근 모서리 켬), 고르는 곳은 `config/fcitx5/conf/classicui.conf` |
@@ -139,27 +145,32 @@ SUPER는 Windows 키입니다.
 | `config/hypr/hyprlock.conf` | `~/.config/hypr/` | 잠금 화면 |
 | `config/hypr/hyprpaper.conf`, `wallpaper.png` | `~/.config/hypr/` | 바탕화면 |
 | `config/hypr/hyprtoolkit.conf` | `~/.config/hypr/` | 앱 검색 창(hyprlauncher) 등 Hypr 앱 색 |
-| `config/waybar/config.jsonc` | `~/.config/waybar/` | 상단 막대: 왼쪽 워크스페이스, 오른쪽 트레이·잠자기 방지·전원 모드·음량·배터리·A/한/あ 입력기 배지·Wi-Fi(누르면 Wi-Fi 목록)·시계(알림 빨간 점) |
+| `config/waybar/config.jsonc` | `~/.config/waybar/` | 상단 막대(화면 위에 붙은 직선 막대): 왼쪽 Arch 로고(누르면 전원 메뉴)·재생 중인 미디어(제목·아티스트·재생 시간, 긴 제목은 전광판처럼 흐름, 일시정지하면 ⏸로 10초 보인 뒤 숨김. 클릭 = 그 앱으로 이동, 오른쪽 클릭 = 재생/일시정지, 가운데 클릭 = 다음 곡), 가운데 워크스페이스(지금 보는 곳은 채운 점, 나머지는 테두리 점), 오른쪽 트레이·잠자기 방지·전원 모드·음량·배터리(충전 상태별 아이콘)·A/한/あ 입력기 배지·Wi-Fi(누르면 제어 센터 Wi-Fi 목록)·제어 센터·시계(알림 빨간 점) |
 | `config/waybar/style.css`, `mocha.css` | `~/.config/waybar/` | 상단 막대 모양과 색 |
 | `config/kitty/kitty.conf`, `current-theme.conf` | `~/.config/kitty/` | 터미널 글꼴·여백·색 |
-| `config/swaync/config.json`, `style.css` | `~/.config/swaync/` | 알림 센터 |
+| `config/quickshell/` | `~/.config/quickshell/` | 제어 센터 (Quickshell, QML). `shell.qml`이 시작점, `qs ipc call cc toggle` / `open wifi·bluetooth·sound`로 열기 |
+| `config/swaync/config.json`, `style.css` | `~/.config/swaync/` | 알림 목록과 알림 팝업 |
 | `config/hypr/scripts/screenshot.sh`, `keyhints.sh` | `~/.config/hypr/scripts/` | 맥식 스크린샷, 단축키 도움말 창 |
-| `config/hypr/scripts/quick-toggle.sh` | `~/.config/hypr/scripts/` | 알림 센터 빠른 버튼(Wi-Fi·블루투스·마이크): 실제 상태를 보고 바꾼 뒤 팝업으로 알림 |
+| `config/hypr/scripts/ime-cycle.sh` | `~/.config/hypr/scripts/` | 입력기를 A → 한 → あ 순서로 바꾸기 (상단바·잠금 화면 배지) |
 | `config/hypr/scripts/ime-status.sh` | `~/.config/hypr/scripts/` | 상단바 입력기 배지 A / 한 / あ (fcitx5 트레이 아이콘 대신) |
-| `config/hypr/scripts/wifi-menu.sh` | `~/.config/hypr/scripts/` | 상단바 Wi-Fi 아이콘을 누르면 뜨는 Wi-Fi 목록 창(nmtui, Catppuccin 색) |
+| `config/hypr/scripts/wifi-menu.sh` | `~/.config/hypr/scripts/` | nmtui Wi-Fi 창 (Catppuccin 색). 상단바 Wi-Fi 오른쪽 클릭, 제어 센터의 "네트워크 설정…" |
+| `config/hypr/scripts/media-status.sh` | `~/.config/hypr/scripts/` | 상단바 미디어 표시 (재생 시간, 긴 제목 흐르기, 일시정지 10초 뒤 숨김) |
+| `config/hypr/scripts/media-focus.sh` | `~/.config/hypr/scripts/` | 상단바 미디어를 누르면 그 미디어를 재생하는 창으로 이동 |
 | `config/hypr/scripts/smart-paste.sh` | `~/.config/hypr/scripts/` | 터미널에서 Alt+V: 클립보드에 이미지만 있으면 Ctrl+V(Claude Code 이미지 붙여넣기), 아니면 글자 붙여넣기 |
 | `config/swayosd/style.css` | `~/.config/swayosd/` | 음량·밝기 팝업 |
 | `config/nwg-bar/bar.json`, `style.css` | `~/.config/nwg-bar/` | 전원 메뉴 |
+| `home/.local/share/icons/hicolor/scalable/apps/power-menu-*.svg` | `~/.local/share/icons/...` | 전원 메뉴 아이콘 (동그란 바탕 + 단색 선 아이콘, 직접 그림) |
+| `config/gtk-4.0/gtk.css`, `config/gtk-3.0/gtk.css` | `~/.config/gtk-4.0/`, `~/.config/gtk-3.0/` | GTK4·libadwaita와 GTK3 앱(파일 관리자, 음량 창 등) 색을 Catppuccin Mocha로 |
+| `config/wireplumber/wireplumber.conf.d/51-hide-hdmi.conf` | `~/.config/wireplumber/wireplumber.conf.d/` | 꽂혀 있지 않은 HDMI 소리 출력 3개 숨기기 (HDMI 모니터로 소리를 내려면 지우고 `systemctl --user restart wireplumber`) |
 | `config/fontconfig/fonts.conf` | `~/.config/fontconfig/` | 웹페이지의 맥 전용 글꼴 이름(`-apple-system` 등)을 Inter로 |
 | `config/fcitx5/conf/classicui.conf`, `home/.local/share/fcitx5/themes/` | `~/.config/fcitx5/conf/`, `~/.local/share/fcitx5/themes/` | 입력기 후보 창 테마 |
-| `config/fcitx5/profile`, `config` | `~/.config/fcitx5/` | 입력기 목록(영어, 한글, 일본어)과 전환 키(Ctrl+Space로 차례로) |
+| `config/fcitx5/profile`, `config` | `~/.config/fcitx5/` | 입력기 목록(영어, 한글, 일본어), 전환 키(Ctrl+Space로 차례로), 모든 창이 같은 입력 상태 |
 | `config/git/config`, `ignore` | `~/.config/git/` | git 이름, LFS, 전역 gitignore |
 | `config/gh/config.yml` | `~/.config/gh/` | GitHub CLI 설정 (`gh co` = PR 체크아웃) |
 | `config/nvim/` | `~/.config/nvim/` | Neovim(LazyVim) 설정 |
 | `config/vicinae/settings.json` | `~/.config/vicinae/` | Raycast 대체 실행기 Vicinae: 테마, 모서리 |
 | `home/.zshrc`, `home/.dircolors` | `~/` | zsh 설정, `ls` 색 |
 | `home/.claude/statusline-command.sh` | `~/.claude/` | Claude Code 상태줄 |
-| `system/battery-threshold.conf` | `/etc/tmpfiles.d/` | 배터리 충전 상한 |
 | `system/zram-generator.conf` | `/etc/systemd/` | zram 스왑 크기와 압축 방식 |
 
 ## 참고
