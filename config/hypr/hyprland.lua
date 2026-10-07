@@ -253,6 +253,7 @@ hl.config({
 
         touchpad = {
             natural_scroll = true,
+            scroll_factor  = 0.8, -- 터치패드 스크롤 속도 (기본 1.0, 작을수록 느림)
         },
     },
 })
