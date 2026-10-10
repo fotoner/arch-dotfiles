@@ -31,7 +31,8 @@ focus() {
   hyprctl dispatch "hl.dsp.focus({ window = \"address:$1\" })" >/dev/null
 }
 
-fetch=$(spawn zsh -c 'fastfetch; exec zsh') || exit 1
+# fastfetch 로고: ~/.face를 원형으로 잘라 둔다 (사진이 바뀌었을 때만 다시 만든다)
+fetch=$(spawn zsh -c '~/.config/fastfetch/face.sh; fastfetch; exec zsh') || exit 1
 term=$(spawn) || exit 1
 
 focus "$fetch"

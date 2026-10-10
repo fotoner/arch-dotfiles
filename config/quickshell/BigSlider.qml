@@ -35,8 +35,9 @@ Item {
         }
     }
 
+    // 아이콘은 왼쪽 둥근 끝의 정중앙에. 밝기·소리 아이콘 폭이 달라도 같은 세로줄에 선다
     Glyph {
-        x: 8
+        x: (parent.height - width) / 2
         anchors.verticalCenter: parent.verticalCenter
         text: slider.icon
         font.pixelSize: 14

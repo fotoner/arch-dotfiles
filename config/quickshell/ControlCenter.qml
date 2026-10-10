@@ -14,7 +14,10 @@ import Quickshell.Services.UPower
 PanelWindow {
     id: win
 
-    readonly property int pad: 8 // 그림자 자리 겸 화면 가장자리 간격 (창 간격 gaps_out과 같게)
+    // 상단바·화면 오른쪽 끝과의 간격. 창 간격(gaps_out 8)과 같으면 패널 위·오른쪽 가장자리가
+    // 아래 창의 보라 테두리와 딱 겹쳐서 테두리가 패널 선처럼 비쳐 보인다. 4면 테두리와 둥근 모서리가 패널 밑에 다 숨는다
+    readonly property int edge: 4
+    readonly property int shadowRoom: 24 // 왼쪽·아래 그림자가 잘리지 않을 자리
 
     readonly property var wifiDevice: Array.from(Networking.devices.values).find(d => d.type === DeviceType.Wifi) ?? null
     readonly property var wifiNet: wifiDevice ? (Array.from(wifiDevice.networks.values).find(n => n.connected) ?? null) : null
@@ -26,6 +29,8 @@ PanelWindow {
     readonly property var source: Pipewire.defaultAudioSource
     readonly property bool micMuted: source?.audio?.muted ?? true
     property bool dnd: false
+    property bool idleInhibit: false
+    readonly property string idleScript: Quickshell.env("HOME") + "/.config/hypr/scripts/idle-inhibit.sh"
     property real brightness: 0
 
     function toggleBluetooth() {
@@ -54,7 +59,7 @@ PanelWindow {
         right: true
         bottom: true
     }
-    implicitWidth: 380 + 2 * pad
+    implicitWidth: 380 + shadowRoom + edge
     color: "transparent"
     exclusionMode: ExclusionMode.Normal
     exclusiveZone: 0
@@ -118,6 +123,23 @@ PanelWindow {
         onTriggered: if (!brightRead.running) brightRead.running = true
     }
 
+    // 잠자기 방지 상태: 상단바에서도 바꿀 수 있어서 열려 있는 동안 2초마다 읽는다
+    Process {
+        id: idleRead
+        command: [win.idleScript, "state"]
+        stdout: StdioCollector {
+            onStreamFinished: win.idleInhibit = text.trim() === "on"
+        }
+    }
+
+    Timer {
+        running: CC.open
+        interval: 2000
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: if (!idleRead.running) idleRead.running = true
+    }
+
     Timer {
         id: brightApply
         interval: 80
@@ -127,10 +149,10 @@ PanelWindow {
     Item {
         id: card
 
-        x: win.pad
-        y: win.pad
+        x: win.shadowRoom
+        y: win.edge
         width: 380
-        height: Math.min(content.implicitHeight + 28, win.height - 2 * win.pad)
+        height: Math.min(content.implicitHeight + 28, win.height - win.edge - win.shadowRoom)
         opacity: CC.open ? 1 : 0
         focus: true
         Keys.onEscapePressed: CC.open = false
@@ -156,8 +178,15 @@ PanelWindow {
             anchors.fill: parent
             radius: 22
             color: Qt.alpha(Theme.base, 0.86)
-            border.width: 1
-            border.color: Qt.rgba(1, 1, 1, 0.07)
+
+            // 테두리는 바탕 위에 따로 그린다. border를 쓰면 그 1px만큼 바탕이 비어서 아래가 그대로 비친다
+            Rectangle {
+                anchors.fill: parent
+                radius: parent.radius
+                color: "transparent"
+                border.width: 1
+                border.color: Qt.rgba(1, 1, 1, 0.07)
+            }
         }
 
         Flickable {
@@ -239,9 +268,13 @@ PanelWindow {
                         }
 
                         SmallTile {
-                            icon: Icons.camera
-                            label: "스크린샷"
-                            onClicked: CC.closeAndRun("~/.config/hypr/scripts/screenshot.sh area")
+                            icon: win.idleInhibit ? Icons.coffee : Icons.coffeeOff
+                            label: "잠자기 방지"
+                            active: win.idleInhibit
+                            onClicked: {
+                                win.idleInhibit = !win.idleInhibit; // 누르자마자 바뀌어 보이게, 실제 상태는 아래 Timer가 다시 읽는다
+                                Quickshell.execDetached([win.idleScript, "toggle"]);
+                            }
                         }
                     }
                 }

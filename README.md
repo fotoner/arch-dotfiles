@@ -43,8 +43,8 @@ SUPER는 Windows 키입니다.
 | SUPER + E | 파일 관리자(Nautilus) | Finder |
 | Nautilus에서 Space | 고른 파일 빠른 미리보기(Sushi). 이미지를 열면 Loupe, PDF는 Papers | Quick Look, 미리보기 |
 | SUPER + L | 화면 잠금 | Ctrl+Cmd+Q |
-| SUPER + Esc | 전원 메뉴(글자 없는 아이콘 줄, 왼쪽부터): 화면 잠금·로그아웃·잠자기·재시동·시스템 종료 (상단바 Arch 로고, 제어 센터의 전원 버튼도 같음) | 메뉴의 전원 항목 |
-| SUPER + A | 제어 센터 (상단바 시계 왼쪽 토글 아이콘도 같음): Wi-Fi·블루투스 켜짐 표시와 기기 목록(신호 세기, 이어폰 배터리, 바로 연결/해제, 처음 쓰는 Wi-Fi는 암호 입력), 빠른 버튼(방해 금지·마이크·전원 모드·스크린샷, 켜지면 보라색), 밝기·음량 막대와 출력 장치, 재생 중인 미디어, 배터리(충전 상태·남은 시간·충전 한도 80% / 100%), 시스템 사용량(CPU·메모리·디스크·온도). 바깥을 누르거나 Esc로 닫기 | 제어 센터 |
+| SUPER + Esc | 전원 메뉴(글자 없는 아이콘 줄, 왼쪽부터): 화면 잠금·로그아웃·잠자기·재시동·시스템 종료 (제어 센터의 전원 버튼도 같음) | 메뉴의 전원 항목 |
+| SUPER + A | 제어 센터 (상단바 시계 왼쪽 토글 아이콘도 같음): Wi-Fi·블루투스 켜짐 표시와 기기 목록(신호 세기, 이어폰 배터리, 바로 연결/해제, 처음 쓰는 Wi-Fi는 암호 입력), 빠른 버튼(방해 금지·마이크·전원 모드·잠자기 방지, 켜지면 보라색), 밝기·음량 막대와 출력 장치, 재생 중인 미디어, 배터리(충전 상태·남은 시간·충전 한도 80% / 100%), 시스템 사용량(CPU·메모리·디스크·온도). 바깥을 누르거나 Esc로 닫기 | 제어 센터 |
 | SUPER + N | 알림 목록과 방해 금지 (상단바 오른쪽 끝 시계를 눌러도 열림, 시계 오른쪽 클릭 = 방해 금지). 읽지 않은 알림이 있으면 시계 옆에 빨간 점, 방해 금지 중이면 달 | 알림 센터 |
 | SUPER + H | 단축키 도움말 창 | |
 | 음량·밝기 키 | 화면에 팝업으로 표시 | 같음 |
@@ -69,7 +69,7 @@ SUPER는 Windows 키입니다.
 
 로그인하면 첫 화면에 왼쪽 위 fastfetch, 왼쪽 아래 큰 시계, 오른쪽 터미널(입력 대기)이 자동으로 열립니다. 셋 다 보통 터미널 창이라 닫거나 옮겨도 되고, 시계는 q로 끝납니다. 원하지 않으면 `hyprland.lua`의 `startup-layout.sh` 줄을 지우세요.
 
-상단바의 커피잔 아이콘을 누르면 잠자기 방지(화면이 꺼지지 않음)가 켜집니다. 배터리가 20%, 10%가 되면 알림이 뜨고, 유튜브 화면 속 화면(PiP)은 오른쪽 아래에 떠서 모든 워크스페이스에 보입니다.
+상단바의 커피잔 아이콘이나 제어 센터의 커피잔 버튼을 누르면 잠자기 방지(가만히 둬도 화면이 어두워지거나 잠기거나 꺼지지 않고 절전하지 않음)가 켜집니다. 둘은 같은 상태를 씁니다. 터미널에서 링크를 누르는 것처럼 앱이 앞으로 와 달라고 하면 그 창으로 바로 이동합니다(브라우저가 다른 워크스페이스에 있어도). 배터리가 20%, 10%가 되면 알림이 뜨고, 유튜브 화면 속 화면(PiP)은 오른쪽 아래에 떠서 모든 워크스페이스에 보입니다.
 
 자동으로 일어나는 일: 2분 30초 뒤 화면 어둡게, 5분 뒤 잠금, 5분 30초 뒤 화면 끔, 30분 뒤 절전. 덮개를 닫으면 잠근 뒤 절전합니다 (`config/hypr/hypridle.conf`).
 
@@ -152,7 +152,7 @@ SUPER는 Windows 키입니다.
 | `config/hypr/hyprlock.conf` | `~/.config/hypr/` | 잠금 화면 |
 | `config/hypr/hyprpaper.conf`, `wallpaper.png` | `~/.config/hypr/` | 바탕화면 |
 | `config/hypr/hyprtoolkit.conf` | `~/.config/hypr/` | 앱 검색 창(hyprlauncher) 등 Hypr 앱 색 |
-| `config/waybar/config.jsonc` | `~/.config/waybar/` | 상단 막대(화면 위에 붙은 직선 막대): 왼쪽 Arch 로고(누르면 전원 메뉴)·재생 중인 미디어(제목·아티스트·재생 시간, 긴 제목은 전광판처럼 흐름, 일시정지하면 ⏸로 10초 보인 뒤 숨김. 클릭 = 그 앱으로 이동, 오른쪽 클릭 = 재생/일시정지, 가운데 클릭 = 다음 곡), 가운데 워크스페이스(지금 보는 곳은 채운 점, 나머지는 테두리 점), 오른쪽 트레이·잠자기 방지·전원 모드·음량·배터리(충전 상태별 아이콘)·A/한/あ 입력기 배지·Wi-Fi(누르면 제어 센터 Wi-Fi 목록)·제어 센터·시계(알림 빨간 점) |
+| `config/waybar/config.jsonc` | `~/.config/waybar/` | 상단 막대(화면 위에 붙은 직선 막대): 왼쪽 끝 오디오 파형·날씨(소리가 나면 cava 파형 막대 8개가 펼쳐지고, 조용해지면 접히며 지역 날씨 아이콘·기온으로 바뀜. 위치는 IP로 추정, 날씨는 Open-Meteo. 클릭 = 재생 중인 앱으로 이동, 오른쪽 클릭 = 재생/일시정지)·재생 중인 미디어(제목·아티스트·재생 시간, 긴 제목은 전광판처럼 흐름, 일시정지하면 ⏸로 10초 보인 뒤 숨김. 클릭 = 그 앱으로 이동, 오른쪽 클릭 = 재생/일시정지, 가운데 클릭 = 다음 곡), 가운데 워크스페이스 번호(지금 보는 곳은 보라 원), 오른쪽 트레이·잠자기 방지·전원 모드·음량·배터리(충전 상태별 아이콘)·A/한/あ 입력기 배지·Wi-Fi(누르면 제어 센터 Wi-Fi 목록)·제어 센터·시계(알림 빨간 점) |
 | `config/waybar/style.css`, `mocha.css` | `~/.config/waybar/` | 상단 막대 모양과 색 |
 | `config/kitty/kitty.conf`, `current-theme.conf` | `~/.config/kitty/` | 터미널 글꼴·여백·색 |
 | `config/quickshell/` | `~/.config/quickshell/` | 제어 센터 (Quickshell, QML). `shell.qml`이 시작점, `qs ipc call cc toggle` / `open wifi·bluetooth·sound`로 열기 |
@@ -162,6 +162,9 @@ SUPER는 Windows 키입니다.
 | `config/hypr/scripts/ime-status.sh` | `~/.config/hypr/scripts/` | 상단바 입력기 배지 A / 한 / あ (fcitx5 트레이 아이콘 대신) |
 | `config/hypr/scripts/wifi-menu.sh` | `~/.config/hypr/scripts/` | nmtui Wi-Fi 창 (Catppuccin 색). 상단바 Wi-Fi 오른쪽 클릭, 제어 센터의 "네트워크 설정…" |
 | `config/hypr/scripts/media-status.sh` | `~/.config/hypr/scripts/` | 상단바 미디어 표시 (재생 시간, 긴 제목 흐르기, 일시정지 10초 뒤 숨김) |
+| `config/hypr/scripts/audio-wave.sh` | `~/.config/hypr/scripts/` | 상단바 왼쪽 끝: 소리가 나면 오디오 파형(cava 출력을 ▁▂▃▄▅▆▇█ 막대로), 조용하면 날씨 |
+| `config/hypr/scripts/idle-inhibit.sh` | `~/.config/hypr/scripts/` | 잠자기 방지 켜기/끄기 (`systemd-inhibit --what=idle`). 상단바 커피잔과 제어 센터 버튼이 같이 쓴다 |
+| `config/hypr/scripts/weather.sh` | `~/.config/hypr/scripts/` | 지역 날씨를 Waybar JSON으로 (IP로 위치 추정, Open-Meteo). 위치가 틀리면 파일 맨 위 `LAT`·`LON`·`CITY`를 적는다 |
 | `config/chrome-flags.conf` | `~/.config/` | Chrome 영상 하드웨어 가속 (인텔 GPU로 영상 디코딩, 발열·배터리 절약) |
 | `config/spotify-launcher.conf` | `~/.config/` | Spotify 공식 앱을 Wayland로 실행 (선명한 글자, 한글 입력) |
 | `config/hypr/scripts/startup-layout.sh` | `~/.config/hypr/scripts/` | 로그인 첫 화면 배치: 왼쪽 위 fastfetch, 왼쪽 아래 시계, 오른쪽 터미널(포커스) |
@@ -173,7 +176,9 @@ SUPER는 Windows 키입니다.
 | `home/.local/share/icons/hicolor/scalable/apps/power-menu-*.svg` | `~/.local/share/icons/...` | 전원 메뉴 아이콘 (동그란 바탕 + 단색 선 아이콘, 직접 그림) |
 | `config/gtk-4.0/gtk.css`, `config/gtk-3.0/gtk.css` | `~/.config/gtk-4.0/`, `~/.config/gtk-3.0/` | GTK4·libadwaita와 GTK3 앱(파일 관리자, 음량 창 등) 색을 Catppuccin Mocha로 |
 | `config/wireplumber/wireplumber.conf.d/51-hide-hdmi.conf` | `~/.config/wireplumber/wireplumber.conf.d/` | 꽂혀 있지 않은 HDMI 소리 출력 3개 숨기기 (HDMI 모니터로 소리를 내려면 지우고 `systemctl --user restart wireplumber`) |
-| `config/fontconfig/fonts.conf` | `~/.config/fontconfig/` | 웹페이지의 맥 전용 글꼴 이름(`-apple-system` 등)을 Inter로 |
+| `config/fastfetch/config.jsonc` | `~/.config/fastfetch/` | fastfetch: 왼쪽 원형 프로필 사진, 오른쪽 상자에 시스템·데스크톱·하드웨어 (글자 없이 아이콘과 값만, Catppuccin 색) |
+| `config/fastfetch/face.sh` | `~/.config/fastfetch/` | `~/.face`(잠금 화면 사진)를 원형 + 보라→파랑 링으로 잘라 `~/.cache/fastfetch/face.png`에 둔다. 사진이 없으면 기본 Arch 로고 |
+| `config/fontconfig/fonts.conf` | `~/.config/fontconfig/` | 웹페이지의 맥 전용 글꼴 이름(`-apple-system` 등)을 Inter로, 한글 글꼴은 힌팅을 꺼서 GTK4 앱에서 글자 윗부분이 잘리지 않게 |
 | `config/fcitx5/conf/classicui.conf`, `home/.local/share/fcitx5/themes/` | `~/.config/fcitx5/conf/`, `~/.local/share/fcitx5/themes/` | 입력기 후보 창 테마 |
 | `config/fcitx5/profile`, `config` | `~/.config/fcitx5/` | 입력기 목록(영어, 한글, 일본어), 전환 키(Ctrl+Space로 차례로), 모든 창이 같은 입력 상태 |
 | `config/git/config`, `ignore` | `~/.config/git/` | git 이름, LFS, 전역 gitignore |

@@ -233,6 +233,8 @@ hl.config({
         force_default_wallpaper = 0,
         disable_hyprland_logo   = true,
         background_color        = 0xff1e1e2e,
+        -- 앱이 앞으로 와 달라고 하면 그 창으로 간다 (터미널에서 링크를 누르면 다른 워크스페이스의 브라우저로 바로 이동)
+        focus_on_activate       = true,
     },
 })
 
@@ -503,10 +505,11 @@ hl.layer_rule({
     ignore_alpha = 0.3,
 })
 
--- 화면 속 화면(PiP): 타일에 끼지 않고 오른쪽 아래 구석에 떠서 모든 워크스페이스에 보이게
+-- 화면 속 화면(PiP): 타일에 끼지 않고 오른쪽 아래 구석에 떠서 모든 워크스페이스에 보이게.
+-- 창 제목은 브라우저 언어를 따른다 (한국어 Chrome은 "PIP 모드", 이 창은 class가 비어 있다)
 hl.window_rule({
     name              = "pip",
-    match             = { title = "^(Picture[- ]in[- ][Pp]icture)$" },
+    match             = { title = "^(Picture[- ]in[- ][Pp]icture|PIP 모드|화면 속 화면)$" },
     float             = true,
     pin               = true,
     keep_aspect_ratio = true,

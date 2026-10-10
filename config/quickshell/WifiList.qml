@@ -121,6 +121,7 @@ Card {
                     spacing: 10
 
                     Glyph {
+                        Layout.preferredWidth: 18
                         text: Icons.wifi(entry.net.signalStrength)
                         font.pixelSize: 15
                         color: entry.net.connected ? Theme.mauve : Theme.text

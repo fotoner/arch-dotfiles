@@ -29,5 +29,6 @@ Singleton {
     readonly property color line: Qt.rgba(1, 1, 1, 0.05)
 
     readonly property string font: "Inter"
-    readonly property string iconFont: "JetBrainsMono Nerd Font"
+    // Propo: 아이콘 폭이 그림 폭과 같다. 그냥 "Nerd Font"는 폭을 한 글자 칸으로 잡아서 가운데 정렬해도 그림이 오른쪽으로 밀린다
+    readonly property string iconFont: "JetBrainsMono Nerd Font Propo"
 }

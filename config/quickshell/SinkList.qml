@@ -40,6 +40,7 @@ ColumnLayout {
                 spacing: 10
 
                 Glyph {
+                    Layout.preferredWidth: 18
                     text: /head|bluez/i.test(entry.modelData.name + entry.label) ? Icons.headphones : Icons.speaker
                     font.pixelSize: 14
                     color: entry.current ? Theme.mauve : Theme.text

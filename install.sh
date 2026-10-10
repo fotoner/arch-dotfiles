@@ -59,6 +59,8 @@ PKGS=(
   spotify-launcher libva-utils
   # 소리
   pipewire pipewire-pulse pipewire-alsa wireplumber pavucontrol
+  # 상단바 오디오 파형
+  cava
   # 글꼴
   noto-fonts noto-fonts-cjk noto-fonts-emoji ttf-jetbrains-mono-nerd
   # 테마: 바탕화면, 아이콘
@@ -72,6 +74,8 @@ PKGS=(
   # 터미널 도구, zsh 플러그인 (mac-dotfiles에서 가져옴)
   zsh-autosuggestions zsh-syntax-highlighting zsh-completions
   bat eza fd fzf jq tmux tree lazygit htop btop fastfetch git-lfs github-cli unzip
+  # fastfetch 원형 프로필 사진 만들기
+  ffmpeg
   # Neovim(LazyVim)과 짝꿍 (npm: LSP 설치용)
   neovim tree-sitter-cli shfmt stylua npm
   # 앱: 메신저, VPN
@@ -195,6 +199,9 @@ place hypr/scripts/ime-status.sh
 place hypr/scripts/ime-cycle.sh
 place hypr/scripts/media-focus.sh
 place hypr/scripts/media-status.sh
+place hypr/scripts/audio-wave.sh
+place hypr/scripts/weather.sh
+place hypr/scripts/idle-inhibit.sh
 place hypr/scripts/startup-layout.sh
 place hypr/scripts/big-clock.sh
 place chrome-flags.conf
@@ -205,6 +212,9 @@ place swayosd/style.css
 place nwg-bar/bar.json
 place nwg-bar/style.css
 place fontconfig/fonts.conf
+place fastfetch/config.jsonc
+place fastfetch/face.sh
+chmod +x "$HOME/.config/fastfetch/face.sh"
 place gtk-4.0/gtk.css
 place gtk-3.0/gtk.css
 place wireplumber/wireplumber.conf.d/51-hide-hdmi.conf
