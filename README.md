@@ -177,6 +177,8 @@ SUPER는 Windows 키입니다.
 | `config/swayosd/style.css` | `~/.config/swayosd/` | 음량·밝기 팝업 |
 | `config/nwg-bar/bar.json`, `style.css` | `~/.config/nwg-bar/` | 전원 메뉴 |
 | `home/.local/share/icons/hicolor/scalable/apps/power-menu-*.svg` | `~/.local/share/icons/...` | 전원 메뉴 아이콘 (동그란 바탕 + 단색 선 아이콘, 직접 그림) |
+| `home/.local/share/icons/hicolor/scalable/apps/tailscale.svg` | `~/.local/share/icons/...` | Tailscale 앱 아이콘 (둥근 네모 바탕 + 3x3 점, 직접 그림) |
+| `home/.local/share/applications/tailscale.desktop` | `~/.local/share/applications/` | Vicinae에서 "Tailscale"로 검색하면 트레이 아이콘(`tailscale systray`)을 띄움. 이미 떠 있으면 다시 띄우지 않음 |
 | `config/gtk-4.0/gtk.css`, `config/gtk-3.0/gtk.css` | `~/.config/gtk-4.0/`, `~/.config/gtk-3.0/` | GTK4·libadwaita와 GTK3 앱(파일 관리자, 음량 창 등) 색을 Catppuccin Mocha로 |
 | `config/wireplumber/wireplumber.conf.d/51-hide-hdmi.conf` | `~/.config/wireplumber/wireplumber.conf.d/` | 꽂혀 있지 않은 HDMI 소리 출력 3개 숨기기 (HDMI 모니터로 소리를 내려면 지우고 `systemctl --user restart wireplumber`) |
 | `config/fastfetch/config.jsonc` | `~/.config/fastfetch/` | fastfetch: 왼쪽 원형 프로필 사진, 오른쪽 상자에 시스템·데스크톱·하드웨어 (글자 없이 아이콘과 값만, Catppuccin 색) |
@@ -202,7 +204,7 @@ SUPER는 Windows 키입니다.
 - [Hyprland Master tutorial](https://wiki.hypr.land/Getting-Started/Master-Tutorial/) · [Must-have](https://wiki.hypr.land/Useful-Utilities/Must-have/) · [hypridle](https://wiki.hypr.land/Hypr-Ecosystem/hypridle/) · [hyprlock](https://wiki.hypr.land/Hypr-Ecosystem/hyprlock/)
 - [ArchWiki: Lenovo ThinkPad T14/T14s (Intel) Gen 1](https://wiki.archlinux.org/title/Lenovo_ThinkPad_T14/T14s_(Intel)_Gen_1) · [ArchWiki: Fcitx5](https://wiki.archlinux.org/title/Fcitx5) · [ArchWiki: Snapper](https://wiki.archlinux.org/title/Snapper)
 - Google Chrome, [Vicinae](https://vicinae.com), 맥 커서, 음량 창(pwvucontrol)은 공식 저장소에 없어서 `install.sh`가 AUR의 `google-chrome`, `vicinae-bin`, `apple_cursor`, `pwvucontrol`을 받아 빌드합니다. pwvucontrol은 Rust로 소스를 빌드해서 몇 분 걸립니다. AUR은 누구나 올릴 수 있으니 바뀐 PKGBUILD가 걱정되면 `~/.cache/aur/<패키지>/PKGBUILD`를 먼저 읽어 보세요. 업데이트는 `pacman -Syu`로 되지 않으니 같은 폴더에서 `git pull && makepkg -si`를 실행합니다.
-- Tailscale은 `install.sh`가 서비스만 켭니다. 처음 한 번 `sudo tailscale up`으로 로그인하세요. 연결되면 `/etc/resolv.conf`를 Tailscale이 직접 관리합니다(MagicDNS).
+- Tailscale은 `install.sh`가 서비스만 켭니다. 처음 한 번 `sudo tailscale up --operator=$USER`로 로그인하세요. `--operator`가 있어야 트레이 메뉴에서 sudo 없이 연결을 켜고 끄거나 exit node를 바꿀 수 있습니다(이미 로그인했다면 `sudo tailscale set --operator=$USER`). 트레이 아이콘은 Vicinae에서 "Tailscale"을 실행하면 뜹니다(`tailscale systray`). 연결되면 `/etc/resolv.conf`를 Tailscale이 직접 관리합니다(MagicDNS).
 - Vicinae의 "활성 창에 붙여넣기"와 스니펫 기능은 키보드 입력을 감시하는 도우미가 필요해서, 설치할 때 그 도우미에 권한(`cap_dac_override`)을 줍니다. 필요 없으면 `settings.json`에 `"input_server": { "enabled": false }`를 넣으세요.
 - 리눅스에는 무릎 위 감지(lap mode)가 없어서 "performance" 전원 모드에서는 75°C를 넘을 수 있습니다. 무릎 위에서는 balanced 이하로 두세요.
 - [CodexBar](https://github.com/steipete/CodexBar)(AI 사용량, 상단바 트레이)는 `install.sh`가 GitHub 공식 배포 파일을 받아 체크섬을 확인한 뒤 `~/.local`에 설치합니다. 업데이트도 같은 방법이라, 새 버전을 쓰려면 `~/.local/bin/codexbar-linux`를 지우고 `install.sh`를 다시 실행하세요. 보여줄 서비스(Claude, Codex 등)는 트레이 아이콘 → Settings → Providers에서 고릅니다.

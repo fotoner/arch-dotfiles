@@ -239,6 +239,7 @@ place fcitx5/config
 place fcitx5/conf/classicui.conf
 (cd "$REPO_DIR/home" && find .local/share/fcitx5 -type f) | while read -r f; do place_home "$f"; done
 (cd "$REPO_DIR/home" && find .local/share/icons -type f) | while read -r f; do place_home "$f"; done
+place_home .local/share/applications/tailscale.desktop
 place_home .local/share/applications/display-settings.desktop
 place git/config
 place git/ignore
@@ -279,7 +280,7 @@ fi
 if tailscale status >/dev/null 2>&1; then
   note "Tailscale: 연결됨"
 else
-  note "Tailscale: 로그인 전입니다. 연결하려면: sudo tailscale up"
+  note "Tailscale: 로그인 전입니다. 연결하려면: sudo tailscale up --operator=\$USER"
 fi
 if swapon --show 2>/dev/null | grep zram >/dev/null; then note "zram 스왑: 정상"; else note "zram 스왑: 안 보임 (재부팅 후 다시 확인)"; fi
 if [ "$(cat /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || echo '?')" = 0 ]; then

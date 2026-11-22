@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Tailscale
+GenericName=VPN
+Comment=트레이에 Tailscale 아이콘 띄우기 (연결, 기기 목록, exit node)
+# 이미 떠 있으면 하나 더 띄우지 않는다. 바(waybar)가 어두워서 흰 점 + 투명 바탕(dark:nobg)
+Exec=sh -c "pgrep -f '^tailscale systray' >/dev/null || exec tailscale systray --theme dark:nobg"
+Icon=tailscale
+Terminal=false
+Categories=Network;
+Keywords=vpn;tailnet;테일스케일;

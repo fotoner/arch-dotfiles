@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- Tailscale 앱 아이콘: 둥근 네모 바탕(Catppuccin surface0) 위에 3x3 점. 연결 로고처럼 가운데 줄과 아래 가운데만 밝게(text), 나머지는 흐리게(overlay0) -->
+  <rect x="2" y="2" width="44" height="44" rx="11" fill="#313244"/>
+  <g fill="#6c7086">
+    <circle cx="14" cy="14" r="4"/><circle cx="24" cy="14" r="4"/><circle cx="34" cy="14" r="4"/>
+    <circle cx="14" cy="34" r="4"/><circle cx="34" cy="34" r="4"/>
+  </g>
+  <g fill="#cdd6f4">
+    <circle cx="14" cy="24" r="4"/><circle cx="24" cy="24" r="4"/><circle cx="34" cy="24" r="4"/>
+    <circle cx="24" cy="34" r="4"/>
+  </g>
+</svg>
