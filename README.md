@@ -101,6 +101,7 @@ SUPER는 Windows 키입니다.
 | Alt + Shift + V | 클립보드 기록: 예전에 복사한 글·이미지를 골라 다시 붙여넣기 (Vicinae, 비밀번호 관리자에서 복사한 것은 따로 처리) | Raycast Clipboard History |
 | Alt + Shift + 3 | 스크린샷: 전체 화면을 `~/Pictures/Screenshots`에 저장 + 클립보드 복사 | 같음 |
 | Alt + Shift + 4 | 스크린샷: 영역을 골라 편집기(satty)로. Enter = 저장 + 복사 | 같음 (찍은 뒤 마크업) |
+| Alt + Shift + 5 | 화면 녹화: 아래에 도구 막대(전체 화면 / 영역 선택, 소리 없음 / 시스템 소리 / 마이크). 녹화 중에는 상단바에 빨간 ● 시간, 누르거나 Alt + Shift + 5를 다시 누르면 멈춤. `~/Videos/Screen Recordings`에 mp4 (인텔 GPU 인코딩) | ⌘⇧5 |
 | Alt + Tab | 지금 워크스페이스의 다음 창 (Shift를 더하면 이전 창) | 같음 |
 | Alt + ← / → | 줄 처음 / 끝 (Shift를 더하면 선택). 파일 관리자에서는 뒤로 / 앞으로 | Alt + ←→ 그대로 |
 | Alt + ↑ / ↓ | 문서 처음 / 끝 (Shift를 더하면 선택). 파일 관리자에서는 상위 폴더 / 열기 | Alt + ↑↓ 그대로 |

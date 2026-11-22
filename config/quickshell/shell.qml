@@ -4,6 +4,7 @@
 // 디스플레이 설정 창: 제어 센터 → 디스플레이, qs ipc call display open
 // 단축키 시트: Super+H, qs ipc call keys toggle
 // 전원 모드: qs ipc call power cycle|set <모드>|get
+// 화면 녹화 도구 막대: Alt+Shift+5 (screenrecord.sh toggle), qs ipc call record open
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -13,6 +14,10 @@ ShellRoot {
     DisplaySettings {}
     DisplayOverlay {}
     ShortcutSheet {}
+
+    RecordBar {
+        id: recordBar
+    }
 
     IpcHandler {
         target: "cc"
@@ -39,6 +44,20 @@ ShellRoot {
 
         function hide(): void {
             CC.open = false;
+        }
+    }
+
+    IpcHandler {
+        target: "record"
+
+        // qs ipc call record open|close
+        function open(): void {
+            CC.open = false;
+            recordBar.show();
+        }
+
+        function close(): void {
+            recordBar.open = false;
         }
     }
 

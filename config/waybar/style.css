@@ -93,6 +93,7 @@ window#waybar {
     padding: 0 6px;
 }
 
+#custom-recording         { color: @red; font-weight: bold; padding: 0 8px; }
 #custom-power             { color: @peach; }
 #custom-power.performance { color: @red; }
 #custom-power.power-saver { color: @green; }

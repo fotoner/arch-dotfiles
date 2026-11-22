@@ -11,6 +11,7 @@
     "hyprland/workspaces"
   ],
   "modules-right": [
+    "custom/recording",
     "tray",
     "custom/idle",
     "custom/power",
@@ -49,6 +50,11 @@
     "interval": "once",
     "signal": 9,
     "on-click": "~/.config/hypr/scripts/idle-inhibit.sh toggle"
+  },
+  "custom/recording": {
+    "exec": "~/.config/hypr/scripts/screenrecord.sh waybar",
+    "return-type": "json",
+    "on-click": "~/.config/hypr/scripts/screenrecord.sh stop"
   },
   "custom/power": {
     "exec": "~/.config/hypr/scripts/power-mode.sh",

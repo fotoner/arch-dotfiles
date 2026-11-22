@@ -71,8 +71,8 @@ PKGS=(
   hyprshutdown swayosd nwg-bar adw-gtk-theme inter-font
   # 맥의 미리보기·Quick Look: 이미지 보기, PDF 보기, Nautilus에서 Space로 빠른 미리보기
   loupe papers sushi
-  # 배터리 부족 알림, 스크린샷 편집기, 폴더 바로 이동
-  batsignal satty zoxide
+  # 배터리 부족 알림, 스크린샷 편집기, 화면 녹화(Alt+Shift+5), 폴더 바로 이동
+  batsignal satty wf-recorder zoxide
   # 터미널 도구, zsh 플러그인 (mac-dotfiles에서 가져옴)
   zsh-autosuggestions zsh-syntax-highlighting zsh-completions
   bat eza fd fzf jq tmux tree lazygit htop btop fastfetch git-lfs github-cli unzip
@@ -222,6 +222,7 @@ place hypr/scripts/idle-inhibit.sh
 place hypr/scripts/startup-layout.sh
 place hypr/scripts/big-clock.sh
 place hypr/scripts/power-mode.sh
+place hypr/scripts/screenrecord.sh
 place chrome-flags.conf
 place spotify-launcher.conf
 chmod +x "$HOME/.config/hypr/scripts/"*.sh

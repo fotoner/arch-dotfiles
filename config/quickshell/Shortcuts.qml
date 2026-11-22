@@ -28,11 +28,12 @@ Singleton {
             ]
         },
         {
-            title: "스크린샷",
+            title: "스크린샷·녹화",
             icon: "\u{f0104}",
             items: [
                 { keys: "Alt+Shift+3", desc: "전체 화면 저장" },
                 { keys: "Alt+Shift+4", desc: "영역을 골라 편집 (Enter = 저장·복사)" },
+                { keys: "Alt+Shift+5", desc: "화면 녹화 (다시 누르면 멈춤)" },
                 { keys: "Print", desc: "영역을 클립보드로" },
                 { keys: "Shift+Print", desc: "전체 화면을 ~/Pictures에" }
             ]

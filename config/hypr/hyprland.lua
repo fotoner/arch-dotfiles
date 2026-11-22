@@ -383,6 +383,8 @@ hl.bind("SHIFT + Print", hl.dsp.exec_cmd('mkdir -p ~/Pictures && grim ~/Pictures
 -- 맥식 스크린샷 (Alt = Cmd): Alt+Shift+3 전체 화면, Alt+Shift+4 영역을 골라 편집기로. 파일은 ~/Pictures/Screenshots
 hl.bind("ALT + SHIFT + 3", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot.sh full"))
 hl.bind("ALT + SHIFT + 4", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot.sh area"))
+-- 맥식 화면 녹화 (Alt+Shift+5): 녹화 도구 막대를 띄우고, 녹화 중이면 멈춘다. 파일은 ~/Videos/Screen Recordings
+hl.bind("ALT + SHIFT + 5", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenrecord.sh toggle"))
 
 -- 맥식 단축키: 스페이스바 옆 Alt를 맥의 Cmd처럼 쓴다 (ThinkPad의 Alt 자리가 맥의 Cmd 자리)
 -- 리눅스 앱은 맥의 ⌘ 단축키를 Ctrl로 쓰므로, 일반 앱에는 Alt+키를 Ctrl+키로, Alt+Shift+키를 Ctrl+Shift+키로 바꿔 보낸다.
@@ -407,7 +409,7 @@ local function passThrough(win)
     return terminalClasses[win.class] or win.class:match("^steam_app_") ~= nil or win.class == "gamescope"
 end
 
--- Alt(+Shift)+키 → Ctrl(+Shift)+키. Q(창 닫기)와 V(붙여넣기)는 아래에 따로, Alt+Shift+3·4는 스크린샷
+-- Alt(+Shift)+키 → Ctrl(+Shift)+키. Q(창 닫기)와 V(붙여넣기)는 아래에 따로, Alt+Shift+3·4·5는 스크린샷·화면 녹화
 local cmdKeys = {}
 for c in ("ABCDEFGHIJKLMNOPRSTUWXYZ"):gmatch(".") do cmdKeys[#cmdKeys + 1] = c end
 for _, k in ipairs({ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "bracketleft", "bracketright", "minus", "equal",
@@ -415,7 +417,7 @@ for _, k in ipairs({ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "bracketl
     cmdKeys[#cmdKeys + 1] = k
 end
 local repeatKeys = { Z = true, minus = true, equal = true } -- 누르고 있으면 반복: 실행 취소, 축소·확대
-local reserved = { ["ALT + SHIFT + 3"] = true, ["ALT + SHIFT + 4"] = true }
+local reserved = { ["ALT + SHIFT + 3"] = true, ["ALT + SHIFT + 4"] = true, ["ALT + SHIFT + 5"] = true } -- 스크린샷, 화면 녹화
 
 for _, key in ipairs(cmdKeys) do
     for _, shift in ipairs({ false, true }) do
@@ -623,10 +625,10 @@ hl.layer_rule({
     no_anim      = true,
 })
 
--- 디스플레이 설정 창, 유지 확인 창, 화면 이름표, 단축키 시트(Quickshell)도 뒤를 흐리게
+-- 디스플레이 설정 창, 유지 확인 창, 화면 이름표, 단축키 시트, 화면 녹화 막대(Quickshell)도 뒤를 흐리게
 hl.layer_rule({
     name         = "quickshell-panels",
-    match        = { namespace = "^quickshell-(display|shortcuts)" },
+    match        = { namespace = "^quickshell-(display|shortcuts|record)" },
     blur         = true,
     ignore_alpha = 0.5,
     no_anim      = true,
