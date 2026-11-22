@@ -116,7 +116,7 @@ python3 dolby_to_pipewire.py                       # ~/.config/pipewire/pipewire
 | Alt + Shift + 3 | 스크린샷: 전체 화면을 `~/Pictures/Screenshots`에 저장 + 클립보드 복사 | 같음 |
 | Alt + Shift + 4 | 스크린샷: 영역을 골라 편집기(satty)로. Enter = 저장 + 복사 | 같음 (찍은 뒤 마크업) |
 | Alt + Shift + 5 | 화면 녹화: 아래에 도구 막대(전체 화면 / 영역 선택, 소리 없음 / 시스템 소리 / 마이크). 녹화 중에는 상단바에 빨간 ● 시간, 누르거나 Alt + Shift + 5를 다시 누르면 멈춤. `~/Videos/Screen Recordings`에 mp4 (인텔 GPU 인코딩) | ⌘⇧5 |
-| Alt + Tab | 지금 워크스페이스의 다음 창 (Shift를 더하면 이전 창) | 같음 |
+| Alt + Tab | 앱 바꾸기: 빠르게 한 번 = 직전에 쓰던 앱으로, Alt를 누른 채 Tab = 가운데에 최근 순서대로 앱 아이콘이 뜨고 Tab(Shift+Tab, ←→)으로 고른 뒤 Alt를 떼면 그 앱으로. 고르는 동안에는 포커스도 커서도 그대로이고 Alt를 떼는 순간에만 넘어가며 커서도 그때 따라감(Hyprland의 Alt 떼기 바인딩). 한 바퀴 돌아 지금 쓰던 앱에서 떼면 아무것도 하지 않음(커서가 튀지 않음). 워크스페이스·모니터와 상관없이 앱 단위 (Quickshell `AppSwitcher.qml`) | ⌘Tab |
 | Alt + ← / → | 줄 처음 / 끝 (Shift를 더하면 선택). 파일 관리자에서는 뒤로 / 앞으로 | Alt + ←→ 그대로 |
 | Alt + ↑ / ↓ | 문서 처음 / 끝 (Shift를 더하면 선택). 파일 관리자에서는 상위 폴더 / 열기 | Alt + ↑↓ 그대로 |
 | Alt + Backspace | 줄 처음까지 지우기. 파일 관리자에서는 휴지통으로 | Alt + Backspace 그대로 (단어 지우기) |

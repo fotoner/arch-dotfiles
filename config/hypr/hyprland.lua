@@ -506,14 +506,27 @@ hl.bind("ALT + Q",     hl.dsp.window.close()) -- 맥의 Cmd+Q: 앱 전체 종료
 hl.bind("ALT + SHIFT + Q", hl.dsp.exec_cmd("qs ipc call session logout")) -- 맥의 Cmd+Shift+Q: 확인 창을 띄운 뒤 로그아웃
 hl.bind("ALT + space", hl.dsp.exec_cmd("vicinae toggle")) -- 맥의 Cmd+Space: Raycast 대신 Vicinae
 hl.bind("ALT + SHIFT + V", hl.dsp.exec_cmd("vicinae cmd launch clipboard:history")) -- 클립보드 기록 (Raycast의 Clipboard History)
-hl.bind("ALT + Tab", function()               -- 맥의 Cmd+Tab: 지금 워크스페이스의 다음 창으로
-    hl.dispatch(hl.dsp.window.cycle_next())
-    hl.dispatch(hl.dsp.window.bring_to_top())
+-- 맥의 Cmd+Tab: 빠르게 한 번 = 직전에 쓰던 앱으로, Alt를 누른 채 Tab = 앱 목록에서 고르기 (워크스페이스·모니터 상관없이).
+-- 목록과 고르기는 Quickshell 앱 전환기(~/.config/quickshell/AppSwitcher.qml)가 한다
+-- 전환 중에 Alt를 떼는 순간에만 넘어간다. 평소 Alt를 뗄 때(복사 등)는 아무것도 하지 않고, 앱도 Alt 떼기를 그대로 받는다(non_consuming)
+local switching = false
+hl.bind("ALT + Tab", function()
+    switching = true
+    hl.dispatch(hl.dsp.exec_cmd("qs ipc call switcher next"))
 end)
 hl.bind("ALT + SHIFT + Tab", function()
-    hl.dispatch(hl.dsp.window.cycle_next({ next = false }))
-    hl.dispatch(hl.dsp.window.bring_to_top())
+    switching = true
+    hl.dispatch(hl.dsp.exec_cmd("qs ipc call switcher prev"))
 end)
+for _, alt in ipairs({ "Alt_L", "Alt_R" }) do
+    for _, mods in ipairs({ "ALT", "ALT + SHIFT" }) do -- Shift+Tab으로 고르다 Shift를 누른 채 Alt를 먼저 떼도
+        hl.bind(mods .. " + " .. alt, function()
+            if not switching then return end
+            switching = false
+            hl.dispatch(hl.dsp.exec_cmd("qs ipc call switcher release"))
+        end, { release = true, non_consuming = true, transparent = true })
+    end
+end
 
 
 --------------------------------
@@ -634,10 +647,10 @@ hl.layer_rule({
     no_anim      = true,
 })
 
--- 디스플레이 설정 창, 유지 확인 창, 화면 이름표, 단축키 시트, 화면 녹화 막대, 로그아웃 확인 창(Quickshell)도 뒤를 흐리게
+-- 디스플레이 설정 창, 유지 확인 창, 화면 이름표, 단축키 시트, 화면 녹화 막대, 앱 전환기, 로그아웃 확인 창(Quickshell)도 뒤를 흐리게
 hl.layer_rule({
     name         = "quickshell-panels",
-    match        = { namespace = "^quickshell-(display|shortcuts|record|session)" },
+    match        = { namespace = "^quickshell-(display|shortcuts|record|switcher|session)" },
     blur         = true,
     ignore_alpha = 0.5,
     no_anim      = true,

@@ -22,7 +22,7 @@ Singleton {
                 { keys: "Alt+⌫", desc: "줄 처음까지 지우기" },
                 { keys: "Ctrl+Alt+키", desc: "맥의 ⌘⌥+키" },
                 { keys: "Alt+Q", desc: "창 닫기" },
-                { keys: "Alt+Tab", desc: "다음 창 (Shift: 이전 창)" },
+                { keys: "Alt+Tab", desc: "앱 바꾸기 (누른 채 Tab으로 고르기)" },
                 { keys: "Alt+Space", desc: "Vicinae: 앱·계산기·이모지" },
                 { keys: "Alt+Shift+V", desc: "클립보드 기록" }
             ]

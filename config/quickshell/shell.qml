@@ -5,6 +5,7 @@
 // 단축키 시트: Super+H, qs ipc call keys toggle
 // 전원 모드: qs ipc call power cycle|set <모드>|get
 // 화면 녹화 도구 막대: Alt+Shift+5 (screenrecord.sh toggle), qs ipc call record open
+// 앱 전환기 (맥 ⌘Tab): Alt+Tab, qs ipc call switcher next|prev
 // 로그아웃 확인 창 (맥 ⌘⇧Q): Alt+Shift+Q, Super+M, qs ipc call session logout
 import QtQuick
 import Quickshell
@@ -18,6 +19,10 @@ ShellRoot {
 
     RecordBar {
         id: recordBar
+    }
+
+    AppSwitcher {
+        id: appSwitcher
     }
 
     SessionDialog {
@@ -63,6 +68,27 @@ ShellRoot {
 
         function close(): void {
             sessionDialog.open = false;
+        }
+    }
+
+    IpcHandler {
+        target: "switcher"
+
+        // qs ipc call switcher next|prev|release|cancel : Hyprland의 Alt+Tab, Alt+Shift+Tab, 전환 중 Alt 떼기
+        function next(): void {
+            appSwitcher.next();
+        }
+
+        function prev(): void {
+            appSwitcher.prev();
+        }
+
+        function release(): void {
+            appSwitcher.release();
+        }
+
+        function cancel(): void {
+            appSwitcher.reset();
         }
     }
 
