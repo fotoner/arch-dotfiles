@@ -84,7 +84,7 @@ Singleton {
                 { keys: "Ctrl+Space", desc: "입력기 A → 한 → あ" },
                 { keys: "Super+L", desc: "화면 잠금" },
                 { keys: "Super+Esc", desc: "전원 메뉴" },
-                { keys: "Super+M", desc: "로그아웃" }
+                { keys: "Alt+Shift+Q", desc: "로그아웃 (확인 창, Super+M도)" }
             ]
         },
         {

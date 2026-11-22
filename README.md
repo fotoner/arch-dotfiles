@@ -59,7 +59,7 @@ SUPER는 Windows 키입니다.
 | 세 손가락 좌우 쓸기 | 워크스페이스 전환 | 같음 |
 | Print | 영역 스크린샷을 클립보드로 | Cmd+Shift+Ctrl+4 |
 | Shift + Print | 전체 화면을 `~/Pictures`에 저장 | Cmd+Shift+3 |
-| SUPER + M | 앱을 정리하고 로그아웃 (hyprshutdown) | 로그아웃 |
+| SUPER + M | 로그아웃 확인 창 (실수로 눌러도 바로 로그아웃되지 않음. "로그아웃"이나 Enter를 누르면 앱을 정리하고 로그아웃, hyprshutdown) | 로그아웃 |
 
 입력기는 영어, 한글, 일본어(Mozc, 로마자 입력) 세 개입니다. **Ctrl+Space**를 누를 때마다 A → 한 → あ 순서로 바뀌고(한/영 키가 있으면 그 키는 영어 ↔ 한글), 지금 상태는 상단바의 "A" / "한" / "あ" 배지로 보입니다. 배지를 눌러도 같은 순서로 바뀝니다. 맥처럼 모든 창이 같은 입력 상태를 씁니다(`ShareInputState=All`). Ctrl+Space는 Hyprland가 직접 받아서 바꾸기 때문에 어느 앱에서도 공백이 입력되지 않습니다. Caps Lock을 누르면 켜짐/꺼짐 팝업이 뜨고, 잠금 화면에서는 암호 칸 테두리가 노란색이 되며 "Caps Lock 켜짐"이 표시됩니다. 한글이 목록에 없으면 SUPER+R → "Fcitx 5 Configuration"에서 "Only Show Current Language"를 끄고 Hangul을 추가하세요.
 
@@ -67,7 +67,7 @@ SUPER는 Windows 키입니다.
 
 펌웨어(ThinkPad BIOS 등)는 fwupd가 하루 한 번 새 버전을 확인합니다. `fwupdmgr get-updates`로 보고 `fwupdmgr update`로 설치합니다.
 
-로그인하면 첫 화면에 왼쪽 위 fastfetch, 왼쪽 아래 큰 시계, 오른쪽 터미널(입력 대기)이 자동으로 열립니다. 셋 다 보통 터미널 창이라 닫거나 옮겨도 되고, 시계는 q로 끝납니다. 원하지 않으면 `hyprland.lua`의 `startup-layout.sh` 줄을 지우세요.
+처음 켤 때 뜨던 Hyprland 기부 요청 팝업은 끔(`ecosystem.no_donation_nag`). 로그인하면 첫 화면에 왼쪽 위 fastfetch, 왼쪽 아래 큰 시계, 오른쪽 터미널(입력 대기)이 자동으로 열립니다. 셋 다 보통 터미널 창이라 닫거나 옮겨도 되고, 시계는 q로 끝납니다. 원하지 않으면 `hyprland.lua`의 `startup-layout.sh` 줄을 지우세요.
 
 전원 모드는 네 가지입니다: 저전력 · 균형 · **빠른 균형** · 성능. 제어 센터의 전원 버튼(균형 → 빠른 균형 → 성능 → 저전력)이나 배터리 카드의 버튼 줄, 상단바 전원 아이콘으로 바꿉니다. 지속 전력(오래 유지하는 전력 상한, PL1)은 저전력 10W · 균형 12W · 빠른 균형 15W · 성능 22W입니다. 저전력·균형은 power-profiles-daemon과 펌웨어 그대로이고, 빠른 균형과 성능은 성능 모드(팬 설정)를 바탕으로 상한(MSR PL1)만 낮춥니다. 빠른 균형은 CPU 성향도 균형 쪽(`balance_performance`)이라 반응은 균형과 비슷하고 긴 작업이 더 빠릅니다. 펌웨어 기본 성능 모드(28W)는 이 노트북에서 20초 만에 99°C가 되고 팬·코일 소음이 커서 22W로 낮췄습니다(18W 부하에서도 97°C). 펌웨어가 바꾸는 값(MMIO)과 따로 있어서 모드를 바꾸거나 전원이 바뀔 때만 다시 맞추고, 주기적으로 확인하지 않습니다(`config/quickshell/Power.qml`).
 
@@ -110,6 +110,7 @@ python3 dolby_to_pipewire.py                       # ~/.config/pipewire/pipewire
 | Alt + W | 탭 닫기 | 같음 |
 | Alt + N | 새 창 | 같음 |
 | Alt + Q | 창 닫기 (맥처럼 앱 전체 종료는 아님) | 같음 |
+| Alt + Shift + Q | 로그아웃 확인 창 (SUPER + M과 같음) | ⌘⇧Q |
 | Alt + Space | Vicinae: 앱 검색·계산기·클립보드 기록·이모지 등 (Raycast) | 같음 |
 | Alt + Shift + V | 클립보드 기록: 예전에 복사한 글·이미지를 골라 다시 붙여넣기 (Vicinae, 비밀번호 관리자에서 복사한 것은 따로 처리) | Raycast Clipboard History |
 | Alt + Shift + 3 | 스크린샷: 전체 화면을 `~/Pictures/Screenshots`에 저장 + 클립보드 복사 | 같음 |

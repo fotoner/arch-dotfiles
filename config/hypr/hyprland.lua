@@ -99,6 +99,13 @@ hl.env("QT_IM_MODULE", "fcitx")
 --   },
 -- })
 
+-- 처음 켤 때 뜨는 Hyprland 기부 요청 팝업을 끈다 (업데이트 소식 팝업은 그대로: no_update_news)
+hl.config({
+    ecosystem = {
+        no_donation_nag = true,
+    },
+})
+
 -- hl.permission("/usr/(bin|local/bin)/grim", "screencopy", "allow")
 -- hl.permission("/usr/(lib|libexec|lib64)/xdg-desktop-portal-hyprland", "screencopy", "allow")
 -- hl.permission("/usr/(bin|local/bin)/hyprpm", "plugin", "allow")
@@ -291,7 +298,8 @@ local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
 local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
+-- 로그아웃: 바로 끝내지 않고 확인 창을 띄운다 (실수로 눌러도 안전). 맥의 Cmd+Shift+Q는 아래 Alt + Shift + Q
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("qs ipc call session logout"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
@@ -495,6 +503,7 @@ hl.bind("ALT + V", function()
 end)
 
 hl.bind("ALT + Q",     hl.dsp.window.close()) -- 맥의 Cmd+Q: 앱 전체 종료 대신 지금 창 닫기
+hl.bind("ALT + SHIFT + Q", hl.dsp.exec_cmd("qs ipc call session logout")) -- 맥의 Cmd+Shift+Q: 확인 창을 띄운 뒤 로그아웃
 hl.bind("ALT + space", hl.dsp.exec_cmd("vicinae toggle")) -- 맥의 Cmd+Space: Raycast 대신 Vicinae
 hl.bind("ALT + SHIFT + V", hl.dsp.exec_cmd("vicinae cmd launch clipboard:history")) -- 클립보드 기록 (Raycast의 Clipboard History)
 hl.bind("ALT + Tab", function()               -- 맥의 Cmd+Tab: 지금 워크스페이스의 다음 창으로
@@ -625,10 +634,10 @@ hl.layer_rule({
     no_anim      = true,
 })
 
--- 디스플레이 설정 창, 유지 확인 창, 화면 이름표, 단축키 시트, 화면 녹화 막대(Quickshell)도 뒤를 흐리게
+-- 디스플레이 설정 창, 유지 확인 창, 화면 이름표, 단축키 시트, 화면 녹화 막대, 로그아웃 확인 창(Quickshell)도 뒤를 흐리게
 hl.layer_rule({
     name         = "quickshell-panels",
-    match        = { namespace = "^quickshell-(display|shortcuts|record)" },
+    match        = { namespace = "^quickshell-(display|shortcuts|record|session)" },
     blur         = true,
     ignore_alpha = 0.5,
     no_anim      = true,

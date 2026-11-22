@@ -5,6 +5,7 @@
 // 단축키 시트: Super+H, qs ipc call keys toggle
 // 전원 모드: qs ipc call power cycle|set <모드>|get
 // 화면 녹화 도구 막대: Alt+Shift+5 (screenrecord.sh toggle), qs ipc call record open
+// 로그아웃 확인 창 (맥 ⌘⇧Q): Alt+Shift+Q, Super+M, qs ipc call session logout
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -17,6 +18,10 @@ ShellRoot {
 
     RecordBar {
         id: recordBar
+    }
+
+    SessionDialog {
+        id: sessionDialog
     }
 
     IpcHandler {
@@ -44,6 +49,20 @@ ShellRoot {
 
         function hide(): void {
             CC.open = false;
+        }
+    }
+
+    IpcHandler {
+        target: "session"
+
+        // qs ipc call session logout|close : 로그아웃 확인 창
+        function logout(): void {
+            CC.open = false;
+            sessionDialog.ask();
+        }
+
+        function close(): void {
+            sessionDialog.open = false;
         }
     }
 
