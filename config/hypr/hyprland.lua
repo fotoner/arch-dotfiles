@@ -373,40 +373,112 @@ hl.bind("ALT + SHIFT + 3", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot.sh
 hl.bind("ALT + SHIFT + 4", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot.sh area"))
 
 -- 맥식 단축키: 스페이스바 옆 Alt를 맥의 Cmd처럼 쓴다 (ThinkPad의 Alt 자리가 맥의 Cmd 자리)
--- 일반 앱에는 Ctrl 조합을 보낸다. 터미널은 Ctrl+C가 '실행 중단'이라 복사·붙여넣기·탭·창은 Ctrl+Shift 조합으로 보내고,
--- 터미널에 맞는 기능이 없는 키는 Alt 조합을 그대로 넘겨 셸의 Alt 단축키(Alt+F 단어 이동 등)를 살린다
+-- 리눅스 앱은 맥의 ⌘ 단축키를 Ctrl로 쓰므로, 일반 앱에는 Alt+키를 Ctrl+키로, Alt+Shift+키를 Ctrl+Shift+키로 바꿔 보낸다.
+-- 그러면 T3 Code(⌘K 명령 팔레트, ⌘B 사이드바, ⌘J 터미널, ⌘1~9 스레드), 크롬(⌘L 주소창, ⌘R 새로고침, ⌘⇧T 닫은 탭),
+-- Obsidian(⌘P, ⌘O), Discord(⌘K) 등이 맥에서처럼 된다. 맥의 ⌘⌥ 조합(T3 Code의 mod+alt)은 Ctrl+Alt+키를 그대로 누른다.
+-- 터미널은 Ctrl+C가 '실행 중단'이라 복사·탭·창만 Ctrl+Shift 조합으로 보내고, 나머지는 Alt 조합을 그대로 넘겨
+-- 셸의 Alt 단축키(Alt+F 단어 이동 등)를 살린다. 게임(Steam)에도 Alt 조합을 그대로 넘긴다.
+-- 단축키를 바꾸면 단축키 시트(~/.config/quickshell/Shortcuts.qml)도 같이 고친다
 local terminalClasses = { kitty = true } -- 다른 터미널을 쓰면 그 창의 class를 추가 (hyprctl clients로 확인)
+local terminalCtrlShift = { C = true, T = true, W = true, N = true } -- 터미널에서 Ctrl+Shift로 보낼 키: 복사, 새 탭, 탭 닫기, 새 창
+-- Alt+[ ]를 뒤로/앞으로(Alt+←→)로 보내는 앱 (맥 크롬·Finder의 ⌘[ ⌘])
+local backForwardClasses = { ["google-chrome"] = true, ["chromium"] = true, ["org.gnome.Nautilus"] = true }
+-- Alt+방향키를 그대로 넘기는 앱: 파일 관리자는 Alt+↑ 상위 폴더, Alt+↓ 열기, Alt+←→ 뒤로/앞으로 (Finder의 ⌘↑↓)
+local arrowPassClasses = { ["org.gnome.Nautilus"] = true }
 
-local function cmdBind(mods, key, appMods, termMods, opts)
-    hl.bind(mods .. " + " .. key, function()
-        local win = hl.get_active_window()
-        if not win then return end
-        local sendMods = appMods
-        if terminalClasses[win.class] then sendMods = termMods or mods end
-        hl.dispatch(hl.dsp.send_shortcut({ mods = sendMods, key = key }))
-    end, opts)
+local function send(mods, key)
+    hl.dispatch(hl.dsp.send_shortcut({ mods = mods, key = key }))
 end
 
-cmdBind("ALT",         "C", "CTRL",         "CTRL + SHIFT")             -- 복사
+-- Alt 조합을 바꾸지 않고 그대로 넘길 창: 터미널, 게임
+local function passThrough(win)
+    return terminalClasses[win.class] or win.class:match("^steam_app_") ~= nil or win.class == "gamescope"
+end
+
+-- Alt(+Shift)+키 → Ctrl(+Shift)+키. Q(창 닫기)와 V(붙여넣기)는 아래에 따로, Alt+Shift+3·4는 스크린샷
+local cmdKeys = {}
+for c in ("ABCDEFGHIJKLMNOPRSTUWXYZ"):gmatch(".") do cmdKeys[#cmdKeys + 1] = c end
+for _, k in ipairs({ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "bracketleft", "bracketright", "minus", "equal",
+                     "comma", "period", "slash", "semicolon", "apostrophe", "backslash", "grave", "Return" }) do
+    cmdKeys[#cmdKeys + 1] = k
+end
+local repeatKeys = { Z = true, minus = true, equal = true } -- 누르고 있으면 반복: 실행 취소, 축소·확대
+local reserved = { ["ALT + SHIFT + 3"] = true, ["ALT + SHIFT + 4"] = true }
+
+for _, key in ipairs(cmdKeys) do
+    for _, shift in ipairs({ false, true }) do
+        local mods = shift and "ALT + SHIFT" or "ALT"
+        local combo = mods .. " + " .. key
+        if not reserved[combo] then
+            hl.bind(combo, function()
+                local win = hl.get_active_window()
+                if not win then return end
+                if passThrough(win) then
+                    if terminalClasses[win.class] and not shift and terminalCtrlShift[key] then
+                        send("CTRL + SHIFT", key)
+                    else
+                        send(mods, key)
+                    end
+                elseif not shift and backForwardClasses[win.class] and (key == "bracketleft" or key == "bracketright") then
+                    send("ALT", key == "bracketleft" and "Left" or "Right")
+                else
+                    send(shift and "CTRL + SHIFT" or "CTRL", key)
+                end
+            end, { repeating = repeatKeys[key] or false })
+        end
+    end
+end
+
+-- 글자 편집: ⌘←→ 줄 처음·끝, ⌘↑↓ 문서 처음·끝 (Shift를 같이 누르면 거기까지 선택)
+local textNav = {
+    Left  = { "", "Home" },
+    Right = { "", "End" },
+    Up    = { "CTRL", "Home" },
+    Down  = { "CTRL", "End" },
+}
+for key, to in pairs(textNav) do
+    for _, shift in ipairs({ false, true }) do
+        local mods = shift and "ALT + SHIFT" or "ALT"
+        hl.bind(mods .. " + " .. key, function()
+            local win = hl.get_active_window()
+            if not win then return end
+            if passThrough(win) or arrowPassClasses[win.class] then
+                send(mods, key)
+                return
+            end
+            local m = to[1]
+            if shift then m = (m == "") and "SHIFT" or (m .. " + SHIFT") end
+            send(m, to[2])
+        end, { repeating = true })
+    end
+end
+
+-- ⌘⌫: 줄 처음까지 지우기. 파일 관리자에서는 Finder처럼 휴지통으로
+hl.bind("ALT + BackSpace", function()
+    local win = hl.get_active_window()
+    if not win then return end
+    if passThrough(win) then
+        send("ALT", "BackSpace")
+    elseif win.class == "org.gnome.Nautilus" then
+        send("", "Delete")
+    else
+        send("SHIFT", "Home")
+        send("", "BackSpace")
+    end
+end)
+
 -- 붙여넣기: 터미널에서는 클립보드에 이미지만 있으면 Ctrl+V(Claude Code 이미지 붙여넣기), 아니면 Ctrl+Shift+V
 hl.bind("ALT + V", function()
     local win = hl.get_active_window()
     if not win then return end
     if terminalClasses[win.class] then
         hl.dispatch(hl.dsp.exec_cmd("~/.config/hypr/scripts/smart-paste.sh"))
+    elseif passThrough(win) then
+        send("ALT", "V")
     else
-        hl.dispatch(hl.dsp.send_shortcut({ mods = "CTRL", key = "V" }))
+        send("CTRL", "V")
     end
 end)
-cmdBind("ALT",         "X", "CTRL")                                     -- 잘라내기
-cmdBind("ALT",         "A", "CTRL")                                     -- 전체 선택
-cmdBind("ALT",         "Z", "CTRL",         nil, { repeating = true })  -- 실행 취소
-cmdBind("ALT + SHIFT", "Z", "CTRL + SHIFT", nil, { repeating = true })  -- 다시 실행
-cmdBind("ALT",         "S", "CTRL")                                     -- 저장
-cmdBind("ALT",         "F", "CTRL")                                     -- 찾기
-cmdBind("ALT",         "T", "CTRL",         "CTRL + SHIFT")             -- 새 탭
-cmdBind("ALT",         "W", "CTRL",         "CTRL + SHIFT")             -- 탭 닫기
-cmdBind("ALT",         "N", "CTRL",         "CTRL + SHIFT")             -- 새 창
 
 hl.bind("ALT + Q",     hl.dsp.window.close()) -- 맥의 Cmd+Q: 앱 전체 종료 대신 지금 창 닫기
 hl.bind("ALT + space", hl.dsp.exec_cmd("vicinae toggle")) -- 맥의 Cmd+Space: Raycast 대신 Vicinae

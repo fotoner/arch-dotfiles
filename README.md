@@ -79,6 +79,8 @@ SUPER는 Windows 키입니다.
 
 스페이스바 바로 옆 **Alt**가 맥의 Cmd 자리라서, Alt를 Cmd처럼 쓰게 했습니다. Ctrl은 맥의 control 자리 그대로라 터미널에서 Ctrl+C는 맥처럼 실행 중단입니다.
 
+리눅스 앱은 맥의 ⌘ 단축키를 Ctrl로 쓰므로, 일반 앱에서는 **Alt+키를 Ctrl+키로, Alt+Shift+키를 Ctrl+Shift+키로** 바꿔 보냅니다(글자, 숫자, `[ ] - = , . / ;` 같은 기호, Enter). 그래서 아래 표에 없는 ⌘ 단축키도 맥에서처럼 됩니다. 예: T3 Code의 Alt+K 명령 팔레트·Alt+B 사이드바·Alt+J 터미널·Alt+1~9 스레드, 크롬의 Alt+L 주소창·Alt+R 새로고침·Alt+Shift+T 닫은 탭, Obsidian의 Alt+P·Alt+O. 맥의 ⌘⌥ 조합은 Ctrl+Alt+키를 누르면 됩니다. 게임(Steam)에는 Alt 조합을 그대로 넘깁니다. OS 기본 조작과 터미널 단축키는 SUPER+H 단축키 시트에서 볼 수 있습니다(다른 앱의 단축키는 넣지 않음).
+
 | 단축키 | 동작 | 터미널(kitty)에서 |
 |---|---|---|
 | Alt + C | 복사 | 같음 (Ctrl+Shift+C로 보냄) |
@@ -98,6 +100,10 @@ SUPER는 Windows 키입니다.
 | Alt + Shift + 3 | 스크린샷: 전체 화면을 `~/Pictures/Screenshots`에 저장 + 클립보드 복사 | 같음 |
 | Alt + Shift + 4 | 스크린샷: 영역을 골라 편집기(satty)로. Enter = 저장 + 복사 | 같음 (찍은 뒤 마크업) |
 | Alt + Tab | 지금 워크스페이스의 다음 창 (Shift를 더하면 이전 창) | 같음 |
+| Alt + ← / → | 줄 처음 / 끝 (Shift를 더하면 선택). 파일 관리자에서는 뒤로 / 앞으로 | Alt + ←→ 그대로 |
+| Alt + ↑ / ↓ | 문서 처음 / 끝 (Shift를 더하면 선택). 파일 관리자에서는 상위 폴더 / 열기 | Alt + ↑↓ 그대로 |
+| Alt + Backspace | 줄 처음까지 지우기. 파일 관리자에서는 휴지통으로 | Alt + Backspace 그대로 (단어 지우기) |
+| Alt + [ / ] | 크롬·파일 관리자: 뒤로 / 앞으로. 다른 앱은 Ctrl+[ / ] (T3 Code 뒤로 / 앞으로) | 그대로 |
 
 "그대로"는 Alt 조합을 터미널에 그대로 넘긴다는 뜻이라 셸의 Alt 단축키도 계속 쓸 수 있습니다. 다른 터미널을 쓰면 `config/hypr/hyprland.lua`의 `terminalClasses`에 그 창의 class(`hyprctl clients`로 확인)를 추가하세요.
 
