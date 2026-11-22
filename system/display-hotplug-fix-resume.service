@@ -1,0 +1,10 @@
+[Unit]
+Description=절전에서 깨어난 뒤 외부 모니터 다시 찾기
+After=suspend.target hibernate.target hybrid-sleep.target suspend-then-hibernate.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/display-hotplug-fix resume
+
+[Install]
+WantedBy=suspend.target hibernate.target hybrid-sleep.target suspend-then-hibernate.target

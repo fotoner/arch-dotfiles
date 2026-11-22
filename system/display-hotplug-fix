@@ -1,0 +1,17 @@
+#!/bin/sh
+# 절전에서 깨어날 때 외부 모니터(HDMI)가 인식되지 않는 문제 대비.
+# 1) i915의 연결 신호(HPD) 폭주 감지를 끈다. 깨어나는 순간 신호가 몰리면 드라이버가 그 포트를 무시하는 모드로 바뀌기 때문
+# 2) resume 인자를 주면 3초, 10초 뒤에 외부 화면 포트를 다시 확인한다 (케이블을 다시 꽂은 것과 같은 효과를 노림)
+
+for f in /sys/kernel/debug/dri/*/i915_hpd_storm_ctl; do
+  [ -e "$f" ] && echo 0 > "$f"
+done
+
+[ "$1" = resume ] || exit 0
+for delay in 3 7; do
+  sleep "$delay"
+  for s in /sys/class/drm/card*-*/status; do
+    case "$s" in *-eDP-*) continue ;; esac
+    echo detect > "$s"
+  done
+done

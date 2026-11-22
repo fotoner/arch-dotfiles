@@ -1,0 +1,11 @@
+[Unit]
+Description=외부 모니터 연결 신호 폭주 감지 끄기 (i915)
+Wants=sys-kernel-debug.mount
+After=sys-kernel-debug.mount
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/display-hotplug-fix
+
+[Install]
+WantedBy=multi-user.target

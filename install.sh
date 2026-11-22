@@ -151,6 +151,12 @@ sudo install -m 644 "$REPO_DIR/system/zram-generator.conf" /etc/systemd/zram-gen
 # sudo 비밀번호를 한 번 입력하면 모든 터미널에서 30분 유지. 문법이 틀리면 sudo가 망가지므로 먼저 검사한다
 sudo visudo -cf "$REPO_DIR/system/sudoers-timeout" \
   && sudo install -m 440 -o root -g root "$REPO_DIR/system/sudoers-timeout" /etc/sudoers.d/zz-sudo-timeout
+# 절전에서 깨어날 때 HDMI 모니터가 인식되지 않는 문제 대비: 연결 신호 폭주 감지 끄기 + 깨어난 뒤 외부 화면 다시 찾기
+sudo install -m 755 "$REPO_DIR/system/display-hotplug-fix" /usr/local/bin/display-hotplug-fix
+sudo install -m 644 "$REPO_DIR/system/display-hotplug-fix.service" "$REPO_DIR/system/display-hotplug-fix-resume.service" /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now display-hotplug-fix.service
+sudo systemctl enable display-hotplug-fix-resume.service
 # 방화벽: 밖에서 먼저 들어오는 연결 막기 (Tailscale, 같은 Wi-Fi 기기 찾기는 허용). 원래 파일은 .bak으로 남긴다
 [ -f /etc/nftables.conf ] && [ ! -f /etc/nftables.conf.bak ] && sudo cp /etc/nftables.conf /etc/nftables.conf.bak
 sudo install -m 644 "$REPO_DIR/system/nftables.conf" /etc/nftables.conf
