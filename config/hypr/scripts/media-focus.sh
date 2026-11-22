@@ -15,7 +15,7 @@ for arg in "$@"; do
   esac
 done
 
-# 상단바에 보이는 플레이어(media-status.sh가 적어 둔 것)를 먼저, 없으면 재생 중 → 일시정지 순으로 고른다
+# 상단바에 보이는 플레이어(bar-status media가 적어 둔 것)를 먼저, 없으면 재생 중 → 일시정지 순으로 고른다
 player=""
 state="${XDG_RUNTIME_DIR:-/tmp}/waybar-media-player"
 if ! $any && [ -s "$state" ]; then

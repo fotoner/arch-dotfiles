@@ -139,7 +139,7 @@
     "on-click": "qs ipc call cc toggle"
   },
   "custom/ime": {
-    "exec": "~/.config/hypr/scripts/ime-status.sh",
+    "exec": "~/.local/bin/bar-status ime",
     "return-type": "json",
     "on-click": "~/.config/hypr/scripts/ime-cycle.sh"
   },
@@ -151,7 +151,7 @@
     "on-click-right": "playerctl -p \"$(cat \"${XDG_RUNTIME_DIR:-/tmp}/waybar-media-player\")\" play-pause"
   },
   "custom/media": {
-    "exec": "~/.config/hypr/scripts/media-status.sh",
+    "exec": "~/.local/bin/bar-status media",
     "return-type": "json",
     "escape": true,
     "on-click": "~/.config/hypr/scripts/media-focus.sh",

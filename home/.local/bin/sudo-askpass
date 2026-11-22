@@ -16,4 +16,5 @@ zenity --entry --hide-text --title="sudo" --text="$prompt"
 rc=$?
 
 [ -n "$im" ] && fcitx5-remote -s "$im" 2>/dev/null
+pkill -USR1 -x bar-status 2>/dev/null # 상단바 입력기 배지를 바로 되돌린다
 exit $rc

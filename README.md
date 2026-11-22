@@ -171,9 +171,8 @@ SUPER는 Windows 키입니다.
 | `config/swaync/config.json`, `style.css` | `~/.config/swaync/` | 알림 목록과 알림 팝업 |
 | `config/hypr/scripts/screenshot.sh` | `~/.config/hypr/scripts/` | 맥식 스크린샷 |
 | `config/hypr/scripts/ime-cycle.sh` | `~/.config/hypr/scripts/` | 입력기를 A → 한 → あ 순서로 바꾸기 (상단바·잠금 화면 배지) |
-| `config/hypr/scripts/ime-status.sh` | `~/.config/hypr/scripts/` | 상단바 입력기 배지 A / 한 / あ (fcitx5 트레이 아이콘 대신) |
 | `config/hypr/scripts/wifi-menu.sh` | `~/.config/hypr/scripts/` | nmtui Wi-Fi 창 (Catppuccin 색). 상단바 Wi-Fi 오른쪽 클릭, 제어 센터의 "네트워크 설정…" |
-| `config/hypr/scripts/media-status.sh` | `~/.config/hypr/scripts/` | 상단바 미디어 표시 (재생 시간, 긴 제목 흐르기, 일시정지 10초 뒤 숨김) |
+| `tools/bar-status/` (러스트) | `~/.local/bin/bar-status` (`install.sh`가 `cargo install`로 빌드) | 상단바 미디어 표시(재생 시간, 긴 제목 흐르기, 일시정지 10초 뒤 숨김)와 입력기 배지 A / 한 / あ. 예전 셸 스크립트는 0.25~0.4초마다 playerctl·pgrep을 새로 실행해서 상단바 두 개가 CPU 한 코어의 40%쯤 썼다. 이제 D-Bus에 한 번 붙어 재생기 변경 알림으로 갱신한다(입력기는 fcitx5가 알림을 안 보내서 1초마다 묻고, Ctrl+Space로 바꾸면 SIGUSR1로 바로). 상단바가 꺼지면 같이 끝난다 |
 | `config/hypr/scripts/audio-wave.sh` | `~/.config/hypr/scripts/` | 상단바 왼쪽 끝: 소리가 나면 오디오 파형(cava 출력을 ▁▂▃▄▅▆▇█ 막대로), 조용하면 날씨 |
 | `config/hypr/scripts/idle-inhibit.sh` | `~/.config/hypr/scripts/` | 잠자기 방지 켜기/끄기 (`systemd-inhibit --what=idle`). 상단바 커피잔과 제어 센터 버튼이 같이 쓴다 |
 | `config/hypr/scripts/weather.sh` | `~/.config/hypr/scripts/` | 지역 날씨를 Waybar JSON으로 (IP로 위치 추정, Open-Meteo). 위치가 틀리면 파일 맨 위 `LAT`·`LON`·`CITY`를 적는다 |

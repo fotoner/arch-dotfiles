@@ -5,3 +5,4 @@ case "$(fcitx5-remote -n 2>/dev/null)" in
   hangul) fcitx5-remote -s mozc ;;
   *) fcitx5-remote -s keyboard-us ;;
 esac
+pkill -USR1 -x bar-status # 상단바 배지를 바로 바꾼다 (기다리면 1초 안에 바뀜)

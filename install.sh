@@ -86,8 +86,8 @@ PKGS=(
   steam vulkan-intel lib32-vulkan-intel lib32-mesa ttf-liberation
   # 터미널 없이 sudo 비밀번호를 팝업으로 받기 (Claude Code의 ! 명령 등, ~/.local/bin/sudo-askpass)
   zenity
-  # AUR 패키지 빌드 도구
-  base-devel
+  # AUR 패키지 빌드 도구, 상단바 상태 프로그램(tools/bar-status) 빌드용 러스트
+  base-devel rust
   # 한글 입력
   fcitx5 fcitx5-hangul fcitx5-mozc fcitx5-configtool fcitx5-gtk fcitx5-qt
   # 네트워크, 블루투스
@@ -214,10 +214,8 @@ place swaync/style.css
 place hypr/scripts/screenshot.sh
 place hypr/scripts/smart-paste.sh
 place hypr/scripts/wifi-menu.sh
-place hypr/scripts/ime-status.sh
 place hypr/scripts/ime-cycle.sh
 place hypr/scripts/media-focus.sh
-place hypr/scripts/media-status.sh
 place hypr/scripts/audio-wave.sh
 place hypr/scripts/weather.sh
 place hypr/scripts/idle-inhibit.sh
@@ -252,6 +250,8 @@ place git/ignore
 place gh/config.yml
 (cd "$REPO_DIR/config" && find nvim -type f) | while read -r f; do place "$f"; done
 place_home .zshrc
+# 상단바 미디어·입력기 표시 (러스트). ~/.local/bin/bar-status에 빌드해 넣는다
+cargo install --locked --force --quiet --path "$REPO_DIR/tools/bar-status" --root "$HOME/.local"
 place_home .local/bin/sudo-askpass
 chmod +x "$HOME/.local/bin/sudo-askpass"
 place_home .dircolors
