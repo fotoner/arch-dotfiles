@@ -1,0 +1,388 @@
+#!/usr/bin/env bash
+# desk: 이 데스크톱(Arch + Hyprland + Quickshell + waybar + PipeWire)을 안전하게 다루는 명령 모음.
+# 사람이든 에이전트든 이 명령으로 다시 시작·점검·동기화하면, 예전에 겪은 함정을 따로 기억할 필요가 없다:
+#   - Quickshell·상단바를 다시 시작하면 옛 하위 프로세스가 남아 쌓임 → restart가 정리하고 확인한다
+#   - Quickshell을 파일 변경으로 다시 읽으면 IPC가 "Not ready"로 멈춤 → restart shell은 끄고 새로 띄운 뒤 IPC가 될 때까지 기다린다
+#   - PipeWire를 다시 시작하면 음량이 예전 값으로 튐 → restart audio가 음량·음소거를 지킨다
+#   - sudo는 터미널이 없으면 비밀번호를 못 묻고, 3번 틀리면 10분 잠김 → desk sudo는 팝업으로 한 번만 묻는다
+#   - 실제 설정과 dotfiles 저장소가 어긋남 → desk sync가 차이를 보여 주고 맞춘다
+#   - 스크린샷에 다른 화면이 찍힘 → desk shot은 그 창 영역만 찍는다
+#   - 에이전트가 자동 모드로 파일을 망침 → 홈은 btrfs 스냅샷(snapper 'home')이 매시간·에이전트 세션마다 찍히고,
+#     desk undo가 그 파일의 이전 버전을 찾아 되돌린다 (git이 아닌 파일, 지운 파일도)
+# 자세한 사용법: desk help
+set -uo pipefail
+
+REPO="${DESK_REPO:-$HOME/dev/arch-dotfiles}"
+export SUDO_ASKPASS="${SUDO_ASKPASS:-$HOME/.local/bin/sudo-askpass}"
+QS_SHADOW=28 # Quickshell 창들의 그림자 여백 (desk shot이 이만큼 안쪽만 찍는다)
+
+ok()   { printf '  \033[32m✓\033[0m %s\n' "$*"; }
+warn() { printf '  \033[33m!\033[0m %s\n' "$*"; }
+bad()  { printf '  \033[31m✗\033[0m %s\n' "$*"; }
+head_() { printf '\n\033[1m%s\033[0m\n' "$*"; }
+
+usage() {
+  cat <<'EOF'
+desk — 이 데스크톱을 안전하게 다루는 명령 (Arch + Hyprland + Quickshell + waybar)
+
+  desk doctor                  상태 점검: 고아 프로세스, 오디오, 서비스, 설정 오류, 전원 모드, dotfiles 차이 (아무것도 안 바꿈)
+  desk restart shell           Quickshell(제어 센터·창들)을 끄고 새로 띄움. IPC가 준비될 때까지 기다리고 남은 하위 프로세스 정리
+  desk restart bar             상단바(waybar) 다시 읽기. 상단바 밖에 남은 옛 모듈 프로세스 정리
+  desk restart audio           PipeWire 다시 시작. 음량·음소거를 지키고 음량 팝업(swayosd)과 스피커 보정이 돌아왔는지 확인
+  desk sync                    실제 설정(~/.config, ~ 등)과 dotfiles 저장소(~/dev/arch-dotfiles)의 차이 보기
+  desk sync --to-repo          실제 설정 → 저장소로 복사 (양쪽에 다 있는 파일만, 커밋은 하지 않음)
+  desk sudo <명령...>          비밀번호 팝업으로 한 번만 인증하고 실행 (3번 틀리면 10분 잠기므로 다시 묻지 않음)
+  desk shot <namespace> [파일]  그 레이어 창(예: quickshell-display) 부분만 찍기. 주변 다른 화면은 안 찍힘
+  desk snap [설명]             홈(/home) 스냅샷 찍기 (sudo 필요 없음, 0.2초). 에이전트 세션이 시작될 때 자동으로 찍힘
+  desk undo <파일>             그 파일의 이전 버전 목록 (홈 스냅샷에서). 지운 파일도 됨
+  desk undo <파일> <번호>      그 버전으로 되돌리기 (지금 파일은 <파일>.desk-undo-시각 으로 남김)
+  desk exclude <폴더>          다시 만들 수 있는 폴더(node_modules, target, 캐시 등)를 하위 볼륨으로 바꿔 홈 스냅샷에서 뺌
+
+설정 파일 위치: Hyprland ~/.config/hypr/hyprland.lua, Quickshell ~/.config/quickshell, waybar ~/.config/waybar
+Hyprland 설정을 바꾸면 저장만 해도 다시 읽힌다 (문법 검사: Hyprland --verify-config -c <파일>)
+홈 스냅샷: 매시간 24개 + 하루 1개씩 7일 + 에이전트 세션 20개. node_modules·빌드 결과물·Steam처럼 다시 만들 수 있는 폴더는
+  하위 볼륨으로 떼어 내서 스냅샷에 안 들어간다. 시스템(/) 되돌리기는 snapper -c root (desk sudo로)
+EOF
+}
+
+# ---------- 공통: 프로세스 ----------
+
+# $1이 $2.. 중 하나의 자손인지
+descends() {
+  local p=$1; shift
+  while [ -n "$p" ] && [ "$p" -gt 1 ] 2>/dev/null; do
+    for a in "$@"; do [ "$p" = "$a" ] && return 0; done
+    p=$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' ')
+  done
+  return 1
+}
+
+# 상단바·Quickshell 밖에 떠도는 하위 프로세스 (상단바 모듈, 알림 감시)
+orphans() {
+  local parents
+  parents=$(pgrep -x waybar; pgrep -x qs; pgrep -x .qs-wrapped; pgrep -x quickshell)
+  # shellcheck disable=SC2086
+  for p in $(pgrep -f 'hypr/scripts/audio-wave\.sh') $(pgrep -x cava) $(pgrep -x bar-status) \
+           $(pgrep -f 'screenrecord\.sh waybar') $(pgrep -x swaync-client); do
+    [ "$p" = "$$" ] && continue
+    descends "$p" $parents || echo "$p"
+  done
+}
+
+kill_orphans() {
+  local list n=0
+  list=$(orphans)
+  for p in $list; do
+    pkill -TERM -P "$p" 2>/dev/null
+    kill "$p" 2>/dev/null && n=$((n + 1))
+  done
+  echo "$n"
+}
+
+# ---------- restart ----------
+
+restart_shell() {
+  echo "Quickshell을 다시 시작합니다"
+  pkill -x qs 2>/dev/null
+  for _ in $(seq 30); do pgrep -x qs >/dev/null || break; sleep 0.1; done
+  hyprctl eval 'hl.exec_cmd("qs")' >/dev/null
+  local ready=false
+  for _ in $(seq 50); do
+    if qs ipc call cc hide >/dev/null 2>&1; then ready=true; break; fi
+    sleep 0.1
+  done
+  $ready && ok "IPC 준비됨" || bad "5초 안에 IPC가 준비되지 않음 (qs 로그 확인: qs log)"
+  sleep 0.5
+  ok "남은 하위 프로세스 $(kill_orphans)개 정리"
+}
+
+restart_bar() {
+  echo "상단바(waybar)를 다시 읽습니다"
+  pkill -SIGUSR2 -x waybar
+  sleep 3
+  ok "상단바 $(hyprctl layers -j | jq '[.[] | .levels[] | .[] | select(.namespace == "waybar")] | length')개(화면마다 하나), 남은 옛 모듈 프로세스 $(kill_orphans)개 정리"
+}
+
+restart_audio() {
+  local vol muted
+  vol=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null)
+  muted=false; [[ $vol == *MUTED* ]] && muted=true
+  vol=$(awk '{print $2}' <<<"$vol")
+  echo "PipeWire를 다시 시작합니다 (지금 음량 ${vol:-?}$($muted && echo ', 음소거'))"
+  systemctl --user restart pipewire pipewire-pulse
+  for _ in $(seq 50); do wpctl get-volume @DEFAULT_AUDIO_SINK@ >/dev/null 2>&1 && break; sleep 0.1; done
+  sleep 1 # wireplumber가 저장된 음량을 다시 거는 것을 기다렸다가 덮는다
+  if [ -n "$vol" ]; then
+    wpctl set-volume @DEFAULT_AUDIO_SINK@ "$vol"
+    wpctl set-mute @DEFAULT_AUDIO_SINK@ "$($muted && echo 1 || echo 0)"
+    ok "음량 되돌림: $(wpctl get-volume @DEFAULT_AUDIO_SINK@)"
+  fi
+  if systemctl --user is-active -q swayosd-server; then ok "음량 팝업(swayosd) 다시 시작됨"
+  else systemctl --user restart swayosd-server && warn "음량 팝업(swayosd)이 꺼져 있어 다시 켬"; fi
+  if ls "$HOME"/.config/pipewire/pipewire.conf.d/*.conf >/dev/null 2>&1; then
+    pw-cli ls Node 2>/dev/null | grep -q 'effect_output' && ok "스피커 보정 필터 로드됨" || bad "스피커 보정 필터가 안 보임 (python3 dolby_to_pipewire.py --doctor)"
+  fi
+}
+
+# ---------- sync ----------
+
+# 저장소 파일 → 실제 위치 (system/은 install.sh가 설치하는 곳)
+live_path() {
+  case "$1" in
+    config/*) echo "$HOME/.config/${1#config/}" ;;
+    home/*) echo "$HOME/${1#home/}" ;;
+    system/zram-generator.conf) echo /etc/systemd/zram-generator.conf ;;
+    system/nftables.conf) echo /etc/nftables.conf ;;
+    system/display-hotplug-fix | system/power-mode-setup) echo "/usr/local/bin/${1#system/}" ;;
+    system/*.service) echo "/etc/systemd/system/${1#system/}" ;;
+    *) return 1 ;;
+  esac
+}
+
+# 일부러 다르게 두는 파일 (실제 쪽에 개인 설정이 들어감)
+KNOWN_DRIFT=(config/hypr/hyprpaper.conf)
+
+sync_cmd() {
+  local apply=false; [ "${1:-}" = --to-repo ] && apply=true
+  [ -d "$REPO" ] || { bad "저장소가 없음: $REPO"; return 1; }
+  local diff=0 missing=0 known=0 copied=0
+  while IFS= read -r rel; do
+    local live; live=$(live_path "$rel") || continue
+    [ -r "$live" ] || { [ -e "$live" ] || { echo "  실제에 없음: $rel → $live"; missing=$((missing + 1)); }; continue; }
+    cmp -s "$REPO/$rel" "$live" && continue
+    if printf '%s\n' "${KNOWN_DRIFT[@]}" | grep -qx "$rel"; then known=$((known + 1)); continue; fi
+    diff=$((diff + 1))
+    if $apply && [[ $rel == config/* || $rel == home/* ]]; then
+      cp "$live" "$REPO/$rel" && copied=$((copied + 1)) && echo "  복사: $live → $rel"
+    else
+      echo "  다름: $rel ↔ $live"
+    fi
+  done < <(cd "$REPO" && git ls-files config home system 2>/dev/null)
+  if [ $diff -eq 0 ]; then ok "저장소와 실제 설정이 같음 (일부러 다른 파일 ${known}개)"
+  elif $apply; then ok "${copied}개를 저장소로 복사함 (system/ 파일은 손으로: sudo install). git -C $REPO diff로 확인"
+  else warn "다른 파일 ${diff}개 (일부러 다른 파일 ${known}개 제외). 실제 → 저장소: desk sync --to-repo"; fi
+  [ $missing -gt 0 ] && warn "저장소에만 있는 파일 ${missing}개 (install.sh를 안 돌렸거나 지운 파일)"
+  return 0
+}
+
+# ---------- sudo ----------
+
+# faillock: 최근 15분 안에 3번 틀렸고 마지막 실패가 10분 안이면 잠긴 상태
+locked_until() {
+  local now times=() last
+  now=$(date +%s)
+  while read -r d t _; do
+    [[ $d =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || continue
+    local s; s=$(date -d "$d $t" +%s 2>/dev/null) || continue
+    [ $((now - s)) -le 900 ] && times+=("$s")
+  done < <(faillock --user "$USER" 2>/dev/null)
+  [ ${#times[@]} -ge 3 ] || return 1
+  last=$(printf '%s\n' "${times[@]}" | sort -n | tail -1)
+  [ $((now - last)) -lt 600 ] || return 1
+  date -d "@$((last + 600))" +%H:%M:%S
+}
+
+# 한 번만 인증한다 (이미 인증돼 있으면 묻지 않음, 잠겨 있으면 묻지 않음)
+sudo_auth() {
+  sudo -n true 2>/dev/null && return 0
+  local until; if until=$(locked_until); then
+    bad "비밀번호를 3번 틀려서 계정이 잠겨 있음 (${until} 이후에 다시). 그전에는 맞는 비밀번호도 거절됨"
+    return 1
+  fi
+  echo "sudo 비밀번호 팝업을 띄웁니다 (한 번만 묻고, 30분 동안 다시 묻지 않음)"
+  sudo -A -v || { bad "인증 실패. 다시 하기 전에 Caps Lock을 확인 (3번 틀리면 10분 잠김)"; return 1; }
+}
+
+sudo_cmd() {
+  [ $# -gt 0 ] || { echo "사용법: desk sudo <명령...>"; return 2; }
+  sudo_auth && exec sudo "$@"
+}
+
+# ---------- shot ----------
+
+shot_cmd() {
+  local ns=${1:-} out=${2:-} inset=0
+  [ -n "$ns" ] || { echo "사용법: desk shot <namespace> [파일]   (namespace 목록: hyprctl layers)"; return 2; }
+  [[ $ns == quickshell-* ]] && inset=$QS_SHADOW
+  local x y w h
+  read -r x y w h < <(hyprctl layers -j | jq -r --arg n "$ns" '[.[] | .levels[] | .[] | select(.namespace == $n)][0] | "\(.x) \(.y) \(.w) \(.h)"')
+  [ -n "$x" ] && [ "$x" != null ] || { bad "열려 있는 '$ns' 창이 없음"; return 1; }
+  out=${out:-${XDG_RUNTIME_DIR:-/tmp}/desk-shot-$ns.png}
+  grim -g "$((x + inset)),$((y + inset)) $((w - 2 * inset))x$((h - 2 * inset))" "$out" && echo "$out"
+}
+
+# ---------- 홈 스냅샷: snap / undo ----------
+
+snap_cmd() {
+  local desc=${*:-"desk snap"}
+  local n
+  # 같은 설명으로 2분 안에 이미 찍었으면 건너뛴다 (세션을 열자마자 이어 열면 훅이 두 번 돈다. 20개 보존이 금방 찬다)
+  local last_desc last_date
+  IFS=';' read -r last_date last_desc < <(snapper -c home --csvout --separator ';' list --columns date,description 2>/dev/null | tail -1)
+  if [ "$last_desc" = "$desc" ] && [ $(( $(date +%s) - $(date -d "$last_date" +%s 2>/dev/null || echo 0) )) -lt 120 ]; then
+    ok "방금 같은 스냅샷이 있어서 건너뜀: $desc"
+    return 0
+  fi
+  n=$(snapper -c home create --description "$desc" --cleanup-algorithm number --print-number) || { bad "스냅샷 실패 (snapper -c home)"; return 1; }
+  ok "홈 스냅샷 #$n: $desc"
+}
+
+undo_cmd() {
+  local f=${1:-} want=${2:-}
+  [ -n "$f" ] || { echo "사용법: desk undo <파일> [번호]"; return 2; }
+  local abs; abs=$(realpath -m -- "$f")
+  [[ $abs == /home/* ]] || { bad "홈(/home) 안의 파일만 됨. 시스템 파일은: desk sudo snapper -c root list / undochange"; return 1; }
+  local rel=${abs#/home/}
+  if [ -z "$want" ]; then
+    echo "$abs 의 이전 버전 (홈 스냅샷, 최근 것부터):"
+    local found=0 n date desc snapf
+    while IFS=';' read -r n date desc; do
+      [[ $n =~ ^[0-9]+$ ]] && [ "$n" != 0 ] || continue
+      snapf="/home/.snapshots/$n/snapshot/$rel"
+      [ -e "$snapf" ] || continue
+      if [ -e "$abs" ] && cmp -s "$snapf" "$abs"; then continue; fi
+      printf '  #%-4s %s  %s  (%s)\n' "$n" "$date" "${desc:-시간별}" "$(du -h "$snapf" 2>/dev/null | cut -f1)"
+      found=$((found + 1))
+    done < <(snapper -c home --csvout --separator ';' list --columns number,date,description 2>/dev/null | tail -n +2 | tac)
+    [ $found -gt 0 ] && echo "되돌리기: desk undo \"$f\" <번호>   (내용 비교: diff /home/.snapshots/<번호>/snapshot/$rel \"$abs\")" \
+      || ok "지금과 다른 이전 버전이 없음"
+    return 0
+  fi
+  local src="/home/.snapshots/$want/snapshot/$rel"
+  [ -e "$src" ] || { bad "#$want 스냅샷에 그 파일이 없음"; return 1; }
+  if [ -e "$abs" ]; then
+    local keep; keep="$abs.desk-undo-$(date +%Y%m%d-%H%M%S)"
+    mv -- "$abs" "$keep" && ok "지금 파일은 $keep 로 남김"
+  fi
+  mkdir -p -- "$(dirname -- "$abs")"
+  cp -a --reflink=auto -- "$src" "$abs" && ok "#$want 버전으로 되돌림: $abs"
+}
+
+# 폴더를 btrfs 하위 볼륨으로 바꾼다: 스냅샷은 하위 볼륨 경계를 넘지 않아서 그 폴더가 스냅샷에서 빠진다.
+# 같은 파일 시스템 안의 즉시 복사(reflink)라 빠르고 내용은 그대로. 그 폴더를 쓰는 프로세스가 있으면 하지 않는다
+exclude_cmd() {
+  local d=${1:-}
+  [ -n "$d" ] || { echo "사용법: desk exclude <폴더>"; return 2; }
+  d=$(realpath -- "$d") || return 1
+  [ -d "$d" ] || { bad "폴더가 아님: $d"; return 1; }
+  [[ $d == /home/* ]] || { bad "홈(/home) 안의 폴더만 됨"; return 1; }
+  [ "$(stat -c %i "$d")" = 256 ] && { ok "이미 하위 볼륨 (스냅샷에서 빠져 있음): $d"; return 0; }
+  local users=""
+  for p in /proc/[0-9]*; do
+    local c; c=$(readlink "$p/cwd" 2>/dev/null)
+    if [[ $c == "$d" || $c == "$d"/* ]] || ls -l "$p/fd" 2>/dev/null | grep -q " $d/"; then users="$users $(cat "$p/comm" 2>/dev/null)"; fi
+  done
+  [ -z "$users" ] || { bad "이 폴더를 쓰는 프로그램이 있음:$(tr ' ' '\n' <<<"$users" | sort -u | tr '\n' ' '). 끄고 다시"; return 1; }
+  # (Go 모듈 캐시처럼 읽기 전용 폴더는 지우기 전에 쓰기 권한을 준다)
+  # 내 것이 아닌 파일(예: rootless docker 컨테이너 안의 파일은 100000번대 사용자 소유)이 있으면
+  # 내 계정으로는 읽지도 소유자를 지키지도 못한다 → root로 복사한다
+  local as=()
+  if [ -n "$(find "$d" ! -user "$USER" -print -quit 2>/dev/null)" ]; then
+    echo "내 계정 소유가 아닌 파일이 있어서 root로 복사함 (소유자·권한 유지)"
+    sudo_auth || return 1
+    as=(sudo)
+  fi
+  local before files; before=$("${as[@]}" du -s "$d" | cut -f1); files=$("${as[@]}" find "$d" | wc -l)
+  local tmp="$d.desk-subvol"
+  "${as[@]}" btrfs subvolume create "$tmp" >/dev/null || { bad "하위 볼륨을 못 만듦"; return 1; }
+  "${as[@]}" chown --reference="$d" "$tmp" && "${as[@]}" chmod --reference="$d" "$tmp" || return 1
+  if "${as[@]}" cp -a --reflink=always "$d/." "$tmp/" \
+    && [ "$("${as[@]}" find "$tmp" | wc -l)" = "$files" ] \
+    && { [ ${#as[@]} -gt 0 ] || chmod -R u+w -- "$d"; } \
+    && "${as[@]}" rm -rf -- "$d" && "${as[@]}" mv -- "$tmp" "$d"; then
+    local after; after=$("${as[@]}" du -s "$d" | cut -f1)
+    ok "스냅샷에서 뺌: $d ($(( after / 1024 ))MB, 파일 ${files}개, 크기 $( [ "$before" = "$after" ] && echo 그대로 || echo "다름 $before→$after: 확인 필요"))"
+  else
+    bad "옮기다 실패. 원래 폴더가 남아 있으면 그대로 쓰면 됨: $d, 만들다 만 것: $tmp (확인 후 btrfs subvolume delete)"
+    return 1
+  fi
+}
+
+# ---------- doctor ----------
+
+doctor() {
+  head_ "Hyprland"
+  local errs; errs=$(hyprctl configerrors 2>/dev/null | grep -v '^\s*$')
+  [ -z "$errs" ] && ok "설정 오류 없음" || bad "설정 오류: $errs"
+
+  head_ "고아 프로세스 (상단바·Quickshell 밖)"
+  local o; o=$(orphans)
+  if [ -z "$o" ]; then ok "없음"
+  else for p in $o; do warn "$(ps -o pid=,etime=,args= -p "$p" | cut -c1-90)"; done; warn "정리: desk restart bar 또는 desk restart shell"; fi
+  ok "상단바 $(hyprctl layers -j | jq '[.[] | .levels[] | .[] | select(.namespace == "waybar")] | length')개, Quickshell $(pgrep -c -x qs)개, cava $(pgrep -c -x cava)개, bar-status $(pgrep -c -x bar-status)개"
+
+  head_ "오디오"
+  local sink err
+  sink=$(timeout 4 pw-top -b -n 2 2>/dev/null | awk '$1=="R" && /alsa_output/ {q=$3; e=$9} END {print q, e}')
+  if [ -n "$sink" ]; then
+    read -r q err <<<"$sink"
+    ok "출력이 ${q} 샘플 단위로 돌고 있음 (끊김 누적 ${err}회, PipeWire를 다시 시작하면 0부터)"
+  else
+    ok "재생 중인 소리 없음"
+  fi
+  systemctl --user is-active -q swayosd-server && ok "음량 팝업(swayosd) 켜짐" || bad "음량 팝업(swayosd) 꺼짐: systemctl --user restart swayosd-server"
+  pw-cli ls Node 2>/dev/null | grep -q 'effect_output' && ok "스피커 보정 필터 로드됨" || warn "스피커 보정 필터 없음"
+  ok "음량 $(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null | cut -d' ' -f2-)"
+
+  head_ "전원 모드"
+  # 실제로 걸리는 지속 전력 상한 = MSR(빠른 균형·성능이 낮춤)과 MMIO(펌웨어가 모드마다 정함) 중 낮은 값
+  local mode msr mmio eff want=""
+  mode=$(qs ipc call power get 2>/dev/null)
+  msr=$(( $(cat /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw 2>/dev/null || echo 0) / 1000000 ))
+  mmio=$(( $(cat /sys/class/powercap/intel-rapl-mmio:0/constraint_0_power_limit_uw 2>/dev/null || echo 0) / 1000000 ))
+  eff=$(( msr < mmio ? msr : mmio ))
+  case "$mode" in fast) want=15 ;; performance) want=22 ;; power-saver) want=10 ;; balanced) want=12 ;; esac
+  if [ "$eff" = "$want" ]; then ok "${mode} (실제 지속 전력 상한 ${eff}W)"
+  else warn "모드 ${mode:-?}인데 실제 상한이 ${eff}W (기대 ${want:-?}W, MSR ${msr}W · 펌웨어 ${mmio}W): qs ipc call power set ${mode:-balanced}"; fi
+  local temp; temp=$(for h in /sys/class/hwmon/hwmon*; do [ "$(cat "$h/name")" = coretemp ] && echo $(( $(cat "$h/temp1_input") / 1000 )); done | head -1)
+  ok "CPU ${temp:-?}°C"
+
+  head_ "서비스"
+  local failed
+  failed=$( { systemctl --failed --no-legend --plain 2>/dev/null; systemctl --user --failed --no-legend --plain 2>/dev/null; } | awk '{print $1}' | grep -v -x 'swaync.service')
+  [ -z "$failed" ] && ok "실패한 서비스 없음 (swaync.service 실패 표시는 정상: Hyprland가 직접 띄움)" || bad "실패: $(echo $failed)"
+  [ -x "$SUDO_ASKPASS" ] && ok "sudo 비밀번호 팝업 준비됨 (desk sudo)" || bad "sudo 팝업 스크립트 없음: $SUDO_ASKPASS"
+  local until; until=$(locked_until) && bad "sudo 잠김: ${until} 이후에 다시"
+
+  head_ "상단바 상태 프로그램 (bar-status, 러스트)"
+  local src="$REPO/tools/bar-status/src/main.rs" bin="$HOME/.local/bin/bar-status"
+  if [ -x "$bin" ] && [ -f "$src" ] && [ "$src" -nt "$bin" ]; then
+    warn "소스가 바이너리보다 새로움: cargo install --locked --force --path $REPO/tools/bar-status --root ~/.local && desk restart bar"
+  else ok "최신"; fi
+
+  head_ "파일 시스템 (btrfs)"
+  local opts disc
+  opts=$(findmnt -no OPTIONS /)
+  [[ $opts == *compress=zstd* ]] && ok "압축 켜짐 ($(grep -o 'compress=[^,]*' <<<"$opts"))" || warn "압축 꺼짐 (fstab에 compress=zstd:1)"
+  disc=$(lsblk -dno DISC-MAX /dev/mapper/cryptroot 2>/dev/null | tr -d ' ')
+  if [ "$disc" != "0B" ] && [ -n "$disc" ]; then ok "SSD TRIM 전달됨 ($(grep -o 'discard[^,]*' <<<"$opts" || echo 'fstrim'))"
+  else warn "SSD TRIM이 암호화(LUKS)에 막혀 있음. 부팅 옵션 rd.luks.options=discard 필요 (넣었다면 재부팅)"; fi
+  systemctl is-enabled -q btrfs-scrub@-.timer 2>/dev/null && ok "데이터 점검(scrub) 매달 켜짐" || warn "scrub 꺼짐: desk sudo systemctl enable --now btrfs-scrub@-.timer"
+  local cnt last
+  cnt=$(snapper -c home --csvout list --columns number 2>/dev/null | tail -n +3 | wc -l)
+  last=$(snapper -c home --csvout --separator ';' list --columns date 2>/dev/null | tail -1)
+  [ "$cnt" -gt 0 ] 2>/dev/null && ok "홈 스냅샷 ${cnt}개 (최근 ${last}). 되돌리기: desk undo <파일>" || warn "홈 스냅샷 없음 (snapper -c home)"
+  ok "디스크 $(df -h / | awk 'NR==2 {print $3 " 사용 / " $2}')"
+
+  head_ "dotfiles"
+  sync_cmd
+}
+
+case "${1:-help}" in
+  doctor) doctor ;;
+  restart)
+    case "${2:-}" in
+      shell) restart_shell ;;
+      bar) restart_bar ;;
+      audio) restart_audio ;;
+      *) echo "사용법: desk restart shell|bar|audio"; exit 2 ;;
+    esac ;;
+  sync) sync_cmd "${2:-}" ;;
+  sudo) shift; sudo_cmd "$@" ;;
+  shot) shift; shot_cmd "$@" ;;
+  snap) shift; snap_cmd "$@" ;;
+  undo) shift; undo_cmd "$@" ;;
+  exclude) shift; exclude_cmd "$@" ;;
+  help | -h | --help) usage ;;
+  *) usage; exit 2 ;;
+esac

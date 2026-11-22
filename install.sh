@@ -259,6 +259,9 @@ place_home .zshrc
 cargo install --locked --force --quiet --path "$REPO_DIR/tools/bar-status" --root "$HOME/.local"
 place_home .local/bin/sudo-askpass
 chmod +x "$HOME/.local/bin/sudo-askpass"
+# desk: 이 데스크톱을 안전하게 다시 시작·점검·동기화하는 명령 (desk help)
+place_home .local/bin/desk
+chmod +x "$HOME/.local/bin/desk"
 place_home .dircolors
 # Claude Code 상태줄 (fotoner/claude-statusline에서 bash 5.2+ 버그를 고친 본). settings.json에는 statusLine만 넣는다
 place_home .claude/statusline-command.sh
