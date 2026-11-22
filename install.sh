@@ -59,8 +59,9 @@ PKGS=(
   quickshell
   # Spotify 공식 앱(설치·업데이트 도구, sp 명령), 영상 하드웨어 가속 확인 도구(vainfo)
   spotify-launcher libva-utils
-  # 소리
+  # 소리, 스피커 보정(Dolby 튜닝 변환, README '스피커 보정' 참고)에 필요한 플러그인·도구
   pipewire pipewire-pulse pipewire-alsa wireplumber pavucontrol
+  lsp-plugins-lv2 calf innoextract python-numpy python-scipy
   # 상단바 오디오 파형
   cava
   # 글꼴

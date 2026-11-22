@@ -77,6 +77,19 @@ SUPER는 Windows 키입니다.
 
 자동으로 일어나는 일: 2분 30초 뒤 화면 어둡게, 5분 뒤 잠금, 5분 30초 뒤 화면 끔, 30분 뒤 절전. 덮개를 닫으면 잠근 뒤 절전합니다 (`config/hypr/hypridle.conf`). 외부 모니터가 켜져 있으면 덮개를 닫아도 절전하지 않고 노트북 화면만 꺼지며(맥 클램쉘 모드), 열면 닫기 전 화면 구성으로 돌아옵니다. 터치패드는 맥처럼 두 손가락으로 누르면 오른쪽 클릭입니다. 모니터가 여럿이면 SUPER + CTRL + SHIFT + 방향키로 창을, SUPER + ALT + SHIFT + 방향키로 워크스페이스를 그 방향 모니터로 보냅니다.
 
+### 스피커 보정 (Dolby 튜닝)
+
+윈도우에서는 레노버가 넣은 Dolby 튜닝(스피커별 EQ, 음향 보정, 대역별 리미터, 음량 +6dB)이 작은 스피커 소리를 보정하는데, 리눅스는 원음을 그대로 내보내서 밋밋하게 들립니다. [speaker-tuning-to-easyeffects](https://github.com/antoinecellerier/speaker-tuning-to-easyeffects)(MIT)가 이 노트북(20S1, Realtek ALC257 17AA:22B1)용 레노버 오디오 드라이버에서 Dolby 튜닝을 꺼내 PipeWire 필터로 바꿔 줍니다. 내장 스피커에만 걸리고 이어폰·HDMI·블루투스는 그대로입니다. 튜닝 데이터는 레노버 드라이버에서 나온 것이라 이 저장소에는 넣지 않고, 설치한 뒤 직접 만듭니다 (필요한 패키지는 `install.sh`가 설치):
+
+```bash
+git clone --depth 1 --branch v2026.10.1 https://github.com/antoinecellerier/speaker-tuning-to-easyeffects ~/.local/src/speaker-tuning-to-easyeffects
+cd ~/.local/src/speaker-tuning-to-easyeffects
+python3 tools/fetch_driver/get_lenovo_dax_xml.py   # 레노버 오디오 드라이버(n2ya123w.exe)를 받아 Dolby 튜닝 XML을 꺼냄
+python3 dolby_to_pipewire.py                       # ~/.config/pipewire/pipewire.conf.d/Dolby_Balanced.conf를 만들고 PipeWire 재시작
+```
+
+저음이 아쉬우면 `--enable virtual-bass`, 목소리가 묻히면 `--enable dialog`, 음색은 `--variant warm|detailed`를 붙여 다시 실행합니다. 점검은 `--doctor`, 되돌리기는 `--uninstall`.
+
 ### 맥식 단축키 (Alt = Cmd)
 
 스페이스바 바로 옆 **Alt**가 맥의 Cmd 자리라서, Alt를 Cmd처럼 쓰게 했습니다. Ctrl은 맥의 control 자리 그대로라 터미널에서 Ctrl+C는 맥처럼 실행 중단입니다.
