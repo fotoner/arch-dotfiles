@@ -83,6 +83,7 @@ Singleton {
             items: [
                 { keys: "Ctrl+Space", desc: "직전 입력기로 (누른 채 Space: 그다음)" },
                 { keys: "한/영", desc: "영어 ↔ 한글 (오른쪽 Alt 자리)" },
+                { keys: "한자", desc: "한자 후보 / 일본어 변환 (오른쪽 Ctrl 자리)" },
                 { keys: "Super+L", desc: "화면 잠금" },
                 { keys: "Super+Esc", desc: "전원 메뉴" },
                 { keys: "Alt+Shift+Q", desc: "로그아웃 (확인 창, Super+M도)" }

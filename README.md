@@ -61,7 +61,7 @@ SUPER는 Windows 키입니다.
 | Shift + Print | 전체 화면을 `~/Pictures`에 저장 | Cmd+Shift+3 |
 | SUPER + M | 로그아웃 확인 창 (실수로 눌러도 바로 로그아웃되지 않음. "로그아웃"이나 Enter를 누르면 앱을 정리하고 로그아웃, hyprshutdown) | 로그아웃 |
 
-입력기는 영어, 한글, 일본어(Mozc, 로마자 입력) 세 개입니다. **Ctrl+Space**는 맥처럼 **직전에 쓰던 입력기**로 바꿉니다. 한 번씩 누르면 자주 쓰는 두 입력기(예: 한 ↔ A)를 오가고, Ctrl을 누른 채 Space를 한 번 더 누르면 그 전에 쓰던 입력기(예: あ)로 넘어가며, Ctrl을 떼면 고른 입력기가 가장 최근이 됩니다(`ime-cycle.sh`). **한/영 키**(한국어 자판의 오른쪽 Alt 자리. 신호도 오른쪽 Alt라서 `kb_options = "korean:ralt_hangul"`로 한/영 키로 바꿈)는 영어 ↔ 한글이고 일본어에서 누르면 영어로 가며, Ctrl+Space와 같은 최근 순서에 기록됩니다. 그래서 오른쪽 Alt는 Alt로 쓰지 않고, Alt 단축키는 왼쪽 Alt로 누릅니다. 지금 상태는 상단바의 "A" / "한" / "あ" 배지로 보이고, 배지를 누르면 A → 한 → あ 순서로 바뀝니다. 맥처럼 모든 창이 같은 입력 상태를 씁니다(`ShareInputState=All`). Ctrl+Space는 Hyprland가 직접 받아서 바꾸기 때문에 어느 앱에서도 공백이 입력되지 않습니다. Caps Lock을 누르면 켜짐/꺼짐 팝업이 뜨고, 잠금 화면에서는 암호 칸 테두리가 노란색이 되며 "Caps Lock 켜짐"이 표시됩니다. 한글이 목록에 없으면 SUPER+R → "Fcitx 5 Configuration"에서 "Only Show Current Language"를 끄고 Hangul을 추가하세요.
+입력기는 영어, 한글, 일본어(Mozc, 로마자 입력) 세 개입니다. **Ctrl+Space**는 맥처럼 **직전에 쓰던 입력기**로 바꿉니다. 한 번씩 누르면 자주 쓰는 두 입력기(예: 한 ↔ A)를 오가고, Ctrl을 누른 채 Space를 한 번 더 누르면 그 전에 쓰던 입력기(예: あ)로 넘어가며, Ctrl을 떼면 고른 입력기가 가장 최근이 됩니다(`ime-cycle.sh`). **한/영 키**(한국어 자판의 오른쪽 Alt 자리. 신호도 오른쪽 Alt라서 `kb_options = "korean:ralt_hangul"`로 한/영 키로 바꿈)는 영어 ↔ 한글이고 일본어에서 누르면 영어로 가며, Ctrl+Space와 같은 최근 순서에 기록됩니다. 그래서 오른쪽 Alt는 Alt로 쓰지 않고, Alt 단축키는 왼쪽 Alt로 누릅니다. **한자 키**(오른쪽 Ctrl 자리, 신호도 오른쪽 Ctrl)는 사용자 키보드 옵션 `custom:rctrl_henkan`(`config/xkb/`)으로 일본어 키보드의 変換(Henkan) 키가 됩니다. 한글을 치다가 누르면 한자 후보 목록이 뜨고(한글 입력기의 한자 키 목록에 Henkan을 더함, `config/fcitx5/conf/hangul.conf`), 일본어를 치다가 누르면 Space처럼 변환하고 한 번 더 누르면 변환 후보 목록이 뜹니다(Mozc 기본 동작). 오른쪽 Ctrl도 Ctrl로 쓰지 않습니다. 지금 상태는 상단바의 "A" / "한" / "あ" 배지로 보이고, 배지를 누르면 A → 한 → あ 순서로 바뀝니다. 맥처럼 모든 창이 같은 입력 상태를 씁니다(`ShareInputState=All`). Ctrl+Space는 Hyprland가 직접 받아서 바꾸기 때문에 어느 앱에서도 공백이 입력되지 않습니다. Caps Lock을 누르면 켜짐/꺼짐 팝업이 뜨고, 잠금 화면에서는 암호 칸 테두리가 노란색이 되며 "Caps Lock 켜짐"이 표시됩니다. 한글이 목록에 없으면 SUPER+R → "Fcitx 5 Configuration"에서 "Only Show Current Language"를 끄고 Hangul을 추가하세요.
 
 음악은 Spotify 공식 앱으로 듣습니다(공식 저장소의 spotify-launcher가 설치·업데이트, 무료 계정도 됨). 셸에서 `sp`로 앱을 열고, `sp p` 재생/일시정지, `sp n` 다음 곡, `sp b` 이전 곡, `sp s` 지금 곡. 재생 중인 곡은 상단바와 제어 센터에도 나오고 미디어 키로도 조작됩니다.
 
@@ -242,6 +242,8 @@ python3 dolby_to_pipewire.py                       # ~/.config/pipewire/pipewire
 | `config/fastfetch/face.sh` | `~/.config/fastfetch/` | `~/.face`(잠금 화면 사진)를 원형 + 보라→파랑 링으로 잘라 `~/.cache/fastfetch/face.png`에 둔다. 사진이 없으면 기본 Arch 로고 |
 | `config/fontconfig/fonts.conf` | `~/.config/fontconfig/` | 웹페이지의 맥 전용 글꼴 이름(`-apple-system` 등)을 Inter로, 한글 글꼴은 힌팅을 꺼서 GTK4 앱에서 글자 윗부분이 잘리지 않게 |
 | `config/fcitx5/conf/classicui.conf`, `home/.local/share/fcitx5/themes/` | `~/.config/fcitx5/conf/`, `~/.local/share/fcitx5/themes/` | 입력기 후보 창 테마 |
+| `config/xkb/rules/evdev`, `symbols/custom` | `~/.config/xkb/` | 사용자 키보드 옵션 `custom:rctrl_henkan`: 한자 키(오른쪽 Ctrl 자리)를 変換(Henkan)으로. libxkbcommon이 시스템 규칙보다 먼저 읽음 |
+| `config/fcitx5/conf/hangul.conf` | `~/.config/fcitx5/conf/` | 한글 입력기의 한자 키 목록에 Henkan을 더함 (fcitx5가 다시 쓰는 파일이라 고칠 때는 fcitx5 설정 창이나 D-Bus SetConfig로) |
 | `config/fcitx5/profile`, `config` | `~/.config/fcitx5/` | 입력기 목록(영어, 한글, 일본어), 전환 키(Ctrl+Space는 Hyprland가 받아 최근 순서로), 모든 창이 같은 입력 상태 |
 | `config/git/config`, `ignore` | `~/.config/git/` | git 이름, LFS, 전역 gitignore |
 | `config/gh/config.yml` | `~/.config/gh/` | GitHub CLI 설정 (`gh co` = PR 체크아웃) |

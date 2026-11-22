@@ -1,0 +1,5 @@
+// 사용자 키보드 옵션 (libxkbcommon이 시스템 규칙보다 먼저 읽는다). 시스템 규칙을 그대로 쓰고 옵션만 더한다
+! include %S/evdev
+
+! option = symbols
+  custom:rctrl_henkan = +custom(rctrl_henkan)

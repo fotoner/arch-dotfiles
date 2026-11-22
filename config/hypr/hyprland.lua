@@ -259,7 +259,9 @@ hl.config({
         kb_layout  = "us",
         kb_variant = "",
         kb_model   = "",
-        kb_options = "korean:ralt_hangul", -- 한국어 자판의 한/영 키(오른쪽 Alt 자리, 신호도 오른쪽 Alt)를 진짜 한/영 키로
+        -- 한국어 자판: 한/영 키(오른쪽 Alt 자리, 신호도 오른쪽 Alt)를 진짜 한/영 키로,
+        -- 한자 키(오른쪽 Ctrl 자리)를 変換(Henkan)으로: 한글은 한자 후보, 일본어(Mozc)는 변환 후보 (~/.config/xkb/symbols/custom)
+        kb_options = "korean:ralt_hangul,custom:rctrl_henkan",
         kb_rules   = "",
 
         follow_mouse = 1,

@@ -273,6 +273,11 @@ place vicinae/settings.json
 place fcitx5/profile
 place fcitx5/config
 place fcitx5/conf/classicui.conf
+# 한자 키(오른쪽 Ctrl 자리 → 変換)에 한글 입력기도 한자 후보를 띄우게
+place fcitx5/conf/hangul.conf
+# 사용자 키보드 옵션 custom:rctrl_henkan (hyprland.lua의 kb_options가 쓴다)
+place xkb/rules/evdev
+place xkb/symbols/custom
 (cd "$REPO_DIR/home" && find .local/share/fcitx5 -type f) | while read -r f; do place_home "$f"; done
 (cd "$REPO_DIR/home" && find .local/share/icons -type f) | while read -r f; do place_home "$f"; done
 place_home .local/share/applications/tailscale.desktop

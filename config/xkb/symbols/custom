@@ -1,0 +1,11 @@
+// 한국어 자판의 한자 키(오른쪽 Ctrl 자리, 신호도 오른쪽 Ctrl)를 変換(Henkan) 키로.
+// 일본어 입력기(Mozc)는 変換 키로 변환 후보를 띄우고, 한글 입력기(fcitx5-hangul)도 이 키에 한자 후보를 띄우게 맞춘다
+// (~/.config/fcitx5/conf/hangul.conf의 HanjaModeToggleKey). NoAction: 더는 Ctrl로 동작하지 않게
+partial modifier_keys
+xkb_symbols "rctrl_henkan" {
+    replace key <RCTL> {
+        type[Group1] = "ONE_LEVEL",
+        symbols[Group1] = [ Henkan ],
+        actions[Group1] = [ NoAction() ]
+    };
+};
