@@ -61,7 +61,7 @@ SUPER는 Windows 키입니다.
 | Shift + Print | 전체 화면을 `~/Pictures`에 저장 | Cmd+Shift+3 |
 | SUPER + M | 로그아웃 확인 창 (실수로 눌러도 바로 로그아웃되지 않음. "로그아웃"이나 Enter를 누르면 앱을 정리하고 로그아웃, hyprshutdown) | 로그아웃 |
 
-입력기는 영어, 한글, 일본어(Mozc, 로마자 입력) 세 개입니다. **Ctrl+Space**를 누를 때마다 A → 한 → あ 순서로 바뀌고(한/영 키가 있으면 그 키는 영어 ↔ 한글), 지금 상태는 상단바의 "A" / "한" / "あ" 배지로 보입니다. 배지를 눌러도 같은 순서로 바뀝니다. 맥처럼 모든 창이 같은 입력 상태를 씁니다(`ShareInputState=All`). Ctrl+Space는 Hyprland가 직접 받아서 바꾸기 때문에 어느 앱에서도 공백이 입력되지 않습니다. Caps Lock을 누르면 켜짐/꺼짐 팝업이 뜨고, 잠금 화면에서는 암호 칸 테두리가 노란색이 되며 "Caps Lock 켜짐"이 표시됩니다. 한글이 목록에 없으면 SUPER+R → "Fcitx 5 Configuration"에서 "Only Show Current Language"를 끄고 Hangul을 추가하세요.
+입력기는 영어, 한글, 일본어(Mozc, 로마자 입력) 세 개입니다. **Ctrl+Space**는 맥처럼 **직전에 쓰던 입력기**로 바꿉니다. 한 번씩 누르면 자주 쓰는 두 입력기(예: 한 ↔ A)를 오가고, Ctrl을 누른 채 Space를 한 번 더 누르면 그 전에 쓰던 입력기(예: あ)로 넘어가며, Ctrl을 떼면 고른 입력기가 가장 최근이 됩니다(`ime-cycle.sh`, 한/영 키로 바꾼 것도 반영). 지금 상태는 상단바의 "A" / "한" / "あ" 배지로 보이고, 배지를 누르면 A → 한 → あ 순서로 바뀝니다. 맥처럼 모든 창이 같은 입력 상태를 씁니다(`ShareInputState=All`). Ctrl+Space는 Hyprland가 직접 받아서 바꾸기 때문에 어느 앱에서도 공백이 입력되지 않습니다. Caps Lock을 누르면 켜짐/꺼짐 팝업이 뜨고, 잠금 화면에서는 암호 칸 테두리가 노란색이 되며 "Caps Lock 켜짐"이 표시됩니다. 한글이 목록에 없으면 SUPER+R → "Fcitx 5 Configuration"에서 "Only Show Current Language"를 끄고 Hangul을 추가하세요.
 
 음악은 Spotify 공식 앱으로 듣습니다(공식 저장소의 spotify-launcher가 설치·업데이트, 무료 계정도 됨). 셸에서 `sp`로 앱을 열고, `sp p` 재생/일시정지, `sp n` 다음 곡, `sp b` 이전 곡, `sp s` 지금 곡. 재생 중인 곡은 상단바와 제어 센터에도 나오고 미디어 키로도 조작됩니다.
 
@@ -217,7 +217,7 @@ python3 dolby_to_pipewire.py                       # ~/.config/pipewire/pipewire
 | `config/swaync/config.json`, `style.css` | `~/.config/swaync/` | 알림 목록과 알림 팝업 |
 | `config/swaync/notify-sound.sh` | `~/.config/swaync/` | 알림 소리 (방해 금지·진행률 갱신·낮은 중요도·자기 소리를 내는 앱은 조용히, 0.8초에 한 번까지) |
 | `config/hypr/scripts/screenshot.sh` | `~/.config/hypr/scripts/` | 맥식 스크린샷 |
-| `config/hypr/scripts/ime-cycle.sh` | `~/.config/hypr/scripts/` | 입력기를 A → 한 → あ 순서로 바꾸기 (상단바·잠금 화면 배지) |
+| `config/hypr/scripts/ime-cycle.sh` | `~/.config/hypr/scripts/` | 입력기 바꾸기: Ctrl+Space는 최근 순서(`next`/`commit`, 순서는 `$XDG_RUNTIME_DIR/ime/mru`), 상단바·잠금 화면 배지는 A → 한 → あ 순서 |
 | `config/hypr/scripts/wifi-menu.sh` | `~/.config/hypr/scripts/` | nmtui Wi-Fi 창 (Catppuccin 색). 상단바 Wi-Fi 오른쪽 클릭, 제어 센터의 "네트워크 설정…" |
 | `tools/bar-status/` (러스트) | `~/.local/bin/bar-status` (`install.sh`가 `cargo install`로 빌드) | 상단바 미디어 표시(재생 시간, 긴 제목 흐르기, 일시정지 10초 뒤 숨김)와 입력기 배지 A / 한 / あ. 예전 셸 스크립트는 0.25~0.4초마다 playerctl·pgrep을 새로 실행해서 상단바 두 개가 CPU 한 코어의 40%쯤 썼다. 이제 D-Bus에 한 번 붙어 재생기 변경 알림으로 갱신한다(입력기는 fcitx5가 알림을 안 보내서 1초마다 묻고, Ctrl+Space로 바꾸면 SIGUSR1로 바로). 상단바가 꺼지면 같이 끝난다 |
 | `config/hypr/scripts/audio-wave.sh` | `~/.config/hypr/scripts/` | 상단바 왼쪽 끝: 소리가 나면 오디오 파형(cava 출력을 ▁▂▃▄▅▆▇█ 막대로), 조용하면 날씨 |
@@ -242,7 +242,7 @@ python3 dolby_to_pipewire.py                       # ~/.config/pipewire/pipewire
 | `config/fastfetch/face.sh` | `~/.config/fastfetch/` | `~/.face`(잠금 화면 사진)를 원형 + 보라→파랑 링으로 잘라 `~/.cache/fastfetch/face.png`에 둔다. 사진이 없으면 기본 Arch 로고 |
 | `config/fontconfig/fonts.conf` | `~/.config/fontconfig/` | 웹페이지의 맥 전용 글꼴 이름(`-apple-system` 등)을 Inter로, 한글 글꼴은 힌팅을 꺼서 GTK4 앱에서 글자 윗부분이 잘리지 않게 |
 | `config/fcitx5/conf/classicui.conf`, `home/.local/share/fcitx5/themes/` | `~/.config/fcitx5/conf/`, `~/.local/share/fcitx5/themes/` | 입력기 후보 창 테마 |
-| `config/fcitx5/profile`, `config` | `~/.config/fcitx5/` | 입력기 목록(영어, 한글, 일본어), 전환 키(Ctrl+Space로 차례로), 모든 창이 같은 입력 상태 |
+| `config/fcitx5/profile`, `config` | `~/.config/fcitx5/` | 입력기 목록(영어, 한글, 일본어), 전환 키(Ctrl+Space는 Hyprland가 받아 최근 순서로), 모든 창이 같은 입력 상태 |
 | `config/git/config`, `ignore` | `~/.config/git/` | git 이름, LFS, 전역 gitignore |
 | `config/gh/config.yml` | `~/.config/gh/` | GitHub CLI 설정 (`gh co` = PR 체크아웃) |
 | `config/nvim/` | `~/.config/nvim/` | Neovim(LazyVim) 설정 |

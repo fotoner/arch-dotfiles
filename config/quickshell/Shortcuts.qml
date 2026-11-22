@@ -81,7 +81,7 @@ Singleton {
             title: "시스템",
             icon: "\u{f0493}",
             items: [
-                { keys: "Ctrl+Space", desc: "입력기 A → 한 → あ" },
+                { keys: "Ctrl+Space", desc: "직전 입력기로 (누른 채 Space: 그다음)" },
                 { keys: "Super+L", desc: "화면 잠금" },
                 { keys: "Super+Esc", desc: "전원 메뉴" },
                 { keys: "Alt+Shift+Q", desc: "로그아웃 (확인 창, Super+M도)" }

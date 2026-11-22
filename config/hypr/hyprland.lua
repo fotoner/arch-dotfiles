@@ -377,9 +377,26 @@ hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("qs ipc call cc toggle"))
 hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("qs ipc call keys toggle")) -- 단축키 시트 (목록은 ~/.config/quickshell/Shortcuts.qml)
 
--- Ctrl+Space: 입력기 바꾸기 (A → 한 → あ). fcitx5 대신 Hyprland가 키를 받아서 어느 앱에서도 공백이 들어가지 않는다.
+-- Ctrl+Space: 맥처럼 입력기 바꾸기. 한 번 = 직전에 쓰던 입력기로(자주 쓰는 두 개를 오감), Ctrl을 누른 채 Space를 더 누르면
+-- 그 전에 쓰던 입력기로, Ctrl을 떼면 고른 입력기가 '가장 최근'이 된다 (~/.config/hypr/scripts/ime-cycle.sh next/commit).
+-- fcitx5 대신 Hyprland가 키를 받아서 어느 앱에서도 공백이 들어가지 않는다.
 -- locked: 잠금 화면에서도 동작해서 암호 칸에 공백이 들어가지 않고 좌하단 배지가 바뀐다
-hl.bind("CTRL + space", hl.dsp.exec_cmd("~/.config/hypr/scripts/ime-cycle.sh"), { locked = true })
+local imeCmd = "~/.config/hypr/scripts/ime-cycle.sh"
+local imeSession, imePresses = 0, 0
+hl.bind("CTRL + space", function()
+    if imePresses == 0 then imeSession = imeSession + 1 end
+    imePresses = imePresses + 1
+    hl.dispatch(hl.dsp.exec_cmd(imeCmd .. " next " .. imeSession .. " " .. imePresses))
+end, { locked = true })
+for _, ctrl in ipairs({ "Control_L", "Control_R" }) do
+    for _, mods in ipairs({ "CTRL", "CTRL + SHIFT" }) do
+        hl.bind(mods .. " + " .. ctrl, function() -- Ctrl을 떼는 순간 (평소 Ctrl을 뗄 때는 아무것도 안 하고 앱도 그대로 받음)
+            if imePresses == 0 then return end
+            hl.dispatch(hl.dsp.exec_cmd(imeCmd .. " commit " .. imeSession .. " " .. imePresses))
+            imePresses = 0
+        end, { release = true, non_consuming = true, transparent = true, locked = true })
+    end
+end
 
 -- Caps Lock을 누르면 켜짐/꺼짐 팝업 (키 자체는 그대로 동작)
 hl.bind("Caps_Lock", hl.dsp.exec_cmd("swayosd-client --caps-lock"), { release = true, non_consuming = true })
