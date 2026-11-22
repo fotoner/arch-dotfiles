@@ -7,6 +7,9 @@
 #   waybar                              상단바 표시. 녹화 중이면 매초 "● 0:12", 아니면 신호가 올 때까지 기다린다
 set -uo pipefail
 
+# 상단바 표시(waybar)는 상단바가 꺼지거나 다시 읽히면 같이 끝나야 한다 (기다리는 동안에는 출력하지 않아 스스로 알 수 없다)
+[ "${1:-}" = waybar ] && [ -z "${SR_PDEATHSIG:-}" ] && SR_PDEATHSIG=1 exec setpriv --pdeathsig TERM "$0" "$@"
+
 run="${XDG_RUNTIME_DIR:-/tmp}/screenrecord"
 mkdir -p "$run"
 dir="$HOME/Videos/Screen Recordings"

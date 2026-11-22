@@ -6,8 +6,13 @@
 #   다 접힌 뒤 cava는 쉬어서 CPU를 거의 안 쓴다
 # 날씨: weather.sh를 15분마다(실패하면 1분 뒤 다시) 불러 $XDG_RUNTIME_DIR/waybar-weather.json 에 담아 두고, 파형이 없을 때 보여 준다
 #   --frames N  cava N프레임만 처리하고 끝낸다 (시험용)
+# 상단바가 꺼지거나 다시 읽히면 같이 끝난다: 자신과 cava를 setpriv --pdeathsig로 띄우고, 끝날 때 하위 셸까지 정리한다.
+#   (예전에는 남은 스크립트가 상단바 없이 cava를 1초마다 다시 띄워서 PipeWire가 바빠지고 소리가 끊겼다)
+# cava는 PIPEWIRE_LATENCY로 1024 샘플(21ms)을 요청한다. 짧게(512) 요청하면 PipeWire 전체가 그 단위로 돌아
+#   스피커 보정(Dolby 필터)까지 두 배로 자주 깨어나고, 바쁠 때 소리가 끊기기 쉽다. 파형은 20fps라 1024로 충분하다
+[ -z "${WAVE_PDEATHSIG:-}" ] && WAVE_PDEATHSIG=1 exec setpriv --pdeathsig TERM "$0" "$@"
 BARS=8
-FPS=30
+FPS=20
 GLYPHS="▁▂▃▄▅▆▇█"
 frames=0
 [ "${1:-}" = "--frames" ] && frames=${2:-30}
@@ -16,7 +21,13 @@ rt=${XDG_RUNTIME_DIR:-/tmp}
 cache="$rt/waybar-weather.json"
 hidden='{"text":"","class":"hidden"}'
 
-trap 'kill $(jobs -p) 2>/dev/null' EXIT
+wavepid=""
+cleanup() {
+  [ -n "$wavepid" ] && pkill -TERM -P "$wavepid" 2>/dev/null
+  kill $(jobs -p) $wavepid 2>/dev/null
+}
+trap cleanup EXIT
+trap 'exit 0' TERM INT HUP
 
 # 날씨 받아 두기
 if [ "$frames" -eq 0 ]; then
@@ -65,7 +76,7 @@ export WAVE_TIP='지금 나오는 소리의 파형\n클릭: 재생 중인 앱으
 exec {wave}< <(
   until command -v cava >/dev/null; do sleep 5; done
   while true; do
-    cava -p "$conf" 2>/dev/null
+    PIPEWIRE_LATENCY=1024/48000 setpriv --pdeathsig TERM cava -p "$conf" 2>/dev/null
     [ "$frames" -gt 0 ] && break
     sleep 1
   done | LC_ALL=C.UTF-8 awk -F';' -v glyphs="$GLYPHS" -v fps="$FPS" -v frames="$frames" '
@@ -102,6 +113,7 @@ exec {wave}< <(
       if (frames && ++count >= frames) exit
     }'
 )
+wavepid=$!
 
 # 파형이 있으면 파형, 없으면 날씨(받아 둔 게 없으면 숨김). 조용할 때는 3초마다 날씨가 바뀌었는지 본다
 mode=weather last=$hidden
@@ -118,7 +130,7 @@ while true; do
     [ -s "$cache" ] && out=$(<"$cache")
   fi
   if [ "$out" != "$last" ]; then
-    printf '%s\n' "$out"
+    printf '%s\n' "$out" || exit 0
     last=$out
   fi
 done

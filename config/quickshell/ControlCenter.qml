@@ -74,7 +74,8 @@ PanelWindow {
     Process {
         id: dndWatch
         running: true
-        command: ["swaync-client", "-swb"]
+        // Quickshell이 꺼지면(재시작 등) 같이 끝나게 setpriv --pdeathsig로 띄운다. 안 그러면 남아서 쌓인다
+        command: ["setpriv", "--pdeathsig", "TERM", "swaync-client", "-swb"]
         stdout: SplitParser {
             onRead: line => {
                 try {
