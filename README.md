@@ -157,7 +157,7 @@ SUPER는 Windows 키입니다.
 
 | 파일 | 설치 위치 | 내용 |
 |---|---|---|
-| `config/hypr/hyprland.lua` | `~/.config/hypr/` | Hyprland 0.56 공식 예시 설정에서 한글 주석 부분만 바꿈: 자동 실행, 한글 입력 환경 변수, 맥식 스크롤 방향, 잠금·스크린샷 단축키, 맥식 Alt(=Cmd) 단축키, 파일 관리자 |
+| `config/hypr/hyprland.lua` | `~/.config/hypr/` | Hyprland 0.56 공식 예시 설정에서 한글 주석 부분만 바꿈: 자동 실행, 한글 입력 환경 변수, 맥식 스크롤 방향(터치패드 0.8배, 크롬·T3 Code 같은 크로미움 계열 앱은 확확 내려가서 0.45배), 잠금·스크린샷 단축키, 맥식 Alt(=Cmd) 단축키, 파일 관리자 |
 | `config/hypr/hypridle.conf` | `~/.config/hypr/` | 자동 잠금·화면 끄기·절전 |
 | `config/hypr/hyprlock.conf` | `~/.config/hypr/` | 잠금 화면 |
 | `config/hypr/hyprpaper.conf`, `wallpaper.png` | `~/.config/hypr/` | 바탕화면 |

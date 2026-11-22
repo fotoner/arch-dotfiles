@@ -655,5 +655,13 @@ hl.window_rule({
     center = true,
 })
 
+-- 크로미움 계열 앱(크롬, T3 Code, Obsidian, Discord, Spotify, Bitwarden)은 Wayland에서 터치패드 스크롤을 크게 받아들여
+-- 확확 내려간다. 그 창에서만 터치패드 스크롤 배율을 낮춘다 (다른 앱은 input.touchpad.scroll_factor 0.8 그대로)
+hl.window_rule({
+    name            = "chromium-touchpad-scroll",
+    match           = { class = "(?i)^(google-chrome|chromium|com\\.t3tools\\.t3code|obsidian|discord|spotify|bitwarden)$" },
+    scroll_touchpad = 0.45,
+})
+
 -- 이 컴퓨터에서만 쓰는 개인 설정(~/.config/hypr/personal.lua)이 있으면 읽는다. 저장소에는 없다 (예: 저작권 있는 커서)
 pcall(require, "personal")
