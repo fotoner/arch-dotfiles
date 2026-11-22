@@ -1,7 +1,7 @@
 pragma Singleton
 // 전원 모드 네 가지: 저전력 · 균형 · 빠른 균형 · 성능
 // 저전력·균형은 power-profiles-daemon(PPD) 그대로 (펌웨어 전력 상한 10W · 12W).
-// 성능은 PPD 성능 모드인데 펌웨어 상한 28W에서는 이 노트북이 20초 만에 99°C가 되고 팬·코일 소음이 커서 MSR PL1을 20W로 낮춘다.
+// 성능은 PPD 성능 모드인데 펌웨어 상한 28W에서는 이 노트북이 20초 만에 99°C가 되고 팬·코일 소음이 커서 MSR PL1을 22W로 낮춘다.
 // 빠른 균형은 PPD 성능 모드(팬·펌웨어 상한 28W) 위에서 CPU 성향(EPP)을 balance_performance로,
 // 오래 유지하는 전력 상한(MSR PL1)을 15W(인텔 기본 설계 전력)로 낮춘 것. 이 노트북은 18W에서 이미 97°C라 15W로 잡았다.
 // 펌웨어는 모드를 바꿀 때 MMIO 상한만 바꾸고 MSR 상한은 그대로 둔다. 그래서 주기적으로 확인하지 않고,
@@ -16,7 +16,7 @@ Singleton {
     id: pm
 
     readonly property int fastWatts: 15
-    readonly property int performanceWatts: 20
+    readonly property int performanceWatts: 22
     property string mode: "balanced"
     property bool ready: false
     property string pl1Default: "51000000"
@@ -27,7 +27,7 @@ Singleton {
         "power-saver": "지속 10W · 조용하고 배터리 오래 감",
         "balanced": "지속 12W · 평소 작업",
         "fast": "지속 15W · 긴 작업이 균형보다 빠름",
-        "performance": "지속 20W · 가장 빠름, 팬이 많이 돎"
+        "performance": "지속 22W · 가장 빠름, 팬이 많이 돎"
     })
     readonly property var icons: ({ "power-saver": Icons.leaf, "balanced": Icons.balance, "fast": Icons.gauge, "performance": Icons.bolt })
     readonly property string stateFile: Quickshell.env("HOME") + "/.local/state/power-mode"
