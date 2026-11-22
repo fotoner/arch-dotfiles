@@ -13,7 +13,7 @@
   "modules-right": [
     "tray",
     "custom/idle",
-    "power-profiles-daemon",
+    "custom/power",
     "pulseaudio",
     "battery",
     "custom/ime",
@@ -50,15 +50,12 @@
     "signal": 9,
     "on-click": "~/.config/hypr/scripts/idle-inhibit.sh toggle"
   },
-  "power-profiles-daemon": {
-    "format": "{icon}",
-    "format-icons": {
-      "default": "",
-      "performance": "",
-      "balanced": "",
-      "power-saver": ""
-    },
-    "tooltip-format": "전원 모드: {profile} (클릭해서 바꾸기)"
+  "custom/power": {
+    "exec": "~/.config/hypr/scripts/power-mode.sh",
+    "return-type": "json",
+    "interval": "once",
+    "signal": 10,
+    "on-click": "qs ipc call power cycle"
   },
   "pulseaudio": {
     "format": "{icon} {volume}%",

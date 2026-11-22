@@ -1,0 +1,22 @@
+#!/bin/sh
+# 전원 모드 '빠른 균형'(Quickshell 제어 센터)을 위한 부팅 준비. power-mode-setup.service가 부팅 때 한 번 실행한다.
+# 1) 부팅 때 펌웨어가 정한 '오래 유지하는 전력 상한'(PL1, MSR)을 /run/power-mode/pl1-default에 남긴다.
+#    다른 모드로 돌아갈 때 이 값으로 되돌린다
+# 2) wheel 그룹이 CPU 성향(EPP)과 그 상한을 바꿀 수 있게 연다. 그래야 모드를 바꿀 때마다 sudo가 필요 없다.
+#    올릴 수 있는 한계는 그대로라 펌웨어 기본값보다 위험해지지 않는다 (제어 센터는 15W로 낮추는 데만 쓴다)
+rapl=/sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw
+
+# intel_rapl 모듈은 udev가 늦게 올릴 수 있어서 10초까지 기다린다
+i=0
+while [ ! -e "$rapl" ] && [ $i -lt 50 ]; do
+  sleep 0.2
+  i=$((i + 1))
+done
+
+mkdir -p /run/power-mode
+[ -e "$rapl" ] && cat "$rapl" > /run/power-mode/pl1-default
+
+for f in "$rapl" /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do
+  [ -e "$f" ] || continue
+  chgrp wheel "$f" && chmod g+w "$f"
+done

@@ -3,6 +3,7 @@
 // 알림 목록은 그대로 swaync가 맡는다 (상단바 시계, Super+N)
 // 디스플레이 설정 창: 제어 센터 → 디스플레이, qs ipc call display open
 // 단축키 시트: Super+H, qs ipc call keys toggle
+// 전원 모드: qs ipc call power cycle|set <모드>|get
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -38,6 +39,24 @@ ShellRoot {
 
         function hide(): void {
             CC.open = false;
+        }
+    }
+
+    IpcHandler {
+        target: "power"
+
+        // qs ipc call power cycle : 균형 → 빠른 균형 → 성능 → 저전력 (상단바 전원 아이콘 클릭)
+        function cycle(): void {
+            Power.cycle();
+        }
+
+        // qs ipc call power set power-saver|balanced|fast|performance
+        function set(mode: string): void {
+            Power.set(mode);
+        }
+
+        function get(): string {
+            return Power.mode;
         }
     }
 

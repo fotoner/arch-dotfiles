@@ -26,7 +26,7 @@ start-hyprland          # Hyprland 실행
 2. pacman 색상·병렬 다운로드·multilib(Steam용 32비트 저장소)을 켜고 전체 업데이트
 3. snapper + snap-pac 스냅샷 설정 (시간별 5개, 일별 7개 보존). 이미 설정돼 있으면 건너뜀
 4. Hyprland, Waybar, 한글 입력기(fcitx5), 글꼴, 테마(바탕화면·아이콘), 소리, 블루투스, 터미널 도구, Neovim, Discord, Tailscale, Steam(Intel Vulkan 드라이버 포함), 맥 느낌 도구(음량·밝기 팝업, 전원 메뉴, 로그아웃 화면, Quickshell 제어 센터, 이미지·PDF 뷰어) 등 설치. oh-my-zsh 내려받기, Google Chrome·Vicinae·맥 커서(AUR) 빌드·설치, CodexBar(AI 사용량) 설치
-5. 블루투스, 전원 모드(power-profiles-daemon), 패키지 캐시 자동 정리, 시간 동기화, Tailscale, 펌웨어 업데이트 자동 확인(fwupd), 방화벽(nftables) 켜기. zram 스왑(RAM의 절반, 최대 8GB) 설정. sudo 비밀번호를 한 번 넣으면 모든 터미널에서 30분 유지. 절전에서 깨어날 때 HDMI 모니터를 놓치지 않게 설정. 소리(PipeWire)를 재로그인 없이 바로 켜기
+5. 블루투스, 전원 모드(power-profiles-daemon), 패키지 캐시 자동 정리, 시간 동기화, Tailscale, 펌웨어 업데이트 자동 확인(fwupd), 방화벽(nftables) 켜기. zram 스왑(RAM의 절반, 최대 8GB) 설정. sudo 비밀번호를 한 번 넣으면 모든 터미널에서 30분 유지. 절전에서 깨어날 때 HDMI 모니터를 놓치지 않게 설정. 전원 모드 '빠른 균형' 준비. 소리(PipeWire)를 재로그인 없이 바로 켜기
 6. 배터리 충전 한도 켜기 (75% 아래에서 충전 시작, 80%에서 멈춤. 제어 센터에서 80% / 100% 전환, UPower가 저장해 재부팅해도 유지)
 7. `config/` 아래 설정 파일을 `~/.config/`로 복사. 내용이 다른 기존 파일은 `.bak-날짜시각`으로 백업. Claude Code 상태줄 설치, 앱 다크 모드 켜기, 기본 브라우저를 Chrome으로, 이미지는 Loupe·PDF는 Papers로 열기
 8. git 이메일, Tailscale 로그인, zram 스왑, 터보 부스트, NVIDIA GPU 유무 점검
@@ -68,6 +68,8 @@ SUPER는 Windows 키입니다.
 펌웨어(ThinkPad BIOS 등)는 fwupd가 하루 한 번 새 버전을 확인합니다. `fwupdmgr get-updates`로 보고 `fwupdmgr update`로 설치합니다.
 
 로그인하면 첫 화면에 왼쪽 위 fastfetch, 왼쪽 아래 큰 시계, 오른쪽 터미널(입력 대기)이 자동으로 열립니다. 셋 다 보통 터미널 창이라 닫거나 옮겨도 되고, 시계는 q로 끝납니다. 원하지 않으면 `hyprland.lua`의 `startup-layout.sh` 줄을 지우세요.
+
+전원 모드는 네 가지입니다: 저전력 · 균형 · **빠른 균형** · 성능. 제어 센터의 전원 버튼(균형 → 빠른 균형 → 성능 → 저전력)이나 배터리 카드의 버튼 줄, 상단바 전원 아이콘으로 바꿉니다. 지속 전력(오래 유지하는 전력 상한, PL1)은 저전력 10W · 균형 12W · 빠른 균형 15W · 성능 20W입니다. 저전력·균형은 power-profiles-daemon과 펌웨어 그대로이고, 빠른 균형과 성능은 성능 모드(팬 설정)를 바탕으로 상한(MSR PL1)만 낮춥니다. 빠른 균형은 CPU 성향도 균형 쪽(`balance_performance`)이라 반응은 균형과 비슷하고 긴 작업이 더 빠릅니다. 펌웨어 기본 성능 모드(28W)는 이 노트북에서 20초 만에 99°C가 되고 팬·코일 소음이 커서 20W로 낮췄습니다(18W 부하에서도 97°C). 펌웨어가 바꾸는 값(MMIO)과 따로 있어서 모드를 바꾸거나 전원이 바뀔 때만 다시 맞추고, 주기적으로 확인하지 않습니다(`config/quickshell/Power.qml`).
 
 모니터 설정은 제어 센터의 "디스플레이" 줄을 눌러 펼치거나, Vicinae에서 "디스플레이 설정"을 찾으면 맥 디스플레이 설정 같은 창이 뜹니다. 화면 네모를 끌어서 실제 위치에 맞추고(가까운 가장자리에 붙고 줄이 맞춰짐), 모니터마다 해상도·주사율·배율·회전을 고릅니다. 해상도·배율·회전을 바꾸거나 "외부만"을 고르면 모든 화면에 "유지할까요?" 창이 떠서 15초 안에 누르지 않으면 원래대로 돌아갑니다. 설정은 모니터(제조사·모델·일련번호)마다 `~/.config/hypr/monitors.lua`에 저장되어 다시 꽂으면 그대로 적용됩니다. 화면을 끄는 구성(외부만·노트북만)은 저장하지 않아서 다시 꽂거나 재시작하면 풀리고, 켜진 화면이 하나도 없게 되면 내장 화면을 다시 켭니다.
 
@@ -203,6 +205,7 @@ SUPER는 Windows 키입니다.
 | `system/zram-generator.conf` | `/etc/systemd/` | zram 스왑 크기와 압축 방식 |
 | `system/sudoers-timeout` | `/etc/sudoers.d/zz-sudo-timeout` | sudo 인증을 터미널별이 아니라 계정 전체로 30분 유지 (wheel 그룹) |
 | `system/display-hotplug-fix`, `system/display-hotplug-fix*.service` | `/usr/local/bin/`, `/etc/systemd/system/` | 모니터를 꽂은 채 절전에서 깨어나면 연결 신호가 몰려 i915가 HDMI 포트를 무시하는 문제 대비. 부팅 때 신호 폭주 감지(`i915_hpd_storm_ctl`)를 끄고, 깨어난 뒤 3초·10초에 외부 화면 포트를 다시 확인 |
+| `system/power-mode-setup`, `power-mode-setup.service` | `/usr/local/bin/`, `/etc/systemd/system/` | 부팅 때 CPU 성향(EPP)과 오래 유지하는 전력 상한(MSR PL1)을 wheel 그룹이 바꿀 수 있게 열고, 펌웨어 기본 상한을 `/run/power-mode/pl1-default`에 남김. 전원 모드 '빠른 균형'이 sudo 없이 쓴다 |
 | `system/nftables.conf` | `/etc/` | 방화벽: 밖에서 먼저 들어오는 연결은 막고 응답만 받기. Tailscale, 같은 Wi-Fi 기기 찾기(mDNS), ping은 허용. Tailscale·NordVPN이 넣는 규칙은 건드리지 않음 |
 
 ## 참고

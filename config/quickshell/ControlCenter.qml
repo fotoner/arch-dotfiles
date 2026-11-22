@@ -42,17 +42,6 @@ PanelWindow {
             adapter.enabled = !adapter.enabled;
     }
 
-    // 균형 → 성능 → 저전력 → 균형
-    function cycleProfile() {
-        const p = PowerProfiles.profile;
-        if (p === PowerProfile.Balanced)
-            PowerProfiles.profile = PowerProfiles.hasPerformanceProfile ? PowerProfile.Performance : PowerProfile.PowerSaver;
-        else if (p === PowerProfile.Performance)
-            PowerProfiles.profile = PowerProfile.PowerSaver;
-        else
-            PowerProfiles.profile = PowerProfile.Balanced;
-    }
-
     visible: CC.open || card.opacity > 0
     anchors {
         top: true
@@ -259,12 +248,12 @@ PanelWindow {
                             onClicked: if (win.source?.audio) win.source.audio.muted = !win.source.audio.muted
                         }
 
+                        // 전원 모드: 균형 → 빠른 균형 → 성능 → 저전력 (배터리 카드에서 바로 고를 수도 있다)
                         SmallTile {
-                            readonly property int profile: PowerProfiles.profile
-                            icon: profile === PowerProfile.PowerSaver ? Icons.leaf : profile === PowerProfile.Performance ? Icons.bolt : Icons.balance
-                            label: profile === PowerProfile.PowerSaver ? "저전력" : profile === PowerProfile.Performance ? "성능" : "균형"
-                            active: profile !== PowerProfile.Balanced
-                            onClicked: win.cycleProfile()
+                            icon: Power.icons[Power.mode]
+                            label: Power.names[Power.mode]
+                            active: Power.mode !== "balanced"
+                            onClicked: Power.cycle()
                         }
 
                         SmallTile {

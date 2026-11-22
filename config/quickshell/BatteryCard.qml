@@ -1,5 +1,5 @@
 pragma ComponentBehavior: Bound
-// 배터리: 잔량, 충전 상태, 남은 시간, 충전 한도(80%까지만 / 100% 완충).
+// 배터리: 잔량, 충전 상태, 남은 시간, 충전 한도(80%까지만 / 100% 완충), 전원 모드(저전력 · 균형 · 빠른 균형 · 성능).
 // 충전 한도는 UPower가 ThinkPad 펌웨어에 기록한다 (비밀번호 필요 없음, 재부팅해도 유지)
 import QtQuick
 import QtQuick.Layouts
@@ -218,6 +218,79 @@ Card {
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: if (!option.selected) card.setLimit(option.modelData.limit)
                             }
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.topMargin: 2
+            implicitHeight: 1
+            color: Theme.line
+        }
+
+        // 전원 모드: 이름과 설명, 그 아래 네 개 중 고르기 (자세한 원리는 Power.qml)
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 8
+
+            Txt {
+                text: "전원 모드"
+                font.pixelSize: 12
+                font.weight: Font.DemiBold
+            }
+
+            Txt {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignRight
+                text: Power.notes[Power.mode]
+                font.pixelSize: 10
+                color: Theme.overlay1
+            }
+        }
+
+        Rectangle {
+            id: modePill
+
+            Layout.fillWidth: true
+            implicitHeight: 28
+            radius: 14
+            color: Qt.rgba(0, 0, 0, 0.25)
+
+            Row {
+                anchors.centerIn: parent
+
+                Repeater {
+                    model: ["power-saver", "balanced", "fast", "performance"]
+
+                    delegate: Rectangle {
+                        id: modeOption
+
+                        required property string modelData
+                        readonly property bool selected: Power.mode === modelData
+
+                        width: (modePill.width - 4) / 4
+                        height: 24
+                        radius: 12
+                        color: selected ? Theme.mauve : modeArea.containsMouse ? Theme.fill : "transparent"
+                        Behavior on color { ColorAnimation { duration: 150 } }
+
+                        Txt {
+                            anchors.centerIn: parent
+                            text: Power.names[modeOption.modelData]
+                            font.pixelSize: 11
+                            font.weight: Font.DemiBold
+                            color: modeOption.selected ? Theme.base : Theme.subtext0
+                        }
+
+                        MouseArea {
+                            id: modeArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: if (!modeOption.selected) Power.set(modeOption.modelData)
                         }
                     }
                 }

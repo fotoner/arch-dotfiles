@@ -157,6 +157,11 @@ sudo install -m 644 "$REPO_DIR/system/display-hotplug-fix.service" "$REPO_DIR/sy
 sudo systemctl daemon-reload
 sudo systemctl enable --now display-hotplug-fix.service
 sudo systemctl enable display-hotplug-fix-resume.service
+# 전원 모드 '빠른 균형'(제어 센터): 부팅 때 CPU 성향(EPP)과 전력 상한(PL1)을 wheel 그룹이 바꿀 수 있게 열고 펌웨어 기본 상한을 남긴다
+sudo install -m 755 "$REPO_DIR/system/power-mode-setup" /usr/local/bin/power-mode-setup
+sudo install -m 644 "$REPO_DIR/system/power-mode-setup.service" /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now power-mode-setup.service
 # 방화벽: 밖에서 먼저 들어오는 연결 막기 (Tailscale, 같은 Wi-Fi 기기 찾기는 허용). 원래 파일은 .bak으로 남긴다
 [ -f /etc/nftables.conf ] && [ ! -f /etc/nftables.conf.bak ] && sudo cp /etc/nftables.conf /etc/nftables.conf.bak
 sudo install -m 644 "$REPO_DIR/system/nftables.conf" /etc/nftables.conf
@@ -218,6 +223,7 @@ place hypr/scripts/weather.sh
 place hypr/scripts/idle-inhibit.sh
 place hypr/scripts/startup-layout.sh
 place hypr/scripts/big-clock.sh
+place hypr/scripts/power-mode.sh
 place chrome-flags.conf
 place spotify-launcher.conf
 chmod +x "$HOME/.config/hypr/scripts/"*.sh

@@ -1,0 +1,10 @@
+[Unit]
+Description=전원 모드 '빠른 균형' 준비 (CPU 성향·전력 상한을 wheel 그룹이 바꿀 수 있게)
+After=systemd-modules-load.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/power-mode-setup
+
+[Install]
+WantedBy=multi-user.target
