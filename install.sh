@@ -228,6 +228,9 @@ place chrome-flags.conf
 place spotify-launcher.conf
 chmod +x "$HOME/.config/hypr/scripts/"*.sh
 place swayosd/style.css
+# 음량·밝기 팝업 서버는 사용자 서비스로 돌려서 PipeWire가 재시작되면 같이 재시작한다 (hyprland.lua가 시작)
+place systemd/user/swayosd-server.service
+systemctl --user daemon-reload
 (cd "$REPO_DIR/config" && find quickshell -type f) | while read -r f; do place "$f"; done
 place nwg-bar/bar.json
 place nwg-bar/style.css

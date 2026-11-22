@@ -1,0 +1,14 @@
+[Unit]
+Description=음량·밝기 팝업 (swayosd). PipeWire가 재시작되면 같이 재시작해서 오디오 연결이 끊긴 채 남지 않게 한다
+# 스피커 보정(dolby_to_pipewire.py)처럼 PipeWire를 재시작하면, 계속 떠 있던 swayosd-server는 오디오 연결을 다시 잡지 못해
+# 음량·밝기 키가 먹통이 된다. PartOf로 묶어 pipewire-pulse가 재시작될 때 같이 재시작한다
+PartOf=graphical-session.target pipewire-pulse.service
+After=graphical-session.target pipewire-pulse.service
+
+[Service]
+ExecStart=/usr/bin/swayosd-server
+Restart=on-failure
+RestartSec=1
+
+[Install]
+WantedBy=graphical-session.target

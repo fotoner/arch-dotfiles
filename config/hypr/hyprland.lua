@@ -59,7 +59,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("fcitx5 -d --disable=notificationitem")   -- 한글 입력기 (트레이 아이콘 대신 상단바에 한/A 표시)
     hl.exec_cmd("waybar")                                 -- 상단 막대
     hl.exec_cmd("hyprpaper")                              -- 바탕화면
-    hl.exec_cmd("swayosd-server")                         -- 음량·밝기 팝업
+    hl.exec_cmd("systemctl --user start swayosd-server")  -- 음량·밝기 팝업 (PipeWire가 재시작되면 같이 재시작, ~/.config/systemd/user)
     hl.exec_cmd("swaync")                                 -- 알림 센터 (Super+N, 시계 클릭)
     hl.exec_cmd("qs")                                     -- 제어 센터 (Super+A, 상단바 제어 센터 아이콘), ~/.config/quickshell
     hl.exec_cmd("batsignal -b -w 20 -c 10")               -- 배터리 20%·10%에서 알림

@@ -197,6 +197,7 @@ python3 dolby_to_pipewire.py                       # ~/.config/pipewire/pipewire
 | `config/hypr/scripts/media-focus.sh` | `~/.config/hypr/scripts/` | 상단바 미디어를 누르면 그 미디어를 재생하는 창으로 이동 |
 | `config/hypr/scripts/smart-paste.sh` | `~/.config/hypr/scripts/` | 터미널에서 Alt+V: 클립보드에 이미지만 있으면 Ctrl+V(Claude Code 이미지 붙여넣기), 아니면 글자 붙여넣기 |
 | `config/swayosd/style.css` | `~/.config/swayosd/` | 음량·밝기 팝업 |
+| `config/systemd/user/swayosd-server.service` | `~/.config/systemd/user/` | 음량·밝기 팝업 서버. PipeWire가 재시작되면(스피커 보정 적용 등) 같이 재시작해서 음량·밝기 키가 먹통이 되지 않게 함 |
 | `config/nwg-bar/bar.json`, `style.css` | `~/.config/nwg-bar/` | 전원 메뉴 |
 | `home/.local/share/icons/hicolor/scalable/apps/power-menu-*.svg` | `~/.local/share/icons/...` | 전원 메뉴 아이콘 (동그란 바탕 + 단색 선 아이콘, 직접 그림) |
 | `home/.local/share/icons/hicolor/scalable/apps/tailscale.svg` | `~/.local/share/icons/...` | Tailscale 앱 아이콘 (둥근 네모 바탕 + 3x3 점, 직접 그림) |
