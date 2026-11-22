@@ -1,8 +1,10 @@
+//@ pragma IconTheme Papirus-Dark
 // Quickshell: 맥 제어 센터 같은 빠른 설정 패널.
 // 열기: 상단바 제어 센터 아이콘, Super+A, qs ipc call cc toggle
 // 알림 목록은 그대로 swaync가 맡는다 (상단바 시계, Super+N)
 // 디스플레이 설정 창: 제어 센터 → 디스플레이, qs ipc call display open
 // 단축키 시트: Super+H, qs ipc call keys toggle
+// 앱 아이콘은 GTK 앱들과 같은 Papirus-Dark 테마에서 찾는다 (맨 윗줄 pragma. 없으면 hicolor만 봐서 아이콘이 비거나 기본 아이콘이 나옴)
 // 전원 모드: qs ipc call power cycle|set <모드>|get
 // 화면 녹화 도구 막대: Alt+Shift+5 (screenrecord.sh toggle), qs ipc call record open
 // 앱 전환기 (맥 ⌘Tab): Alt+Tab, qs ipc call switcher next|prev

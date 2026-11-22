@@ -20,6 +20,10 @@ PanelWindow {
     property bool active: false // Alt를 누르고 고르는 중
     property bool shown: false // 목록이 화면에 보임 (빠르게 한 번 누를 때는 안 보이고 바로 넘어간다)
     property var apps: [] // [{ cls, name, icon, address, count }]
+
+    // Quickshell은 앱 목록(.desktop)을 처음 물어볼 때 읽기 시작한다. 셸이 켜질 때 미리 물어봐 두지 않으면
+    // 재시작 뒤 첫 Alt+Tab에서 목록이 비어 아이콘·이름을 창 class로 추측하게 된다
+    Component.onCompleted: DesktopEntries.applications.values.length
     property int index: 0
     property int startDir: 1
     property bool released: false // 목록을 만들기 전에 이미 Alt를 뗐음 (빠르게 한 번)

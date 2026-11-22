@@ -78,6 +78,8 @@ PKGS=(
   xdg-desktop-portal-hyprland xdg-desktop-portal-gtk qt5-wayland qt6-wayland
   # 터미널, 상단 막대, 알림 센터, 파일 관리자
   kitty waybar swaync libnotify nautilus xdg-user-dirs
+  # 알림 소리, kitty 아이콘(SVG → PNG)
+  sound-theme-freedesktop librsvg
   # 제어 센터 (Wi-Fi·블루투스 기기, 빠른 버튼, 충전 한도, 사용량)
   quickshell
   # Spotify 공식 앱(설치·업데이트 도구, sp 명령), 영상 하드웨어 가속 확인 도구(vainfo)
@@ -235,6 +237,9 @@ place kitty/kitty.conf
 place kitty/current-theme.conf
 place swaync/config.json
 place swaync/style.css
+# 알림이 오면 소리 (swaync config.json의 scripts가 실행)
+place swaync/notify-sound.sh
+chmod +x "$HOME/.config/swaync/notify-sound.sh"
 place hypr/scripts/screenshot.sh
 place hypr/scripts/smart-paste.sh
 place hypr/scripts/wifi-menu.sh
@@ -273,6 +278,10 @@ place fcitx5/conf/classicui.conf
 place_home .local/share/applications/tailscale.desktop
 place_home .local/share/applications/display-settings.desktop
 place_home .local/share/applications/shortcuts.desktop
+# kitty 아이콘(직접 그림, kitty-mocha.svg): 실행기·Alt+Tab은 데스크톱 파일의 Icon을 바꾸고,
+# 알림은 kitty가 ~/.config/kitty/kitty.app.png를 쓴다 (kitty는 켤 때 한 번만 확인하므로 새로 켜야 반영)
+sed 's/^Icon=kitty$/Icon=kitty-mocha/' /usr/share/applications/kitty.desktop > "$HOME/.local/share/applications/kitty.desktop"
+rsvg-convert -w 256 -h 256 "$HOME/.local/share/icons/hicolor/scalable/apps/kitty-mocha.svg" -o "$HOME/.config/kitty/kitty.app.png"
 place git/config
 place git/ignore
 place gh/config.yml

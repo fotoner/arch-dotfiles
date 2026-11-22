@@ -65,6 +65,8 @@ SUPER는 Windows 키입니다.
 
 음악은 Spotify 공식 앱으로 듣습니다(공식 저장소의 spotify-launcher가 설치·업데이트, 무료 계정도 됨). 셸에서 `sp`로 앱을 열고, `sp p` 재생/일시정지, `sp n` 다음 곡, `sp b` 이전 곡, `sp s` 지금 곡. 재생 중인 곡은 상단바와 제어 센터에도 나오고 미디어 키로도 조작됩니다.
 
+알림이 오면 소리가 납니다(freedesktop `message-new-instant`). 방해 금지 중, 진행률처럼 이미 떠 있는 알림을 고치는 것, 중요도 낮은 알림, Discord처럼 자기 소리를 따로 내는 앱은 조용하고, 알림이 소리를 지정하면 그 소리를 냅니다. 소리는 `~/.config/swaync/notify-sound.sh`의 `SOUND`로 바꿉니다.
+
 펌웨어(ThinkPad BIOS 등)는 fwupd가 하루 한 번 새 버전을 확인합니다. `fwupdmgr get-updates`로 보고 `fwupdmgr update`로 설치합니다.
 
 처음 켤 때 뜨던 Hyprland 기부 요청 팝업은 끔(`ecosystem.no_donation_nag`). 로그인하면 첫 화면에 왼쪽 위 fastfetch, 왼쪽 아래 큰 시계, 오른쪽 터미널(입력 대기)이 자동으로 열립니다. 셋 다 보통 터미널 창이라 닫거나 옮겨도 되고, 시계는 q로 끝납니다. 원하지 않으면 `hyprland.lua`의 `startup-layout.sh` 줄을 지우세요.
@@ -213,6 +215,7 @@ python3 dolby_to_pipewire.py                       # ~/.config/pipewire/pipewire
 | `home/.local/share/applications/display-settings.desktop` | `~/.local/share/applications/` | Vicinae에서 "디스플레이 설정"으로 검색하면 디스플레이 설정 창을 띄움 |
 | `home/.local/share/applications/shortcuts.desktop` | `~/.local/share/applications/` | Vicinae에서 "단축키"로 검색하면 단축키 시트를 띄움 |
 | `config/swaync/config.json`, `style.css` | `~/.config/swaync/` | 알림 목록과 알림 팝업 |
+| `config/swaync/notify-sound.sh` | `~/.config/swaync/` | 알림 소리 (방해 금지·진행률 갱신·낮은 중요도·자기 소리를 내는 앱은 조용히, 0.8초에 한 번까지) |
 | `config/hypr/scripts/screenshot.sh` | `~/.config/hypr/scripts/` | 맥식 스크린샷 |
 | `config/hypr/scripts/ime-cycle.sh` | `~/.config/hypr/scripts/` | 입력기를 A → 한 → あ 순서로 바꾸기 (상단바·잠금 화면 배지) |
 | `config/hypr/scripts/wifi-menu.sh` | `~/.config/hypr/scripts/` | nmtui Wi-Fi 창 (Catppuccin 색). 상단바 Wi-Fi 오른쪽 클릭, 제어 센터의 "네트워크 설정…" |
@@ -230,6 +233,7 @@ python3 dolby_to_pipewire.py                       # ~/.config/pipewire/pipewire
 | `config/systemd/user/swayosd-server.service` | `~/.config/systemd/user/` | 음량·밝기 팝업 서버. PipeWire가 재시작되면(스피커 보정 적용 등) 같이 재시작해서 음량·밝기 키가 먹통이 되지 않게 함 |
 | `config/nwg-bar/bar.json`, `style.css` | `~/.config/nwg-bar/` | 전원 메뉴 |
 | `home/.local/share/icons/hicolor/scalable/apps/power-menu-*.svg` | `~/.local/share/icons/...` | 전원 메뉴 아이콘 (동그란 바탕 + 단색 선 아이콘, 직접 그림) |
+| `home/.local/share/icons/hicolor/scalable/apps/kitty-mocha.svg` | `~/.local/share/icons/...` | kitty 아이콘 (맥 앱 아이콘 모양 + 고양이 귀, Catppuccin 색, 직접 그림). install.sh가 실행기·Alt+Tab용 데스크톱 파일과 알림용 `~/.config/kitty/kitty.app.png`를 만듦 |
 | `home/.local/share/icons/hicolor/scalable/apps/tailscale.svg` | `~/.local/share/icons/...` | Tailscale 앱 아이콘 (둥근 네모 바탕 + 3x3 점, 직접 그림) |
 | `home/.local/share/applications/tailscale.desktop` | `~/.local/share/applications/` | Vicinae에서 "Tailscale"로 검색하면 트레이 아이콘(`tailscale systray`)을 띄움. 이미 떠 있으면 다시 띄우지 않음 |
 | `config/gtk-4.0/gtk.css`, `config/gtk-3.0/gtk.css` | `~/.config/gtk-4.0/`, `~/.config/gtk-3.0/` | GTK4·libadwaita와 GTK3 앱(파일 관리자, 음량 창 등) 색을 Catppuccin Mocha로 |

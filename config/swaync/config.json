@@ -41,5 +41,12 @@
       "vexpand": false
     }
   },
-  "control-center-height": -1
+  "control-center-height": -1,
+  "script-fail-notify": true,
+  "scripts": {
+    "sound": {
+      "exec": "sh -c '\"$HOME/.config/swaync/notify-sound.sh\"'",
+      "app-name": ".*"
+    }
+  }
 }

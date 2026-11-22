@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- kitty 터미널 아이콘 (직접 그림): 맥 앱 아이콘 비율의 둥근 사각형 + 고양이 귀, Catppuccin Mocha 색 -->
+  <defs>
+    <linearGradient id="body" x1="0" y1="210" x2="0" y2="950" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#45475a"/>
+      <stop offset="0.5" stop-color="#28293a"/>
+      <stop offset="1" stop-color="#1e1e2e"/>
+    </linearGradient>
+    <linearGradient id="chevron" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#cba6f7"/>
+      <stop offset="1" stop-color="#f5c2e7"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#000000" flood-opacity="0.38"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- 바깥 윤곽: 귀와 몸통을 한 덩어리로 감싼다 (안쪽 경계는 아래 채우기가 덮음) -->
+    <g fill="none" stroke="#7f849c" stroke-opacity="0.55" stroke-width="12" stroke-linejoin="round">
+      <path d="M180 430 L244 74 L486 262 Z"/>
+      <path d="M844 430 L780 74 L538 262 Z"/>
+      <rect x="112" y="210" width="800" height="740" rx="190"/>
+    </g>
+    <!-- 귀 (끝을 둥글게), 몸통. 귀 색 = 몸통 맨 위 색이라 이음매가 없다 -->
+    <g fill="#45475a" stroke="#45475a" stroke-width="36" stroke-linejoin="round">
+      <path d="M180 430 L244 74 L486 262 Z"/>
+      <path d="M844 430 L780 74 L538 262 Z"/>
+    </g>
+    <rect x="112" y="210" width="800" height="740" rx="190" fill="url(#body)"/>
+  </g>
+
+  <!-- 귀 안쪽 -->
+  <g fill="#f5c2e7" stroke="#f5c2e7" stroke-width="18" stroke-linejoin="round" opacity="0.5">
+    <path d="M268 196 L282 134 L370 200 Z"/>
+    <path d="M756 196 L742 134 L654 200 Z"/>
+  </g>
+
+  <!-- 프롬프트 >_ -->
+  <polyline points="326,484 462,588 326,692" fill="none" stroke="url(#chevron)" stroke-width="78" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="534" y1="692" x2="712" y2="692" stroke="#cdd6f4" stroke-width="78" stroke-linecap="round"/>
+</svg>
