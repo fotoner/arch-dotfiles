@@ -24,8 +24,10 @@ step "1/8 인터넷 연결 확인"
 ping -c 1 -W 3 archlinux.org >/dev/null 2>&1 \
   || die "인터넷에 연결되지 않았습니다. 먼저 연결하세요: sudo nmcli device wifi connect \"와이파이이름\" --ask"
 
-step "2/8 pacman 설정(색상, 병렬 다운로드) 후 전체 업데이트"
+step "2/8 pacman 설정(색상, 병렬 다운로드, Steam용 32비트 저장소) 후 전체 업데이트"
 sudo sed -i 's/^#Color/Color/; s/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
+# Steam은 32비트 라이브러리가 든 multilib 저장소에 있다
+sudo sed -i '/^#\[multilib\]/,/^#Include/ s/^#//' /etc/pacman.conf
 sudo pacman -Syu --noconfirm
 
 step "3/8 스냅샷(snapper) 설정"
@@ -80,6 +82,8 @@ PKGS=(
   neovim tree-sitter-cli shfmt stylua npm
   # 앱: 메신저, VPN
   discord tailscale
+  # 게임: Steam, Intel 그래픽 Vulkan 드라이버(64·32비트, Proton 게임에 필요), Steam 글꼴
+  steam vulkan-intel lib32-vulkan-intel lib32-mesa ttf-liberation
   # AUR 패키지 빌드 도구
   base-devel
   # 한글 입력
