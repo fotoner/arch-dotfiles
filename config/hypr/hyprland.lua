@@ -259,7 +259,7 @@ hl.config({
         kb_layout  = "us",
         kb_variant = "",
         kb_model   = "",
-        kb_options = "",
+        kb_options = "korean:ralt_hangul", -- 한국어 자판의 한/영 키(오른쪽 Alt 자리, 신호도 오른쪽 Alt)를 진짜 한/영 키로
         kb_rules   = "",
 
         follow_mouse = 1,
@@ -382,21 +382,36 @@ hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("qs ipc call keys toggle")) -- 단축
 -- fcitx5 대신 Hyprland가 키를 받아서 어느 앱에서도 공백이 들어가지 않는다.
 -- locked: 잠금 화면에서도 동작해서 암호 칸에 공백이 들어가지 않고 좌하단 배지가 바뀐다
 local imeCmd = "~/.config/hypr/scripts/ime-cycle.sh"
-local imeSession, imePresses = 0, 0
+local imeSession, imePresses, imeLast = 0, 0, 0
+-- 진행 중인 Ctrl+Space 선택을 확정하는 명령 (없으면 빈 문자열)
+local function imeCommit()
+    if imePresses == 0 then return "" end
+    local cmd = imeCmd .. " commit " .. imeSession .. " " .. imePresses .. "; "
+    imePresses = 0
+    return cmd
+end
 hl.bind("CTRL + space", function()
+    local now = os.time()
+    -- Ctrl 떼기를 놓쳤으면(다른 수정 키를 같이 누른 채 뗀 경우 등) 3초 뒤에는 앞 선택을 확정하고 새로 시작한다
+    local cmd = (imePresses > 0 and now - imeLast >= 3) and imeCommit() or ""
     if imePresses == 0 then imeSession = imeSession + 1 end
     imePresses = imePresses + 1
-    hl.dispatch(hl.dsp.exec_cmd(imeCmd .. " next " .. imeSession .. " " .. imePresses))
+    imeLast = now
+    hl.dispatch(hl.dsp.exec_cmd(cmd .. imeCmd .. " next " .. imeSession .. " " .. imePresses))
 end, { locked = true })
 for _, ctrl in ipairs({ "Control_L", "Control_R" }) do
-    for _, mods in ipairs({ "CTRL", "CTRL + SHIFT" }) do
-        hl.bind(mods .. " + " .. ctrl, function() -- Ctrl을 떼는 순간 (평소 Ctrl을 뗄 때는 아무것도 안 하고 앱도 그대로 받음)
-            if imePresses == 0 then return end
-            hl.dispatch(hl.dsp.exec_cmd(imeCmd .. " commit " .. imeSession .. " " .. imePresses))
-            imePresses = 0
+    -- Ctrl을 떼는 순간. 그때 같이 눌려 있을 수 있는 수정 키 조합을 모두 받는다 (평소 Ctrl을 뗄 때는 아무것도 안 하고 앱도 그대로 받음)
+    for _, mods in ipairs({ "", "CTRL", "CTRL + SHIFT", "CTRL + ALT", "CTRL + SUPER", "SHIFT", "ALT", "SUPER" }) do
+        hl.bind((mods == "" and "" or mods .. " + ") .. ctrl, function()
+            local cmd = imeCommit()
+            if cmd ~= "" then hl.dispatch(hl.dsp.exec_cmd(cmd)) end
         end, { release = true, non_consuming = true, transparent = true, locked = true })
     end
 end
+-- 한/영 키: 영어면 한글로, 한글·일본어면 영어로 (일본어는 Ctrl+Space). Ctrl+Space와 같은 최근 순서에 기록된다
+hl.bind("Hangul", function()
+    hl.dispatch(hl.dsp.exec_cmd(imeCommit() .. imeCmd .. " hangul"))
+end, { locked = true })
 
 -- Caps Lock을 누르면 켜짐/꺼짐 팝업 (키 자체는 그대로 동작)
 hl.bind("Caps_Lock", hl.dsp.exec_cmd("swayosd-client --caps-lock"), { release = true, non_consuming = true })

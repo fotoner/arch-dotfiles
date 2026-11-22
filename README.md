@@ -61,7 +61,7 @@ SUPER는 Windows 키입니다.
 | Shift + Print | 전체 화면을 `~/Pictures`에 저장 | Cmd+Shift+3 |
 | SUPER + M | 로그아웃 확인 창 (실수로 눌러도 바로 로그아웃되지 않음. "로그아웃"이나 Enter를 누르면 앱을 정리하고 로그아웃, hyprshutdown) | 로그아웃 |
 
-입력기는 영어, 한글, 일본어(Mozc, 로마자 입력) 세 개입니다. **Ctrl+Space**는 맥처럼 **직전에 쓰던 입력기**로 바꿉니다. 한 번씩 누르면 자주 쓰는 두 입력기(예: 한 ↔ A)를 오가고, Ctrl을 누른 채 Space를 한 번 더 누르면 그 전에 쓰던 입력기(예: あ)로 넘어가며, Ctrl을 떼면 고른 입력기가 가장 최근이 됩니다(`ime-cycle.sh`, 한/영 키로 바꾼 것도 반영). 지금 상태는 상단바의 "A" / "한" / "あ" 배지로 보이고, 배지를 누르면 A → 한 → あ 순서로 바뀝니다. 맥처럼 모든 창이 같은 입력 상태를 씁니다(`ShareInputState=All`). Ctrl+Space는 Hyprland가 직접 받아서 바꾸기 때문에 어느 앱에서도 공백이 입력되지 않습니다. Caps Lock을 누르면 켜짐/꺼짐 팝업이 뜨고, 잠금 화면에서는 암호 칸 테두리가 노란색이 되며 "Caps Lock 켜짐"이 표시됩니다. 한글이 목록에 없으면 SUPER+R → "Fcitx 5 Configuration"에서 "Only Show Current Language"를 끄고 Hangul을 추가하세요.
+입력기는 영어, 한글, 일본어(Mozc, 로마자 입력) 세 개입니다. **Ctrl+Space**는 맥처럼 **직전에 쓰던 입력기**로 바꿉니다. 한 번씩 누르면 자주 쓰는 두 입력기(예: 한 ↔ A)를 오가고, Ctrl을 누른 채 Space를 한 번 더 누르면 그 전에 쓰던 입력기(예: あ)로 넘어가며, Ctrl을 떼면 고른 입력기가 가장 최근이 됩니다(`ime-cycle.sh`). **한/영 키**(한국어 자판의 오른쪽 Alt 자리. 신호도 오른쪽 Alt라서 `kb_options = "korean:ralt_hangul"`로 한/영 키로 바꿈)는 영어 ↔ 한글이고 일본어에서 누르면 영어로 가며, Ctrl+Space와 같은 최근 순서에 기록됩니다. 그래서 오른쪽 Alt는 Alt로 쓰지 않고, Alt 단축키는 왼쪽 Alt로 누릅니다. 지금 상태는 상단바의 "A" / "한" / "あ" 배지로 보이고, 배지를 누르면 A → 한 → あ 순서로 바뀝니다. 맥처럼 모든 창이 같은 입력 상태를 씁니다(`ShareInputState=All`). Ctrl+Space는 Hyprland가 직접 받아서 바꾸기 때문에 어느 앱에서도 공백이 입력되지 않습니다. Caps Lock을 누르면 켜짐/꺼짐 팝업이 뜨고, 잠금 화면에서는 암호 칸 테두리가 노란색이 되며 "Caps Lock 켜짐"이 표시됩니다. 한글이 목록에 없으면 SUPER+R → "Fcitx 5 Configuration"에서 "Only Show Current Language"를 끄고 Hangul을 추가하세요.
 
 음악은 Spotify 공식 앱으로 듣습니다(공식 저장소의 spotify-launcher가 설치·업데이트, 무료 계정도 됨). 셸에서 `sp`로 앱을 열고, `sp p` 재생/일시정지, `sp n` 다음 곡, `sp b` 이전 곡, `sp s` 지금 곡. 재생 중인 곡은 상단바와 제어 센터에도 나오고 미디어 키로도 조작됩니다.
 

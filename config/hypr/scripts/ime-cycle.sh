@@ -4,6 +4,7 @@
 #   next <세션> <n>        Ctrl+Space를 n번째 누름 (Ctrl을 누른 채로). 맥처럼 1번 = 직전에 쓰던 입력기,
 #                          2번 = 그 전에 쓰던 입력기 … (누르는 동안에는 순서를 고정해 둔다)
 #   commit <세션> <n>      Ctrl을 뗌. 고른 입력기가 '가장 최근'이 되고, 바꾸기 전 입력기가 그다음이 된다
+#   hangul                 한/영 키: 영어면 한글로, 아니면(한글·일본어) 영어로
 # 그래서 Ctrl+Space를 한 번씩 누르면 자주 쓰는 두 입력기를 오가고, 세 번째는 Ctrl을 누른 채 Space 두 번.
 # Hyprland(hyprland.lua)가 세션 번호와 누른 횟수를 넘긴다. 최근 순서는 $XDG_RUNTIME_DIR/ime/mru (로그인마다 새로)
 set -u
@@ -77,6 +78,14 @@ case "${1:-}" in
     wait_for "$session" "$n" || exit 0
     # 고른 것(지금 입력기)을 맨 앞에, 그다음은 이번 순서대로 → 바꾸기 전 입력기가 두 번째
     ordered "$(fcitx5-remote -n 2>/dev/null || echo "$current")" "${order[@]}" > "$dir/mru"
+    rm -f "$dir/state"
+    ;;
+  hangul)
+    flock 9
+    if [ "$current" = keyboard-us ]; then target=hangul; else target=keyboard-us; fi
+    switch_to "$target"
+    # shellcheck disable=SC2046
+    ordered "$target" "$current" $(cat "$dir/mru" 2>/dev/null) > "$dir/mru.new" && mv "$dir/mru.new" "$dir/mru"
     rm -f "$dir/state"
     ;;
   *)
