@@ -24,7 +24,7 @@ start-hyprland          # Hyprland 실행
 
 1. 인터넷 연결 확인
 2. pacman 색상·병렬 다운로드·multilib(Steam용 32비트 저장소)을 켜고 전체 업데이트
-3. snapper + snap-pac 스냅샷 설정 (시간별 5개, 일별 7개 보존). 이미 설정돼 있으면 건너뜀
+3. snapper + snap-pac 스냅샷 설정: 시스템(`/`)은 시간별 5개·일별 7개, 홈(`/home`)은 시간별 24개·일별 7개·세션별 20개 (내 계정이 sudo 없이 찍고 되돌림). btrfs 압축(zstd:1)·noatime, 암호화 너머 SSD TRIM(부팅 옵션 `rd.luks.options=discard`, 재부팅 후), 매달 데이터 점검(scrub)
 4. Hyprland, Waybar, 한글 입력기(fcitx5), 글꼴, 테마(바탕화면·아이콘), 소리, 블루투스, 터미널 도구, Neovim, Discord, Tailscale, Steam(Intel Vulkan 드라이버 포함), 맥 느낌 도구(음량·밝기 팝업, 전원 메뉴, 로그아웃 화면, Quickshell 제어 센터, 이미지·PDF 뷰어) 등 설치. oh-my-zsh 내려받기, Google Chrome·Vicinae·맥 커서(AUR) 빌드·설치, CodexBar(AI 사용량) 설치
 5. 블루투스, 전원 모드(power-profiles-daemon), 패키지 캐시 자동 정리, 시간 동기화, Tailscale, 펌웨어 업데이트 자동 확인(fwupd), 방화벽(nftables) 켜기. zram 스왑(RAM의 절반, 최대 8GB) 설정. sudo 비밀번호를 한 번 넣으면 모든 터미널에서 30분 유지. 절전에서 깨어날 때 HDMI 모니터를 놓치지 않게 설정. 전원 모드 '빠른 균형' 준비. 소리(PipeWire)를 재로그인 없이 바로 켜기
 6. 배터리 충전 한도 켜기 (75% 아래에서 충전 시작, 80%에서 멈춤. 제어 센터에서 80% / 100% 전환, UPower가 저장해 재부팅해도 유지)
@@ -95,6 +95,15 @@ SUPER는 Windows 키입니다.
 | `desk exclude <폴더>` | 다시 만들 수 있는 폴더(node_modules, 빌드 결과물, 캐시, Docker 이미지)를 하위 볼륨으로 바꿔 홈 스냅샷에서 뺌 |
 
 오래 떠 있는 하위 프로세스(상단바 모듈, cava, 알림 감시, 음량 팝업)는 부모가 꺼지면 같이 끝나게 해 두었습니다(`setpriv --pdeathsig`, systemd `PartOf`).
+
+### 되돌리기 (에이전트용 실행 취소)
+
+에이전트가 자동 모드로 파일을 고치다 망쳐도 되돌릴 수 있게 홈(`/home`)을 btrfs 스냅샷으로 남깁니다. git은 커밋한 코드만 지키지만 스냅샷은 설정 파일, git 밖의 폴더, 지운 파일까지 지킵니다.
+
+- **언제 찍히나**: 매시간(24개 보존), 하루 1개(7일), 그리고 Claude Code 세션이 시작될 때마다(`~/.claude/settings.json`의 SessionStart 훅, 20개 보존)
+- **되돌리기**: `desk undo ~/.config/hypr/hyprland.lua`로 이전 버전 목록을 보고, `desk undo <파일> <번호>`로 되돌립니다
+- **가볍게 유지**: 스냅샷은 하위 볼륨 경계를 넘지 않습니다. 그래서 다시 만들 수 있는 큰 폴더는 `desk exclude`로 하위 볼륨으로 떼어 냅니다. 빌드할 때마다 스냅샷이 몇 GB씩 불어나는 걸 막아요. 이 노트북에서는 `node_modules`, Rust `target`, `~/.cache`의 AUR·크롬·vicinae 캐시, `~/.npm`, Steam을 떼어 냈습니다
+- **주의**: 떼어 내기 전에 찍은 스냅샷은 원본을 계속 붙잡고 있습니다. 공간이 안 줄면 `snapper -c home list`에서 오래된 번호를 `snapper -c home delete <번호>`로 지웁니다
 
 ### 스피커 보정 (Dolby 튜닝)
 
@@ -180,6 +189,7 @@ python3 dolby_to_pipewire.py                       # ~/.config/pipewire/pipewire
 
 - 화면이 멈추거나 Hyprland가 안 뜨면 **Ctrl+Alt+F2**로 다른 텍스트 화면에 로그인해서 고칩니다.
 - 화면 위에 빨간 막대가 뜨면 설정 파일 오류입니다. `hyprctl configerrors`로 내용을 봅니다.
+- 홈의 파일을 망쳤으면(에이전트 포함) `desk undo <파일>`로 스냅샷의 이전 버전을 꺼냅니다.
 - 패키지 설치 때문에 망가졌으면 snap-pac이 남긴 스냅샷으로 되돌립니다.
   ```sh
   sudo snapper -c root list                # 설치 전(pre)·후(post) 번호 확인

@@ -46,7 +46,30 @@ else
   sudo snapper -c root set-config TIMELINE_LIMIT_HOURLY=5 TIMELINE_LIMIT_DAILY=7 \
     TIMELINE_LIMIT_WEEKLY=0 TIMELINE_LIMIT_MONTHLY=0 TIMELINE_LIMIT_YEARLY=0
 fi
+# 홈 스냅샷: 에이전트(Claude Code 등)가 파일을 망쳐도 되돌릴 수 있게. 매시간 24개 + 하루 1개씩 7일 + 수동·세션 스냅샷 20개.
+# 내 계정이 sudo 없이 찍고(ALLOW_USERS) 들여다볼 수 있게(SYNC_ACL) 한다. 되돌리기: desk undo <파일>
+if ! sudo test -f /etc/snapper/configs/home; then
+  sudo snapper -c home create-config /home
+fi
+sudo snapper -c home set-config ALLOW_USERS="$USER" SYNC_ACL=yes \
+  TIMELINE_CREATE=yes TIMELINE_CLEANUP=yes TIMELINE_MIN_AGE=3600 \
+  TIMELINE_LIMIT_HOURLY=24 TIMELINE_LIMIT_DAILY=7 TIMELINE_LIMIT_WEEKLY=0 \
+  TIMELINE_LIMIT_MONTHLY=0 TIMELINE_LIMIT_QUARTERLY=0 TIMELINE_LIMIT_YEARLY=0 \
+  NUMBER_CLEANUP=yes NUMBER_MIN_AGE=1800 NUMBER_LIMIT=20 NUMBER_LIMIT_IMPORTANT=5
 sudo systemctl enable --now snapper-timeline.timer snapper-cleanup.timer
+
+# 파일 시스템: 압축(zstd 1단계, 새로 쓰는 파일부터)과 noatime(읽을 때마다 쓰지 않기). 다음 부팅부터, 지금도 바로 적용
+sudo sed -i -e '/[[:space:]]btrfs[[:space:]]/ s/,relatime,/,noatime,/' \
+  -e '/[[:space:]]btrfs[[:space:]]/ {/compress=/! s/,noatime,/,noatime,compress=zstd:1,/}' /etc/fstab
+sudo systemctl daemon-reload
+sudo mount -o remount,noatime,compress=zstd:1 /
+# SSD TRIM: 디스크 암호화(LUKS)가 기본으로 TRIM을 막는다. 부팅 옵션으로 통과시키면 btrfs가 알아서 비동기 TRIM을 한다 (재부팅 후)
+for entry in /boot/loader/entries/*.conf; do
+  sudo grep -q 'rd.luks.name' "$entry" && ! sudo grep -q 'rd.luks.options=discard' "$entry" \
+    && sudo sed -i 's/^options .*/& rd.luks.options=discard/' "$entry"
+done
+# 한 달에 한 번 데이터 점검(scrub): 조용히 깨진 데이터를 찾는다
+sudo systemctl enable --now btrfs-scrub@-.timer
 
 step "4/8 Hyprland와 데스크톱 구성 요소 설치"
 PKGS=(
@@ -269,6 +292,11 @@ chmod +x "$HOME/.claude/statusline-command.sh"
 CLAUDE_SETTINGS="$HOME/.claude/settings.json"
 [ -f "$CLAUDE_SETTINGS" ] || echo '{}' > "$CLAUDE_SETTINGS"
 jq '.statusLine = {"type": "command", "command": "bash ~/.claude/statusline-command.sh", "refreshInterval": 3}' \
+  "$CLAUDE_SETTINGS" > "$CLAUDE_SETTINGS.tmp" && mv "$CLAUDE_SETTINGS.tmp" "$CLAUDE_SETTINGS"
+# Claude Code 세션이 시작될 때마다 홈 스냅샷을 찍는다 (실패해도 세션은 그대로 시작). 이미 있으면 바꿔 끼운다
+SNAP_HOOK='"$HOME/.local/bin/desk" snap "Claude Code 세션 시작: $PWD" >/dev/null 2>&1 && echo "이 세션을 시작하기 직전에 홈(/home) 스냅샷을 찍었다. 에이전트가 망친 파일은 desk undo <파일>로 되돌린다. 이 데스크톱 점검·재시작은 desk help." || true'
+jq --arg cmd "$SNAP_HOOK" '.hooks.SessionStart = ([(.hooks.SessionStart // [])[] | select(any(.hooks[]?; .command | test("desk\"? snap")) | not)]
+    + [{"matcher": "startup|resume", "hooks": [{"type": "command", "command": $cmd, "timeout": 15}]}])' \
   "$CLAUDE_SETTINGS" > "$CLAUDE_SETTINGS.tmp" && mv "$CLAUDE_SETTINGS.tmp" "$CLAUDE_SETTINGS"
 xdg-user-dirs-update
 # 앱 다크 모드, GTK3 앱 테마(adw-gtk3), 맥 커서, 아이콘 테마
