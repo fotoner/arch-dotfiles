@@ -44,7 +44,7 @@ SUPER는 Windows 키입니다.
 | Nautilus에서 Space | 고른 파일 빠른 미리보기(Sushi). 이미지를 열면 Loupe, PDF는 Papers | Quick Look, 미리보기 |
 | SUPER + L | 화면 잠금 | Ctrl+Cmd+Q |
 | SUPER + Esc | 전원 메뉴(글자 없는 아이콘 줄, 왼쪽부터): 화면 잠금·로그아웃·잠자기·재시동·시스템 종료 (제어 센터의 전원 버튼도 같음) | 메뉴의 전원 항목 |
-| SUPER + A | 제어 센터 (상단바 시계 왼쪽 토글 아이콘도 같음): Wi-Fi·블루투스 켜짐 표시와 기기 목록(신호 세기, 이어폰 배터리, 바로 연결/해제, 처음 쓰는 Wi-Fi는 암호 입력), 빠른 버튼(방해 금지·마이크·전원 모드·잠자기 방지, 켜지면 보라색), 밝기·음량 막대와 출력 장치, 재생 중인 미디어, 배터리(충전 상태·남은 시간·충전 한도 80% / 100%), 시스템 사용량(CPU·메모리·디스크·온도). 바깥을 누르거나 Esc로 닫기 | 제어 센터 |
+| SUPER + A | 제어 센터 (상단바 시계 왼쪽 토글 아이콘도 같음): Wi-Fi·블루투스 켜짐 표시와 기기 목록(신호 세기, 이어폰 배터리, 바로 연결/해제, 처음 쓰는 Wi-Fi는 암호 입력), 빠른 버튼(방해 금지·마이크·전원 모드·잠자기 방지, 켜지면 보라색), 밝기·음량 막대와 출력 장치, 화면 구성(확장·미러링·외부만·노트북만)과 디스플레이 설정 창, 재생 중인 미디어, 배터리(충전 상태·남은 시간·충전 한도 80% / 100%), 시스템 사용량(CPU·메모리·디스크·온도). 바깥을 누르거나 Esc로 닫기 | 제어 센터 |
 | SUPER + N | 알림 목록과 방해 금지 (상단바 오른쪽 끝 시계를 눌러도 열림, 시계 오른쪽 클릭 = 방해 금지). 읽지 않은 알림이 있으면 시계 옆에 빨간 점, 방해 금지 중이면 달 | 알림 센터 |
 | SUPER + H | 단축키 도움말 창 | |
 | 음량·밝기 키 | 화면에 팝업으로 표시 | 같음 |
@@ -68,6 +68,8 @@ SUPER는 Windows 키입니다.
 펌웨어(ThinkPad BIOS 등)는 fwupd가 하루 한 번 새 버전을 확인합니다. `fwupdmgr get-updates`로 보고 `fwupdmgr update`로 설치합니다.
 
 로그인하면 첫 화면에 왼쪽 위 fastfetch, 왼쪽 아래 큰 시계, 오른쪽 터미널(입력 대기)이 자동으로 열립니다. 셋 다 보통 터미널 창이라 닫거나 옮겨도 되고, 시계는 q로 끝납니다. 원하지 않으면 `hyprland.lua`의 `startup-layout.sh` 줄을 지우세요.
+
+모니터 설정은 제어 센터의 "디스플레이" 줄을 눌러 펼치거나, Vicinae에서 "디스플레이 설정"을 찾으면 맥 디스플레이 설정 같은 창이 뜹니다. 화면 네모를 끌어서 실제 위치에 맞추고(가까운 가장자리에 붙고 줄이 맞춰짐), 모니터마다 해상도·주사율·배율·회전을 고릅니다. 해상도·배율·회전을 바꾸거나 "외부만"을 고르면 모든 화면에 "유지할까요?" 창이 떠서 15초 안에 누르지 않으면 원래대로 돌아갑니다. 설정은 모니터(제조사·모델·일련번호)마다 `~/.config/hypr/monitors.lua`에 저장되어 다시 꽂으면 그대로 적용됩니다. 화면을 끄는 구성(외부만·노트북만)은 저장하지 않아서 다시 꽂거나 재시작하면 풀리고, 켜진 화면이 하나도 없게 되면 내장 화면을 다시 켭니다.
 
 상단바의 커피잔 아이콘이나 제어 센터의 커피잔 버튼을 누르면 잠자기 방지(가만히 둬도 화면이 어두워지거나 잠기거나 꺼지지 않고 절전하지 않음)가 켜집니다. 둘은 같은 상태를 씁니다. 터미널에서 링크를 누르는 것처럼 앱이 앞으로 와 달라고 하면 그 창으로 바로 이동합니다(브라우저가 다른 워크스페이스에 있어도). 배터리가 20%, 10%가 되면 알림이 뜨고, 유튜브 화면 속 화면(PiP)은 오른쪽 아래에 떠서 모든 워크스페이스에 보입니다.
 
@@ -155,7 +157,8 @@ SUPER는 Windows 키입니다.
 | `config/waybar/config.jsonc` | `~/.config/waybar/` | 상단 막대(화면 위에 붙은 직선 막대): 왼쪽 끝 오디오 파형·날씨(소리가 나면 cava 파형 막대 8개가 펼쳐지고, 조용해지면 접히며 지역 날씨 아이콘·기온으로 바뀜. 위치는 IP로 추정, 날씨는 Open-Meteo. 클릭 = 재생 중인 앱으로 이동, 오른쪽 클릭 = 재생/일시정지)·재생 중인 미디어(제목·아티스트·재생 시간, 긴 제목은 전광판처럼 흐름, 일시정지하면 ⏸로 10초 보인 뒤 숨김. 클릭 = 그 앱으로 이동, 오른쪽 클릭 = 재생/일시정지, 가운데 클릭 = 다음 곡), 가운데 워크스페이스 번호(지금 보는 곳은 보라 원), 오른쪽 트레이·잠자기 방지·전원 모드·음량·배터리(충전 상태별 아이콘)·A/한/あ 입력기 배지·Wi-Fi(누르면 제어 센터 Wi-Fi 목록)·제어 센터·시계(알림 빨간 점) |
 | `config/waybar/style.css`, `mocha.css` | `~/.config/waybar/` | 상단 막대 모양과 색 |
 | `config/kitty/kitty.conf`, `current-theme.conf` | `~/.config/kitty/` | 터미널 글꼴·여백·색 |
-| `config/quickshell/` | `~/.config/quickshell/` | 제어 센터 (Quickshell, QML). `shell.qml`이 시작점, `qs ipc call cc toggle` / `open wifi·bluetooth·sound`로 열기 |
+| `config/quickshell/` | `~/.config/quickshell/` | 제어 센터 (Quickshell, QML). `shell.qml`이 시작점, `qs ipc call cc toggle` / `open wifi·bluetooth·sound·display`로 열기. 디스플레이 설정 창은 `Display*.qml`·`DS.qml`, `qs ipc call display open` / `topology extend·mirror·external·internal` |
+| `home/.local/share/applications/display-settings.desktop` | `~/.local/share/applications/` | Vicinae에서 "디스플레이 설정"으로 검색하면 디스플레이 설정 창을 띄움 |
 | `config/swaync/config.json`, `style.css` | `~/.config/swaync/` | 알림 목록과 알림 팝업 |
 | `config/hypr/scripts/screenshot.sh`, `keyhints.sh` | `~/.config/hypr/scripts/` | 맥식 스크린샷, 단축키 도움말 창 |
 | `config/hypr/scripts/ime-cycle.sh` | `~/.config/hypr/scripts/` | 입력기를 A → 한 → あ 순서로 바꾸기 (상단바·잠금 화면 배지) |

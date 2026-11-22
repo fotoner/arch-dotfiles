@@ -239,6 +239,7 @@ place fcitx5/config
 place fcitx5/conf/classicui.conf
 (cd "$REPO_DIR/home" && find .local/share/fcitx5 -type f) | while read -r f; do place_home "$f"; done
 (cd "$REPO_DIR/home" && find .local/share/icons -type f) | while read -r f; do place_home "$f"; done
+place_home .local/share/applications/display-settings.desktop
 place git/config
 place git/ignore
 place gh/config.yml

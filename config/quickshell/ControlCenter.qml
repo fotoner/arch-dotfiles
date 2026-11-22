@@ -301,11 +301,48 @@ PanelWindow {
                         width: parent.width - 24
                         spacing: 8
 
-                        Txt {
-                            text: "디스플레이"
-                            font.pixelSize: 12
-                            font.weight: Font.DemiBold
-                            color: Theme.subtext1
+                        // '디스플레이' 줄을 누르면 화면 구성(확장·미러링 등)과 설정 창 링크
+                        Item {
+                            Layout.fillWidth: true
+                            implicitHeight: 18
+
+                            Txt {
+                                anchors.left: parent.left
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "디스플레이"
+                                font.pixelSize: 12
+                                font.weight: Font.DemiBold
+                                color: Theme.subtext1
+                            }
+
+                            Txt {
+                                anchors.right: displayChevron.left
+                                anchors.rightMargin: 4
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: Math.min(implicitWidth, parent.width - 90)
+                                text: DS.topology ? DS.topologyNames[DS.topology] : ""
+                                font.pixelSize: 11
+                                color: displayArea.containsMouse ? Theme.text : Theme.overlay1
+                            }
+
+                            Glyph {
+                                id: displayChevron
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "\u{f0142}"
+                                font.pixelSize: 13
+                                color: Theme.overlay1
+                                rotation: CC.section === "display" ? 90 : 0
+                                Behavior on rotation { NumberAnimation { duration: 150 } }
+                            }
+
+                            MouseArea {
+                                id: displayArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: CC.toggleSection("display")
+                            }
                         }
 
                         BigSlider {
@@ -315,6 +352,28 @@ PanelWindow {
                                 win.brightness = v;
                                 if (!brightApply.running)
                                     brightApply.start();
+                            }
+                        }
+
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            visible: CC.section === "display"
+                            spacing: 6
+
+                            DisplayModes {
+                                visible: DS.monitors.length > 1
+                                Layout.topMargin: 2
+                                tileHeight: 58
+                            }
+
+                            LinkRow {
+                                Layout.leftMargin: -6
+                                Layout.rightMargin: -6
+                                text: "디스플레이 설정…"
+                                onClicked: {
+                                    CC.open = false;
+                                    DS.open = true;
+                                }
                             }
                         }
 

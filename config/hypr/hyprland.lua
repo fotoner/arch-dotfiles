@@ -23,6 +23,10 @@ hl.monitor({
     scale    = 1,
 })
 
+-- 디스플레이 설정 창(제어 센터 → 디스플레이 → 디스플레이 설정…)이 저장한 모니터별 해상도·위치·배율·회전·미러링.
+-- 이 컴퓨터에만 있는 파일(~/.config/hypr/monitors.lua)이라 저장소에는 없다
+pcall(require, "monitors")
+
 
 ---------------------
 ---- MY PROGRAMS ----
@@ -539,6 +543,15 @@ hl.window_rule({
 hl.layer_rule({
     name         = "quickshell-control-center",
     match        = { namespace = "^quickshell-control-center$" },
+    blur         = true,
+    ignore_alpha = 0.5,
+    no_anim      = true,
+})
+
+-- 디스플레이 설정 창, 유지 확인 창, 화면 이름표(Quickshell)도 뒤를 흐리게
+hl.layer_rule({
+    name         = "quickshell-display",
+    match        = { namespace = "^quickshell-display" },
     blur         = true,
     ignore_alpha = 0.5,
     no_anim      = true,

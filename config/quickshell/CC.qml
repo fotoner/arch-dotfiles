@@ -7,7 +7,7 @@ Singleton {
     id: cc
 
     property bool open: false
-    // 펼친 목록: "wifi" | "bluetooth" | "sound" | ""
+    // 펼친 목록: "wifi" | "bluetooth" | "sound" | "display" | ""
     property string section: ""
 
     function toggleSection(name) {

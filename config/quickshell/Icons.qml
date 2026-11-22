@@ -26,6 +26,13 @@ Singleton {
     readonly property string lock: "\u{f033e}"
     readonly property string speaker: "\u{f04c3}"
     readonly property string headphones: "\u{f02cb}"
+    // 디스플레이: 모니터 · 여러 모니터(확장) · 미러링 · 노트북 · 닫기 · 펼치기
+    readonly property string monitor: "\u{f0379}"
+    readonly property string monitors: "\u{f037a}"
+    readonly property string mirror: "\u{f1483}"
+    readonly property string laptop: "\u{f0322}"
+    readonly property string close: "\u{f0156}"
+    readonly property string chevron: "\u{f0142}"
     // 전원 모드: 저전력 · 균형 · 성능
     readonly property string leaf: ""
     readonly property string balance: ""
