@@ -162,7 +162,7 @@ SUPER는 Windows 키입니다.
 | `config/hypr/hyprtoolkit.conf` | `~/.config/hypr/` | 앱 검색 창(hyprlauncher) 등 Hypr 앱 색 |
 | `config/waybar/config.jsonc` | `~/.config/waybar/` | 상단 막대(화면 위에 붙은 직선 막대): 왼쪽 끝 오디오 파형·날씨(소리가 나면 cava 파형 막대 8개가 펼쳐지고, 조용해지면 접히며 지역 날씨 아이콘·기온으로 바뀜. 위치는 IP로 추정, 날씨는 Open-Meteo. 클릭 = 재생 중인 앱으로 이동, 오른쪽 클릭 = 재생/일시정지)·재생 중인 미디어(제목·아티스트·재생 시간, 긴 제목은 전광판처럼 흐름, 일시정지하면 ⏸로 10초 보인 뒤 숨김. 클릭 = 그 앱으로 이동, 오른쪽 클릭 = 재생/일시정지, 가운데 클릭 = 다음 곡), 가운데 워크스페이스 번호(지금 보는 곳은 보라 원), 오른쪽 트레이·잠자기 방지·전원 모드·음량·배터리(충전 상태별 아이콘)·A/한/あ 입력기 배지·Wi-Fi(누르면 제어 센터 Wi-Fi 목록)·제어 센터·시계(알림 빨간 점) |
 | `config/waybar/style.css`, `mocha.css` | `~/.config/waybar/` | 상단 막대 모양과 색 |
-| `config/kitty/kitty.conf`, `current-theme.conf` | `~/.config/kitty/` | 터미널 글꼴·여백·색 |
+| `config/kitty/kitty.conf`, `current-theme.conf` | `~/.config/kitty/` | 터미널 글꼴·여백·색, 맥 터미널식 탭 단축키(Alt+1~9 그 탭으로, Alt+Shift+[ ] 이전·다음 탭, Alt+= / - / 0 글자 크기) |
 | `config/quickshell/` | `~/.config/quickshell/` | 제어 센터 (Quickshell, QML). `shell.qml`이 시작점, `qs ipc call cc toggle` / `open wifi·bluetooth·sound·display`로 열기. 디스플레이 설정 창은 `Display*.qml`·`DS.qml`, `qs ipc call display open` / `topology extend·mirror·external·internal`. 단축키 시트는 `ShortcutSheet.qml`, 목록은 `Shortcuts.qml`(단축키를 바꾸면 같이 고침), `qs ipc call keys toggle` |
 | `home/.local/share/applications/display-settings.desktop` | `~/.local/share/applications/` | Vicinae에서 "디스플레이 설정"으로 검색하면 디스플레이 설정 창을 띄움 |
 | `home/.local/share/applications/shortcuts.desktop` | `~/.local/share/applications/` | Vicinae에서 "단축키"로 검색하면 단축키 시트를 띄움 |

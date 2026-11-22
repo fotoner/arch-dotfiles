@@ -1,5 +1,5 @@
 pragma Singleton
-// 단축키 시트(Super+H)에 보이는 목록. hyprland.lua의 단축키를 바꾸면 여기도 같이 고친다.
+// 단축키 시트(Super+H)에 보이는 목록: OS 기본 조작과 터미널만 (다른 앱의 단축키는 넣지 않는다). hyprland.lua의 단축키를 바꾸면 여기도 같이 고친다.
 // keys: "Alt+C / V / X"처럼 쓴다. '+'로 나눈 것은 키캡 하나씩, ' / '는 다른 키(앞의 조합키를 그대로 씀)
 import QtQuick
 import Quickshell
@@ -88,6 +88,16 @@ Singleton {
             title: "터미널 (kitty)",
             icon: "\u{f018d}",
             items: [
+                { keys: "Alt+T", desc: "새 탭" },
+                { keys: "Alt+W", desc: "탭 닫기" },
+                { keys: "Alt+1~9", desc: "그 탭으로" },
+                { keys: "Alt+Shift+[ / ]", desc: "이전 / 다음 탭" },
+                { keys: "Ctrl+Tab", desc: "다음 탭 (Shift: 이전 탭)" },
+                { keys: "Ctrl+Shift+, / .", desc: "탭을 왼쪽 / 오른쪽으로" },
+                { keys: "Ctrl+Shift+Alt+T", desc: "탭 이름 바꾸기" },
+                { keys: "Alt+C / V", desc: "복사 / 붙여넣기" },
+                { keys: "Ctrl+C", desc: "실행 중단" },
+                { keys: "Alt+= / - / 0", desc: "글자 크게 / 작게 / 원래대로" },
                 { keys: "Ctrl+Shift+A → L / M", desc: "투명도 ↑ / ↓" }
             ]
         }

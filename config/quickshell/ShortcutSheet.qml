@@ -28,7 +28,7 @@ PanelWindow {
         })).filter(g => g.items.length > 0);
     }
 
-    // 카드를 높이가 고르게 세 줄로 나눈다 (가장 짧은 줄에 다음 카드를 넣는다)
+    // 카드를 높이가 고르게 세 줄로 나눈다: 큰 카드부터 가장 짧은 줄에 넣고, 줄 안에서는 원래 순서대로 둔다
     readonly property var lanes: {
         const lanes = [];
         const heights = [];
@@ -36,12 +36,13 @@ PanelWindow {
             lanes.push([]);
             heights.push(0);
         }
-        for (const g of shown) {
-            const i = heights.indexOf(Math.min(...heights));
-            lanes[i].push(g);
-            heights[i] += g.items.length + 2;
+        const order = shown.map((g, i) => ({ g: g, i: i, size: g.items.length + 2 })).sort((a, b) => b.size - a.size || a.i - b.i);
+        for (const o of order) {
+            const k = heights.indexOf(Math.min(...heights));
+            lanes[k].push(o);
+            heights[k] += o.size;
         }
-        return lanes;
+        return lanes.map(lane => lane.sort((a, b) => a.i - b.i).map(o => o.g));
     }
 
     function parts(keys) {
