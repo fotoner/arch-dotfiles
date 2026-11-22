@@ -111,5 +111,13 @@ ShellRoot {
         function topology(kind: string): void {
             DS.setTopology(kind);
         }
+
+        // qs ipc call display lid close|open : 덮개 스위치 (hyprland.lua)
+        function lid(state: string): void {
+            if (state === "close")
+                DS.lidClose();
+            else
+                DS.lidOpen();
+        }
     }
 }

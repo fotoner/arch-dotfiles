@@ -262,6 +262,7 @@ hl.config({
         touchpad = {
             natural_scroll = true,
             scroll_factor  = 0.8, -- 터치패드 스크롤 속도 (기본 1.0, 작을수록 느림)
+            clickfinger_behavior = true, -- 맥처럼 두 손가락으로 누르면 오른쪽 클릭, 세 손가락은 가운데 클릭 (모서리 위치와 상관없이)
         },
     },
 })
@@ -309,6 +310,12 @@ hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.swap({ direction = "right" 
 hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.window.swap({ direction = "up" }))
 hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.window.swap({ direction = "down" }))
 
+-- 모니터가 여럿일 때: SUPER + CTRL + SHIFT + 방향키 = 창을 그 방향 모니터로, SUPER + ALT + SHIFT + 방향키 = 지금 워크스페이스를 통째로
+for key, dir in pairs({ left = "l", right = "r", up = "u", down = "d" }) do
+    hl.bind(mainMod .. " + CTRL + SHIFT + " .. key, hl.dsp.window.move({ monitor = dir }))
+    hl.bind(mainMod .. " + ALT + SHIFT + " .. key,  hl.dsp.workspace.move({ monitor = dir }))
+end
+
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
 for i = 1, 10 do
@@ -347,6 +354,11 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 
 -- 잠금 (맥의 Ctrl+Cmd+Q)
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("loginctl lock-session"))
+
+-- 덮개 (맥 클램쉘 모드): 외부 모니터가 켜져 있을 때 덮개를 닫으면 노트북 화면만 끄고, 열면 닫기 전 화면 구성으로 되돌린다.
+-- 외부 모니터가 없으면 아무것도 하지 않고 logind가 잠그고 절전한다 (모니터가 꽂혀 있으면 logind는 덮개를 무시한다)
+hl.bind("switch:on:Lid Switch",  hl.dsp.exec_cmd("qs ipc call display lid close"), { locked = true })
+hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd("qs ipc call display lid open"),  { locked = true })
 
 -- 전원 메뉴 (화면 잠금·로그아웃·잠자기·재시동·시스템 종료). 알림 센터의 전원 버튼도 같은 메뉴
 hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("nwg-bar"))

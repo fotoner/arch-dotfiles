@@ -301,6 +301,42 @@ Singleton {
         return next;
     }
 
+    // ---- 덮개 (맥 클램쉘 모드) ----
+    // 외부 모니터가 켜져 있을 때 덮개를 닫으면 노트북 화면만 끄고, 열면 닫기 전 구성으로 되돌린다 (저장하지 않음).
+    // Hyprland가 덮개 스위치에서 qs ipc call display lid close|open을 부른다
+    property var lidSnapshot: null
+
+    function lidClose() {
+        const int = internal;
+        if (!int || !int.enabled || pending || !externals.some(m => m.enabled))
+            return; // 외부 모니터가 없으면 logind가 잠그고 절전한다
+        lidSnapshot = monitors;
+        const wasMirror = topology === "mirror";
+        let x = 0;
+        apply(monitors.map(m => {
+            if (m.internal)
+                return Object.assign({}, m, { enabled: false, mirror: "" });
+            if (!m.enabled)
+                return m;
+            const o = Object.assign({}, m, { mirror: "" });
+            if (wasMirror) { // 미러링의 원본(노트북 화면)이 꺼지므로 외부 모니터를 나란히 세운다
+                o.x = x;
+                o.y = 0;
+                x += logical(o).w;
+            }
+            return o;
+        }), false, false);
+    }
+
+    function lidOpen() {
+        const snap = lidSnapshot;
+        lidSnapshot = null;
+        if (!snap || !internal || internal.enabled || pending)
+            return; // 덮개 때문에 끈 게 아니면(직접 '외부만'을 고른 경우 등) 그대로 둔다
+        // 닫은 사이에 모니터가 빠졌으면 남은 것만 되돌린다 (빠진 모니터 규칙은 Hyprland가 무시)
+        apply(monitors.map(m => snap.find(s => s.name === m.name) ?? m), false, false);
+    }
+
     // ---- 저장 ----
 
     function save(states) {

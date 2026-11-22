@@ -45,6 +45,7 @@ Singleton {
                 { keys: "Super+V", desc: "띄우기 / 타일로 되돌리기" },
                 { keys: "Super+←→↑↓", desc: "옆 창으로 이동" },
                 { keys: "Super+Shift+←→↑↓", desc: "옆 창과 자리 바꾸기" },
+                { keys: "Super+Ctrl+Shift+←→↑↓", desc: "창을 옆 모니터로" },
                 { keys: "Super+J", desc: "나누는 방향 바꾸기" },
                 { keys: "Super+왼쪽 끌기", desc: "창 옮기기" },
                 { keys: "Super+오른쪽 끌기", desc: "창 크기 조절" }
@@ -56,6 +57,7 @@ Singleton {
             items: [
                 { keys: "Super+1~0", desc: "그 워크스페이스로" },
                 { keys: "Super+Shift+1~0", desc: "창을 그 워크스페이스로" },
+                { keys: "Super+Alt+Shift+←→↑↓", desc: "통째로 옆 모니터로" },
                 { keys: "Super+휠", desc: "옆 워크스페이스로" },
                 { keys: "세 손가락 ←→", desc: "워크스페이스 넘기기" },
                 { keys: "Super+S", desc: "숨김 공간 열기·닫기" },
