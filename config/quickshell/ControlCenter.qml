@@ -448,7 +448,7 @@ PanelWindow {
 
                 StatsCard {}
 
-                // 알림 센터, 전원 메뉴
+                // 단축키 시트, 알림 센터, 전원 메뉴
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.rightMargin: 5
@@ -456,6 +456,14 @@ PanelWindow {
 
                     Item {
                         Layout.fillWidth: true
+                    }
+
+                    IconButton {
+                        icon: Icons.keyboard
+                        onClicked: {
+                            CC.open = false;
+                            Shortcuts.open = true;
+                        }
                     }
 
                     IconButton {

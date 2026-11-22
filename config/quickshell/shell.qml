@@ -2,6 +2,7 @@
 // 열기: 상단바 제어 센터 아이콘, Super+A, qs ipc call cc toggle
 // 알림 목록은 그대로 swaync가 맡는다 (상단바 시계, Super+N)
 // 디스플레이 설정 창: 제어 센터 → 디스플레이, qs ipc call display open
+// 단축키 시트: Super+H, qs ipc call keys toggle
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -10,6 +11,7 @@ ShellRoot {
     ControlCenter {}
     DisplaySettings {}
     DisplayOverlay {}
+    ShortcutSheet {}
 
     IpcHandler {
         target: "cc"
@@ -36,6 +38,31 @@ ShellRoot {
 
         function hide(): void {
             CC.open = false;
+        }
+    }
+
+    IpcHandler {
+        target: "keys"
+
+        // qs ipc call keys toggle|open|close
+        function toggle(): void {
+            if (Shortcuts.open) {
+                Shortcuts.open = false;
+            } else {
+                CC.open = false;
+                DS.open = false;
+                Shortcuts.open = true;
+            }
+        }
+
+        function open(): void {
+            CC.open = false;
+            DS.open = false;
+            Shortcuts.open = true;
+        }
+
+        function close(): void {
+            Shortcuts.open = false;
         }
     }
 

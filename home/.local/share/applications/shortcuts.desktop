@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=단축키
+GenericName=Keyboard Shortcuts
+Comment=단축키 시트 열기 (Super+H)
+Exec=qs ipc call keys open
+Icon=preferences-desktop-keyboard-shortcuts
+Terminal=false
+Categories=Settings;
+Keywords=shortcut;shortcuts;keyboard;hotkey;cheatsheet;단축키;키보드;도움말;

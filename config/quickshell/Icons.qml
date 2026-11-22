@@ -33,6 +33,7 @@ Singleton {
     readonly property string laptop: "\u{f0322}"
     readonly property string close: "\u{f0156}"
     readonly property string chevron: "\u{f0142}"
+    readonly property string keyboard: "\u{f030c}"
     // 전원 모드: 저전력 · 균형 · 성능
     readonly property string leaf: ""
     readonly property string balance: ""

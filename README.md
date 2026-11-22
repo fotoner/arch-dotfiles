@@ -46,7 +46,7 @@ SUPER는 Windows 키입니다.
 | SUPER + Esc | 전원 메뉴(글자 없는 아이콘 줄, 왼쪽부터): 화면 잠금·로그아웃·잠자기·재시동·시스템 종료 (제어 센터의 전원 버튼도 같음) | 메뉴의 전원 항목 |
 | SUPER + A | 제어 센터 (상단바 시계 왼쪽 토글 아이콘도 같음): Wi-Fi·블루투스 켜짐 표시와 기기 목록(신호 세기, 이어폰 배터리, 바로 연결/해제, 처음 쓰는 Wi-Fi는 암호 입력), 빠른 버튼(방해 금지·마이크·전원 모드·잠자기 방지, 켜지면 보라색), 밝기·음량 막대와 출력 장치, 화면 구성(확장·미러링·외부만·노트북만)과 디스플레이 설정 창, 재생 중인 미디어, 배터리(충전 상태·남은 시간·충전 한도 80% / 100%), 시스템 사용량(CPU·메모리·디스크·온도). 바깥을 누르거나 Esc로 닫기 | 제어 센터 |
 | SUPER + N | 알림 목록과 방해 금지 (상단바 오른쪽 끝 시계를 눌러도 열림, 시계 오른쪽 클릭 = 방해 금지). 읽지 않은 알림이 있으면 시계 옆에 빨간 점, 방해 금지 중이면 달 | 알림 센터 |
-| SUPER + H | 단축키 도움말 창 | |
+| SUPER + H | 단축키 시트: 종류별 카드에 키캡 모양으로 정리, 바로 입력하면 찾기, Esc로 닫기 (제어 센터 아래 키보드 단추, Vicinae "단축키"도 같음) | ⌘ 길게 누르기(CheatSheet) |
 | 음량·밝기 키 | 화면에 팝업으로 표시 | 같음 |
 | 상단바 음량 아이콘 | 클릭: 제어 센터(음량, 출력 장치 목록), 오른쪽 클릭: 상세 설정 창(pwvucontrol), 가운데 클릭: 음소거, 휠: 음량 | 메뉴바 소리 메뉴 |
 | 상단바 Wi-Fi 아이콘 | 클릭: 제어 센터의 Wi-Fi 목록, 오른쪽 클릭: nmtui 창 | 메뉴바 Wi-Fi 메뉴 |
@@ -157,10 +157,11 @@ SUPER는 Windows 키입니다.
 | `config/waybar/config.jsonc` | `~/.config/waybar/` | 상단 막대(화면 위에 붙은 직선 막대): 왼쪽 끝 오디오 파형·날씨(소리가 나면 cava 파형 막대 8개가 펼쳐지고, 조용해지면 접히며 지역 날씨 아이콘·기온으로 바뀜. 위치는 IP로 추정, 날씨는 Open-Meteo. 클릭 = 재생 중인 앱으로 이동, 오른쪽 클릭 = 재생/일시정지)·재생 중인 미디어(제목·아티스트·재생 시간, 긴 제목은 전광판처럼 흐름, 일시정지하면 ⏸로 10초 보인 뒤 숨김. 클릭 = 그 앱으로 이동, 오른쪽 클릭 = 재생/일시정지, 가운데 클릭 = 다음 곡), 가운데 워크스페이스 번호(지금 보는 곳은 보라 원), 오른쪽 트레이·잠자기 방지·전원 모드·음량·배터리(충전 상태별 아이콘)·A/한/あ 입력기 배지·Wi-Fi(누르면 제어 센터 Wi-Fi 목록)·제어 센터·시계(알림 빨간 점) |
 | `config/waybar/style.css`, `mocha.css` | `~/.config/waybar/` | 상단 막대 모양과 색 |
 | `config/kitty/kitty.conf`, `current-theme.conf` | `~/.config/kitty/` | 터미널 글꼴·여백·색 |
-| `config/quickshell/` | `~/.config/quickshell/` | 제어 센터 (Quickshell, QML). `shell.qml`이 시작점, `qs ipc call cc toggle` / `open wifi·bluetooth·sound·display`로 열기. 디스플레이 설정 창은 `Display*.qml`·`DS.qml`, `qs ipc call display open` / `topology extend·mirror·external·internal` |
+| `config/quickshell/` | `~/.config/quickshell/` | 제어 센터 (Quickshell, QML). `shell.qml`이 시작점, `qs ipc call cc toggle` / `open wifi·bluetooth·sound·display`로 열기. 디스플레이 설정 창은 `Display*.qml`·`DS.qml`, `qs ipc call display open` / `topology extend·mirror·external·internal`. 단축키 시트는 `ShortcutSheet.qml`, 목록은 `Shortcuts.qml`(단축키를 바꾸면 같이 고침), `qs ipc call keys toggle` |
 | `home/.local/share/applications/display-settings.desktop` | `~/.local/share/applications/` | Vicinae에서 "디스플레이 설정"으로 검색하면 디스플레이 설정 창을 띄움 |
+| `home/.local/share/applications/shortcuts.desktop` | `~/.local/share/applications/` | Vicinae에서 "단축키"로 검색하면 단축키 시트를 띄움 |
 | `config/swaync/config.json`, `style.css` | `~/.config/swaync/` | 알림 목록과 알림 팝업 |
-| `config/hypr/scripts/screenshot.sh`, `keyhints.sh` | `~/.config/hypr/scripts/` | 맥식 스크린샷, 단축키 도움말 창 |
+| `config/hypr/scripts/screenshot.sh` | `~/.config/hypr/scripts/` | 맥식 스크린샷 |
 | `config/hypr/scripts/ime-cycle.sh` | `~/.config/hypr/scripts/` | 입력기를 A → 한 → あ 순서로 바꾸기 (상단바·잠금 화면 배지) |
 | `config/hypr/scripts/ime-status.sh` | `~/.config/hypr/scripts/` | 상단바 입력기 배지 A / 한 / あ (fcitx5 트레이 아이콘 대신) |
 | `config/hypr/scripts/wifi-menu.sh` | `~/.config/hypr/scripts/` | nmtui Wi-Fi 창 (Catppuccin 색). 상단바 Wi-Fi 오른쪽 클릭, 제어 센터의 "네트워크 설정…" |

@@ -355,7 +355,7 @@ hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("nwg-bar"))
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
 -- 제어 센터: Wi-Fi·블루투스 기기, 빠른 버튼, 밝기·음량, 미디어, 배터리 충전 한도, 시스템 사용량
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("qs ipc call cc toggle"))
-hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("~/.config/hypr/scripts/keyhints.sh"))
+hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("qs ipc call keys toggle")) -- 단축키 시트 (목록은 ~/.config/quickshell/Shortcuts.qml)
 
 -- Ctrl+Space: 입력기 바꾸기 (A → 한 → あ). fcitx5 대신 Hyprland가 키를 받아서 어느 앱에서도 공백이 들어가지 않는다.
 -- locked: 잠금 화면에서도 동작해서 암호 칸에 공백이 들어가지 않고 좌하단 배지가 바뀐다
@@ -521,15 +521,6 @@ hl.window_rule({
     move              = "monitor_w-495 monitor_h-285",
 })
 
--- 단축키 도움말 창은 가운데에 띄운다
-hl.window_rule({
-    name   = "keyhints",
-    match  = { class = "^yad$", title = "^단축키$" },
-    float  = true,
-    size   = "620 780",
-    center = true,
-})
-
 -- Nautilus 빠른 미리보기(Sushi, Space): 맥 Quick Look처럼 타일에 끼지 않고 화면 가운데에 띄운다
 hl.window_rule({
     name   = "sushi-preview",
@@ -548,10 +539,10 @@ hl.layer_rule({
     no_anim      = true,
 })
 
--- 디스플레이 설정 창, 유지 확인 창, 화면 이름표(Quickshell)도 뒤를 흐리게
+-- 디스플레이 설정 창, 유지 확인 창, 화면 이름표, 단축키 시트(Quickshell)도 뒤를 흐리게
 hl.layer_rule({
-    name         = "quickshell-display",
-    match        = { namespace = "^quickshell-display" },
+    name         = "quickshell-panels",
+    match        = { namespace = "^quickshell-(display|shortcuts)" },
     blur         = true,
     ignore_alpha = 0.5,
     no_anim      = true,

@@ -71,8 +71,8 @@ PKGS=(
   hyprshutdown swayosd nwg-bar adw-gtk-theme inter-font
   # 맥의 미리보기·Quick Look: 이미지 보기, PDF 보기, Nautilus에서 Space로 빠른 미리보기
   loupe papers sushi
-  # 배터리 부족 알림, 스크린샷 편집기, 단축키 도움말 창, 폴더 바로 이동
-  batsignal satty yad zoxide
+  # 배터리 부족 알림, 스크린샷 편집기, 폴더 바로 이동
+  batsignal satty zoxide
   # 터미널 도구, zsh 플러그인 (mac-dotfiles에서 가져옴)
   zsh-autosuggestions zsh-syntax-highlighting zsh-completions
   bat eza fd fzf jq tmux tree lazygit htop btop fastfetch git-lfs github-cli unzip
@@ -207,7 +207,6 @@ place kitty/current-theme.conf
 place swaync/config.json
 place swaync/style.css
 place hypr/scripts/screenshot.sh
-place hypr/scripts/keyhints.sh
 place hypr/scripts/smart-paste.sh
 place hypr/scripts/wifi-menu.sh
 place hypr/scripts/ime-status.sh
@@ -241,6 +240,7 @@ place fcitx5/conf/classicui.conf
 (cd "$REPO_DIR/home" && find .local/share/icons -type f) | while read -r f; do place_home "$f"; done
 place_home .local/share/applications/tailscale.desktop
 place_home .local/share/applications/display-settings.desktop
+place_home .local/share/applications/shortcuts.desktop
 place git/config
 place git/ignore
 place gh/config.yml
