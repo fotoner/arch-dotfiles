@@ -1,0 +1,2 @@
+# sudo 비밀번호를 한 번 입력하면 모든 터미널(Claude Code 포함)에서 30분 동안 다시 묻지 않음
+Defaults:%wheel timestamp_type=global, timestamp_timeout=30

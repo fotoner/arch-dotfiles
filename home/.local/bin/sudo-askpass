@@ -1,0 +1,19 @@
+#!/bin/sh
+# 터미널 없이 sudo가 실행될 때(Claude Code의 ! 명령 등) 비밀번호를 팝업으로 받는다.
+# 한글 입력 상태로 치면 비밀번호가 틀리므로 팝업 동안 입력기를 영어(A)로 바꾸고, 닫히면 원래대로 되돌린다.
+# 비밀번호를 3번 틀리면 계정이 10분 잠기니(faillock) Caps Lock이 켜져 있으면 경고한다.
+
+prompt="${1:-비밀번호}"
+for led in /sys/class/leds/*::capslock/brightness; do
+  [ "$(cat "$led" 2>/dev/null)" = 1 ] && prompt="⚠ Caps Lock이 켜져 있습니다
+$prompt" && break
+done
+
+im=$(fcitx5-remote -n 2>/dev/null)
+fcitx5-remote -s keyboard-us 2>/dev/null
+
+zenity --entry --hide-text --title="sudo" --text="$prompt"
+rc=$?
+
+[ -n "$im" ] && fcitx5-remote -s "$im" 2>/dev/null
+exit $rc

@@ -84,6 +84,8 @@ PKGS=(
   discord tailscale
   # 게임: Steam, Intel 그래픽 Vulkan 드라이버(64·32비트, Proton 게임에 필요), Steam 글꼴
   steam vulkan-intel lib32-vulkan-intel lib32-mesa ttf-liberation
+  # 터미널 없이 sudo 비밀번호를 팝업으로 받기 (Claude Code의 ! 명령 등, ~/.local/bin/sudo-askpass)
+  zenity
   # AUR 패키지 빌드 도구
   base-devel
   # 한글 입력
@@ -146,6 +148,9 @@ step "5/8 서비스 켜기 (블루투스, 전원 모드, 패키지 캐시 자동
 sudo systemctl enable --now bluetooth.service power-profiles-daemon.service paccache.timer \
   systemd-timesyncd.service tailscaled.service fwupd-refresh.timer
 sudo install -m 644 "$REPO_DIR/system/zram-generator.conf" /etc/systemd/zram-generator.conf
+# sudo 비밀번호를 한 번 입력하면 모든 터미널에서 30분 유지. 문법이 틀리면 sudo가 망가지므로 먼저 검사한다
+sudo visudo -cf "$REPO_DIR/system/sudoers-timeout" \
+  && sudo install -m 440 -o root -g root "$REPO_DIR/system/sudoers-timeout" /etc/sudoers.d/zz-sudo-timeout
 # 방화벽: 밖에서 먼저 들어오는 연결 막기 (Tailscale, 같은 Wi-Fi 기기 찾기는 허용). 원래 파일은 .bak으로 남긴다
 [ -f /etc/nftables.conf ] && [ ! -f /etc/nftables.conf.bak ] && sudo cp /etc/nftables.conf /etc/nftables.conf.bak
 sudo install -m 644 "$REPO_DIR/system/nftables.conf" /etc/nftables.conf
@@ -233,6 +238,8 @@ place git/ignore
 place gh/config.yml
 (cd "$REPO_DIR/config" && find nvim -type f) | while read -r f; do place "$f"; done
 place_home .zshrc
+place_home .local/bin/sudo-askpass
+chmod +x "$HOME/.local/bin/sudo-askpass"
 place_home .dircolors
 # Claude Code 상태줄 (fotoner/claude-statusline에서 bash 5.2+ 버그를 고친 본). settings.json에는 statusLine만 넣는다
 place_home .claude/statusline-command.sh
